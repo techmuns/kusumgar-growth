@@ -42,6 +42,33 @@ const SEG_TO_EXHIB = {
   'Workwear & Safety': 'Workwear',
 };
 
+// Lead-segment colors (Phase 3) — distinct customer-facing segmentation.
+const LEAD_SEGMENT_COLORS = {
+  'Tool & Equipment Bags': '#f59e0b',        // amber
+  'Medical & Emergency': '#f43f5e',          // rose
+  'Marine Covers': '#3b82f6',                // blue
+  'Pool & Outdoor Covers': '#14b8a6',        // teal
+  'Protective Covers & Industrial': '#f97316', // orange
+  'Automotive Seating': '#8b5cf6',           // violet
+};
+// Resolve a color for any segment string across all maps.
+const anyColor = (s) => LEAD_SEGMENT_COLORS[s] || SEGMENT_COLORS[s] || '#64748b';
+const leadSegColor = (s) => LEAD_SEGMENT_COLORS[s] || anyColor(s);
+
+const PRIORITY_COLORS = { High: '#10b981', Medium: '#94a3b8', Low: '#94a3b8' };
+
+// Competitor positioning buckets (first match wins; note Premium beats Technical).
+const POSITION_BUCKETS = [
+  { label: 'Cost / Scale', color: '#f59e0b', test: (p) => /cost|scale/.test(p) },
+  { label: 'Premium', color: '#6366f1', test: (p) => /premium/.test(p) },
+  { label: 'Technology / Technical', color: '#0ea5e9', test: (p) => /techn/.test(p) },
+  { label: 'Regional', color: '#94a3b8', test: (p) => /regional/.test(p) },
+];
+function positionBucket(pos) {
+  const p = String(pos || '').toLowerCase();
+  return POSITION_BUCKETS.find((b) => b.test(p)) || POSITION_BUCKETS[3];
+}
+
 // Engagement status colors + display order.
 const STATUS_COLORS = {
   'Exhibited': '#10b981', // emerald
@@ -55,8 +82,8 @@ const ENGAGED = new Set(['Exhibited', 'Visited', 'Attended']);
 const TABS = [
   { id: 'exhibitions', label: 'Exhibitions', icon: '🎪', live: true },
   { id: 'products', label: 'Products', icon: '🧵', live: true },
-  { id: 'leads', label: 'Leads', icon: '🎯', live: false },
-  { id: 'competitors', label: 'Competitors', icon: '🛡️', live: false },
+  { id: 'leads', label: 'Leads', icon: '🎯', live: true },
+  { id: 'competitors', label: 'Competitors', icon: '🛡️', live: true },
   { id: 'outreach', label: 'Outreach', icon: '📮', live: false },
 ];
 
@@ -66,6 +93,9 @@ const FLAGS = {
   'South Korea': '🇰🇷', 'Israel': '🇮🇱', 'Poland': '🇵🇱', 'Egypt': '🇪🇬', 'Chile': '🇨🇱',
   'Czechia': '🇨🇿', 'UAE': '🇦🇪', 'Australia': '🇦🇺', 'Indonesia': '🇮🇩', 'Brazil': '🇧🇷',
   'Singapore': '🇸🇬', 'Saudi Arabia': '🇸🇦',
+  'Taiwan': '🇹🇼', 'Italy': '🇮🇹', 'Netherlands': '🇳🇱', 'Denmark': '🇩🇰', 'Norway': '🇳🇴',
+  'Ireland': '🇮🇪', 'Liechtenstein': '🇱🇮', 'China': '🇨🇳', 'Austria': '🇦🇹', 'Sweden': '🇸🇪',
+  'Switzerland': '🇨🇭', 'Belgium': '🇧🇪', 'Vietnam': '🇻🇳',
 };
 
 const MONTHS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -80,10 +110,16 @@ const state = {
   meta: null,
   exhibitions: [],
   products: [],
+  leads: [],
+  competitors: [],
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
   filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false },
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
+  leadsSub: 'overview',   // 'overview' | 'list'
+  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', fullOnly: false },
+  leadSort: { key: 'company', dir: 'asc' },
+  competitorsSub: 'landscape', // 'landscape' | 'list'
 };
 
 const REL_KEY = (id) => `kgr.relevant.${id}`;
@@ -192,7 +228,7 @@ function unhighlight(el) {
  * ------------------------------------------------------------------ */
 
 // Donut — items: [{label, value, color, key}]
-function buildDonut(items, { centerNum, centerLabel }) {
+function buildDonut(items, { centerNum, centerLabel, unit = 'show' }) {
   const total = items.reduce((s, i) => s + i.value, 0) || 1;
   const cx = 80, cy = 80, r = 56, sw = 22;
   const C = 2 * Math.PI * r;
@@ -209,7 +245,7 @@ function buildDonut(items, { centerNum, centerLabel }) {
         stroke-dasharray="0 ${C.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"
         data-arc="${drawLen.toFixed(2)} ${(C - drawLen).toFixed(2)}"
         data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}"
-        data-tip-sub="${plural(i.value, 'show')} • ${pct}%"></circle>`;
+        data-tip-sub="${plural(i.value, unit)} • ${pct}%"></circle>`;
   }).join('');
   return `
     <svg viewBox="0 0 160 160" width="144" height="144" class="h-36 w-36 shrink-0" role="img" aria-label="${escapeHtml(centerLabel)}">
@@ -221,12 +257,12 @@ function buildDonut(items, { centerNum, centerLabel }) {
 }
 
 // Legend rows (also cross-highlight the chart when hovered).
-function buildLegend(items, { total } = {}) {
+function buildLegend(items, { total, unit = 'show' } = {}) {
   return `<ul class="flex-1 space-y-1.5 min-w-0">` + items.map((i) => {
     const pct = total ? Math.round((i.value / total) * 100) : null;
     return `<li class="hovable flex items-center gap-2 rounded-lg px-1.5 py-0.5" data-key="${escapeHtml(i.key)}"
         data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}"
-        data-tip-sub="${plural(i.value, 'show')}${pct != null ? ` • ${pct}%` : ''}">
+        data-tip-sub="${plural(i.value, unit)}${pct != null ? ` • ${pct}%` : ''}">
       <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${i.color}"></span>
       <span class="min-w-0 flex-1 truncate text-[13px] font-medium text-slate-600">${escapeHtml(i.label)}</span>
       <span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span>
@@ -235,7 +271,7 @@ function buildLegend(items, { total } = {}) {
 }
 
 // Horizontal bars — items: [{label, value, color, key, flag}]
-function buildBars(items) {
+function buildBars(items, { unit = 'show' } = {}) {
   const W = 460, x0 = 132, valW = 28;    // wide viewBox keeps bars from magnifying vertically
   const barMax = W - x0 - valW;
   const rowH = 30, padTop = 6, barH = 14;
@@ -248,10 +284,10 @@ function buildBars(items) {
     const flag = i.flag ? i.flag + ' ' : '';
     return `<g class="hovable" data-key="${escapeHtml(i.key)}"
         data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}"
-        data-tip-sub="${plural(i.value, 'show')}">
+        data-tip-sub="${plural(i.value, unit)}">
       <rect x="0" y="${y}" width="${W}" height="${rowH}" fill="transparent"></rect>
       <text x="${x0 - 8}" y="${cy}" text-anchor="end" dominant-baseline="central"
-        style="font-size:11.5px;font-weight:600;fill:#475569;">${escapeHtml(flag + i.label)}</text>
+        style="font-size:11.5px;font-weight:600;fill:#475569;">${escapeHtml(flag + (i.short || i.label))}</text>
       <rect x="${x0}" y="${cy - barH / 2}" width="${barMax}" height="${barH}" rx="7" fill="#f1f5f9"></rect>
       <rect class="reveal-scale" x="${x0}" y="${cy - barH / 2}" width="${w.toFixed(1)}" height="${barH}" rx="7"
         fill="${i.color}" style="transition-delay:${idx * 55}ms"></rect>
@@ -263,7 +299,7 @@ function buildBars(items) {
 }
 
 // Stacked bar — items: [{label, value, color, key}]
-function buildStackedBar(items) {
+function buildStackedBar(items, { unit = 'show' } = {}) {
   const total = items.reduce((s, i) => s + i.value, 0) || 1;
   const W = 340, H = 30, r = 8;
   let x = 0;
@@ -275,7 +311,7 @@ function buildStackedBar(items) {
     const rect = `<rect class="hovable" data-key="${escapeHtml(i.key)}" x="${x.toFixed(2)}" y="0"
         width="${drawW.toFixed(2)}" height="${H}" rx="${r}" fill="${i.color}"
         data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}"
-        data-tip-sub="${plural(i.value, 'show')} • ${pct}%"></rect>`;
+        data-tip-sub="${plural(i.value, unit)} • ${pct}%"></rect>`;
     x += w;
     return rect;
   }).join('');
@@ -827,6 +863,326 @@ function renderProducts() {
 }
 
 /* ------------------------------------------------------------------ *
+ * Leads tab — Overview + sortable list + drill-panel
+ * ------------------------------------------------------------------ */
+
+const dash = (v) => (v == null || v === '' ? '—' : v);
+
+function fmtNum(n) {
+  n = Number(n);
+  if (!isFinite(n)) return '—';
+  if (n >= 1e6) return (n / 1e6).toFixed(n % 1e6 === 0 ? 0 : 1).replace(/\.0$/, '') + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(n % 1e3 === 0 ? 0 : 1).replace(/\.0$/, '') + 'K';
+  return String(n);
+}
+function fmtConsumption(v) {
+  if (v == null || v === '') return '—';
+  const m = String(v).match(/(\d+)\s*[-–]\s*(\d+)/);
+  if (m) return `${fmtNum(m[1])}–${fmtNum(m[2])}`;
+  const single = String(v).match(/\d+/);
+  return single ? fmtNum(single[0]) : String(v);
+}
+const consumptionSortVal = (v) => { const m = String(v || '').match(/\d+/); return m ? Number(m[0]) : -1; };
+
+function priorityChip(pri) {
+  if (pri === 'High') return `<span class="inline-flex items-center rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white">High</span>`;
+  return `<span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500">${escapeHtml(pri || '—')}</span>`;
+}
+
+function renderLeadsOverview() {
+  const leads = state.leads;
+  const total = leads.length;
+  const segCounts = countBy(leads, (d) => d.segment);
+  const high = leads.filter((d) => d.priority === 'High').length;
+  const fullCount = leads.filter((d) => d.detail === 'full').length;
+
+  const chips = `
+    <div class="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      ${statChip('🎯', total, 'Total leads', '#6366f1')}
+      ${statChip('🧩', segCounts.size, 'Segments', '#0ea5e9')}
+      ${statChip('⭐', high, 'High priority', '#10b981')}
+      ${statChip('📇', fullCount, 'Fully profiled', '#f59e0b')}
+    </div>`;
+
+  // Live source split (grows once the classify engine appends exhibition leads).
+  const research = leads.filter((d) => !String(d.source || '').startsWith('exhibition')).length;
+  const fromEx = total - research;
+  const sourceLine = `
+    <div class="mb-4 flex flex-wrap items-center gap-2 text-[12px]">
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 shadow-sm ring-1 ring-slate-100"><span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>Research <span class="tnum font-bold text-slate-900">${research}</span></span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 shadow-sm ring-1 ring-slate-100"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>From exhibitions <span class="tnum font-bold text-slate-900">${fromEx}</span></span>
+    </div>`;
+
+  const segItems = [...segCounts.entries()].sort((a, b) => b[1] - a[1])
+    .map(([s, v]) => ({ label: s, value: v, color: leadSegColor(s), key: 'lseg:' + s }));
+  const donut = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(segItems, { centerNum: total, centerLabel: 'leads', unit: 'lead' })}${buildLegend(segItems, { total, unit: 'lead' })}</div>`;
+
+  const countryCounts = [...countBy(leads, (d) => d.country).entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 10);
+  const maxC = countryCounts[0] ? countryCounts[0][1] : 1, minC = countryCounts.length ? countryCounts[countryCounts.length - 1][1] : 0;
+  const countryItems = countryCounts.map(([c, v]) => ({ label: c, value: v, flag: FLAGS[c] || '', key: 'lc:' + c, color: lerpColor('#818cf8', '#db2777', maxC === minC ? 0.5 : (v - minC) / (maxC - minC)) }));
+  const countryLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#818cf8,#db2777)"></span><span>more leads</span></div>`;
+
+  const priItems = ['High', 'Medium'].map((p) => ({ label: p, value: leads.filter((d) => d.priority === p).length, color: PRIORITY_COLORS[p], key: 'pri:' + p })).filter((i) => i.value > 0);
+  const priLegend = `<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">` + priItems.map((i) =>
+    `<div class="hovable flex items-center gap-1.5" data-key="${i.key}" data-tip-title="${escapeHtml(i.label)} priority" data-tip-color="${i.color}" data-tip-sub="${plural(i.value, 'lead')}"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
+
+  const fitCounts = [...countBy(leads, (d) => d.fabric_fit).entries()].filter(([k]) => k).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const maxF = fitCounts[0] ? fitCounts[0][1] : 1, minF = fitCounts.length ? fitCounts[fitCounts.length - 1][1] : 0;
+  const fitShort = (f) => f.replace(/ Polyester| Fabric/g, '').replace(/ \/ /g, '/');
+  const fitItems = fitCounts.map(([f, v]) => ({ label: f, short: fitShort(f), value: v, key: 'fit:' + f, color: lerpColor('#34d399', '#6366f1', maxF === minF ? 0.5 : (v - minF) / (maxF - minF)) }));
+  const fitLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#34d399,#6366f1)"></span><span>more leads</span></div>`;
+
+  const grid = `
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+      <div class="space-y-4">
+        <div data-chart>${chartCard('🧩', 'Leads by segment', 'who they sell to', donut)}</div>
+        <div data-chart>${chartCard('🧵', 'Leads by fabric fit', 'mapped Kusumgar fabric', buildBars(fitItems, { unit: 'lead' }) + fitLegend)}</div>
+      </div>
+      <div class="space-y-4">
+        <div data-chart>${chartCard('🌍', 'Top countries', 'by number of leads', buildBars(countryItems, { unit: 'lead' }) + countryLegend)}</div>
+        <div data-chart>${chartCard('⭐', 'Priority split', 'high vs medium', buildStackedBar(priItems, { unit: 'lead' }) + priLegend)}</div>
+      </div>
+    </div>`;
+
+  return chips + sourceLine + grid;
+}
+
+function filteredLeads() {
+  const f = state.leadFilters;
+  const q = f.search.trim().toLowerCase();
+  return state.leads.filter((l) => {
+    if (f.segment !== 'all' && l.segment !== f.segment) return false;
+    if (f.country !== 'all' && l.country !== f.country) return false;
+    if (f.priority !== 'all' && l.priority !== f.priority) return false;
+    if (f.fullOnly && l.detail !== 'full') return false;
+    if (q) {
+      const hay = `${l.company} ${l.country} ${l.segment} ${l.application || ''} ${l.fabric_fit || ''} ${l.contact_role || ''}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function sortedLeads(list) {
+  const { key, dir } = state.leadSort;
+  const s = dir === 'asc' ? 1 : -1;
+  const val = (l) => {
+    if (key === 'est') return consumptionSortVal(l.est_consumption);
+    if (key === 'priority') return l.priority === 'High' ? 0 : 1;
+    return String(l[key] ?? '').toLowerCase();
+  };
+  return [...list].sort((a, b) => {
+    const va = val(a), vb = val(b);
+    if (va < vb) return -s;
+    if (va > vb) return s;
+    return a.company.localeCompare(b.company);
+  });
+}
+
+const LEAD_COLS = [
+  { key: 'company', label: 'Company' }, { key: 'segment', label: 'Segment' },
+  { key: 'country', label: 'Country' }, { key: 'application', label: 'Application' },
+  { key: 'fabric_fit', label: 'Fabric fit' }, { key: 'est', label: 'Est. use (m²/yr)' },
+  { key: 'sourcing_model', label: 'Sourcing' }, { key: 'contact_role', label: 'Contact role' },
+  { key: 'priority', label: 'Priority' },
+];
+
+function leadsTableHtml() {
+  const { key: sk, dir } = state.leadSort;
+  const arrow = (k) => (sk === k ? (dir === 'asc' ? ' ▲' : ' ▼') : '');
+  const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">` + LEAD_COLS.map((c) =>
+    `<th class="cursor-pointer whitespace-nowrap px-3 py-2.5 font-semibold hover:text-slate-600 ${sk === c.key ? 'text-indigo-600' : ''}" data-sort="${c.key}">${escapeHtml(c.label)}<span class="tnum">${arrow(c.key)}</span></th>`).join('') + `</tr>`;
+  const rows = sortedLeads(filteredLeads());
+  const body = rows.length ? rows.map((l) => `
+    <tr class="cursor-pointer border-t border-slate-100 hover:bg-slate-50/60" data-lead-id="${escapeHtml(l.id)}">
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</td>
+      <td class="px-3 py-2.5"><div class="max-w-[210px] truncate text-sm text-slate-600" title="${escapeHtml(l.application || '')}">${escapeHtml(dash(l.application))}</div></td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${escapeHtml(dash(l.fabric_fit))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500 tnum">${escapeHtml(fmtConsumption(l.est_consumption))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500">${escapeHtml(dash(l.sourcing_model))}</td>
+      <td class="px-3 py-2.5"><div class="max-w-[190px] truncate text-sm text-slate-500" title="${escapeHtml(l.contact_role || '')}">${escapeHtml(dash(l.contact_role))}</div></td>
+      <td class="whitespace-nowrap px-3 py-2.5">${priorityChip(l.priority)}</td>
+    </tr>`).join('') : `<tr><td colspan="9" class="px-4 py-10 text-center text-sm text-slate-400">No leads match these filters.</td></tr>`;
+  return `<table class="w-full min-w-[980px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
+}
+
+function refreshLeadsTable() {
+  const w = $('#leadsTableWrap'); if (w) w.innerHTML = leadsTableHtml();
+  const c = $('#lCount'); if (c) c.textContent = filteredLeads().length;
+}
+
+function renderLeadsList() {
+  const f = state.leadFilters;
+  const segs = [...new Set(state.leads.map((l) => l.segment))].sort();
+  const countries = [...new Set(state.leads.map((l) => l.country))].sort();
+  const toggleCls = f.fullOnly ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
+  return `
+    <div class="fade-in">
+      <div class="mb-3 flex flex-wrap items-center gap-2">
+        <div class="relative min-w-[170px] flex-1">
+          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+          <input id="l-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search leads…"
+            class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+        </div>
+        ${selectHtml('l-seg', 'All segments', f.segment, segs)}
+        ${selectHtml('l-country', 'All countries', f.country, countries)}
+        ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
+        <button type="button" data-ltoggle aria-pressed="${f.fullOnly}"
+          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">📇 Fully profiled only</button>
+      </div>
+      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> leads · <span class="text-slate-400">click a row for the full profile</span></div>
+      <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="leadsTableWrap">${leadsTableHtml()}</div></div>
+    </div>`;
+}
+
+function renderLeads() {
+  if (!state.leads.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No leads loaded.</div>`;
+  }
+  const subBtn = (id, label) => {
+    const active = state.leadsSub === id;
+    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
+    return `<button type="button" data-lsub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
+  };
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('overview', '📊 Overview')}${subBtn('list', '📋 Leads list')}</div>`;
+  const body = state.leadsSub === 'overview' ? renderLeadsOverview() : renderLeadsList();
+  return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+// Drill-panel (right slide-over) for a single lead.
+function openLeadDrawer(id) {
+  const l = state.leads.find((x) => x.id === id);
+  if (!l) return;
+  const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-slate-100 py-2.5"><span class="shrink-0 text-[12px] font-medium text-slate-400">${escapeHtml(label)}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
+  const website = l.website ? `<a href="${escapeHtml(l.website)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${escapeHtml(String(l.website).replace(/^https?:\/\//, ''))}</a>` : '—';
+  const badge = l.detail === 'full'
+    ? '<span class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600">Fully profiled</span>'
+    : '<span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-400">Basic</span>';
+  const body = `
+    <div class="flex flex-wrap items-center gap-2">${coloredChip(l.segment, leadSegColor(l.segment))}${priorityChip(l.priority)}${badge}</div>
+    <div class="mt-4">
+      ${row('Country', (l.country ? (FLAGS[l.country] || '') + ' ' : '') + escapeHtml(dash(l.country)))}
+      ${row('Website', website)}
+      ${row('Application', escapeHtml(dash(l.application)))}
+      ${row('Fabric fit', escapeHtml(dash(l.fabric_fit)))}
+      ${row('Est. use (m²/yr)', escapeHtml(fmtConsumption(l.est_consumption)))}
+      ${row('Sourcing model', escapeHtml(dash(l.sourcing_model)))}
+      ${row('Contact role', escapeHtml(dash(l.contact_role)))}
+      ${row('Source', escapeHtml(dash(l.source)))}
+    </div>`;
+  const html = `
+    <div data-drawer-backdrop class="absolute inset-0 bg-slate-900/30"></div>
+    <aside class="drawer-panel absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-100 p-5">
+        <div><h3 class="font-display text-lg font-extrabold leading-tight text-slate-900">${escapeHtml(l.company)}</h3><p class="mt-0.5 text-[12px] text-slate-500">Potential customer</p></div>
+        <button type="button" data-drawer-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5">${body}</div>
+      <div class="border-t border-slate-100 p-5">
+        <button type="button" data-action="draft-email" class="w-full rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-95">✉️ Draft outreach email</button>
+        <div id="emailStub" hidden class="mt-2 rounded-xl bg-indigo-50 px-3 py-2 text-[12px] font-medium text-indigo-700">Coming in the next build — the AI will draft a Nishad-style email here.</div>
+      </div>
+    </aside>`;
+  const d = $('#drawer');
+  d.innerHTML = html;
+  requestAnimationFrame(() => d.classList.add('open'));
+  try { document.body.style.overflow = 'hidden'; } catch { /* noop */ }
+}
+function closeDrawer() {
+  const d = $('#drawer');
+  if (!d || !d.classList.contains('open')) return;
+  d.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => { if (!d.classList.contains('open')) d.innerHTML = ''; }, 260);
+}
+
+/* ------------------------------------------------------------------ *
+ * Competitors tab — Landscape + list
+ * ------------------------------------------------------------------ */
+
+function renderCompetitorsLandscape() {
+  const comps = state.competitors;
+  const total = comps.length;
+
+  const supply = [
+    { country: 'China', flag: '🇨🇳', role: 'Cost', color: '#f59e0b' },
+    { country: 'Taiwan', flag: '🇹🇼', role: 'Premium', color: '#6366f1' },
+    { country: 'South Korea', flag: '🇰🇷', role: 'Technology', color: '#0ea5e9' },
+    { country: 'Vietnam', flag: '🇻🇳', role: 'Manufacturing', color: '#10b981' },
+  ];
+  const supplyChips = supply.map((s) =>
+    `<div class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-sm ring-1 ring-slate-100">
+      <span>${s.flag}</span><span class="text-sm font-semibold text-slate-700">${s.country}</span>
+      <span class="rounded-full px-2 py-0.5 text-[11px] font-semibold" style="background:${s.color}1f;color:${darken(s.color, 0.35)}">${s.role}</span>
+    </div>`).join('') +
+    `<div class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-3 py-2 text-white shadow-sm">
+      <span>🇮🇳</span><span class="text-sm font-extrabold">India</span>
+      <span class="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">China+1 · Kusumgar</span>
+    </div>`;
+  const strip = `
+    <section class="fade-in mb-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
+      <h3 class="mb-3 font-display text-sm font-bold text-slate-800">🌐 Global supply map</h3>
+      <div class="flex flex-wrap gap-2">${supplyChips}</div>
+      <p class="mt-3 text-[13px] text-slate-500"><span class="font-semibold text-slate-700">Kusumgar's edge:</span> a China+1 technical supplier — competes on service &amp; customisation, not price.</p>
+    </section>`;
+
+  const countryCounts = [...countBy(comps, (d) => d.country).entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const maxC = countryCounts[0] ? countryCounts[0][1] : 1, minC = countryCounts.length ? countryCounts[countryCounts.length - 1][1] : 0;
+  const countryItems = countryCounts.map(([c, v]) => ({ label: c, value: v, flag: FLAGS[c] || '', key: 'cc:' + c, color: lerpColor('#818cf8', '#db2777', maxC === minC ? 0.5 : (v - minC) / (maxC - minC)) }));
+  const countryLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#818cf8,#db2777)"></span><span>more rivals</span></div>`;
+
+  const posMap = new Map();
+  comps.forEach((c) => { const b = positionBucket(c.positioning); posMap.set(b.label, (posMap.get(b.label) || 0) + 1); });
+  const posItems = [...posMap.entries()].sort((a, b) => b[1] - a[1]).map(([label, v]) => {
+    const b = POSITION_BUCKETS.find((x) => x.label === label);
+    return { label, value: v, color: b ? b.color : '#94a3b8', key: 'pos:' + label };
+  });
+  const posDonut = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(posItems, { centerNum: total, centerLabel: 'rivals', unit: 'competitor' })}${buildLegend(posItems, { total, unit: 'competitor' })}</div>`;
+
+  const grid = `
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+      <div data-chart>${chartCard('🌍', 'Competitors by country', 'where rivals are based', buildBars(countryItems, { unit: 'competitor' }) + countryLegend)}</div>
+      <div data-chart>${chartCard('🏷️', 'By positioning', 'how they compete', posDonut)}</div>
+    </div>`;
+
+  return strip + grid;
+}
+
+function renderCompetitorsList() {
+  const cards = state.competitors.map((c) => {
+    const b = positionBucket(c.positioning);
+    const segs = (c.segments || []).map((s) => coloredChip(s, anyColor(s))).join(' ');
+    return `
+      <article class="fade-in flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+        <div class="mb-1 flex items-start justify-between gap-2">
+          <h4 class="font-display text-[15px] font-bold leading-tight text-slate-800">${escapeHtml(c.company)}</h4>
+          ${coloredChip(c.positioning, b.color)}
+        </div>
+        <p class="mb-2 text-[12px] text-slate-500">${c.country ? (FLAGS[c.country] || '') + ' ' : ''}${escapeHtml(dash(c.country))}</p>
+        <p class="mb-3 text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</p>
+        <div class="mt-auto flex flex-wrap gap-1.5">${segs}</div>
+      </article>`;
+  }).join('');
+  return `<div class="fade-in grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">${cards}</div>`;
+}
+
+function renderCompetitors() {
+  if (!state.competitors.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No competitors loaded.</div>`;
+  }
+  const subBtn = (id, label) => {
+    const active = state.competitorsSub === id;
+    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
+    return `<button type="button" data-csub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
+  };
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('landscape', '🗺️ Landscape')}${subBtn('list', '📋 List')}</div>`;
+  const body = state.competitorsSub === 'landscape' ? renderCompetitorsLandscape() : renderCompetitorsList();
+  return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+/* ------------------------------------------------------------------ *
  * Render pipeline
  * ------------------------------------------------------------------ */
 
@@ -850,11 +1206,15 @@ function render() {
   const tab = TABS.find((t) => t.id === state.tab);
   if (state.tab === 'exhibitions') view.innerHTML = renderExhibitions();
   else if (state.tab === 'products') view.innerHTML = renderProducts();
+  else if (state.tab === 'leads') view.innerHTML = renderLeads();
+  else if (state.tab === 'competitors') view.innerHTML = renderCompetitors();
   else view.innerHTML = renderPlaceholder(tab);
 
   // Views with SVG/dot entrance animations.
   if (state.tab === 'exhibitions' && state.sub === 'overview') revealCharts();
   else if (state.tab === 'products' && state.productsSub === 'coverage') revealCharts();
+  else if (state.tab === 'leads' && state.leadsSub === 'overview') revealCharts();
+  else if (state.tab === 'competitors' && state.competitorsSub === 'landscape') revealCharts();
 }
 
 // Kick chart entrance animations after the DOM paints (idempotent, so a
@@ -904,27 +1264,53 @@ function wireEvents() {
     const psub = e.target.closest('[data-psub]');
     if (psub) { state.productsSub = psub.getAttribute('data-psub'); render(); return; }
 
+    const lsub = e.target.closest('[data-lsub]');
+    if (lsub) { state.leadsSub = lsub.getAttribute('data-lsub'); render(); return; }
+
+    const csub = e.target.closest('[data-csub]');
+    if (csub) { state.competitorsSub = csub.getAttribute('data-csub'); render(); return; }
+
     const toggle = e.target.closest('[data-toggle]');
     if (toggle) { state.filters.relevantOnly = !state.filters.relevantOnly; render(); return; }
+
+    const ltoggle = e.target.closest('[data-ltoggle]');
+    if (ltoggle) { state.leadFilters.fullOnly = !state.leadFilters.fullOnly; render(); return; }
+
+    const sortTh = e.target.closest('[data-sort]');
+    if (sortTh) {
+      const key = sortTh.getAttribute('data-sort');
+      const s = state.leadSort;
+      s.dir = (s.key === key && s.dir === 'asc') ? 'desc' : 'asc';
+      s.key = key;
+      refreshLeadsTable();
+      return;
+    }
 
     const rel = e.target.closest('[data-rel]');
     if (rel) {
       const id = rel.closest('[data-rel-group]').getAttribute('data-rel-group');
       setRelevance(id, rel.getAttribute('data-rel'));
       refreshRows();
+      return;
     }
+
+    const leadRow = e.target.closest('[data-lead-id]');
+    if (leadRow) { openLeadDrawer(leadRow.getAttribute('data-lead-id')); }
   });
 
   // Filters (search inputs + selects)
   view.addEventListener('input', (e) => {
     if (e.target.id === 'f-search') { state.filters.search = e.target.value; refreshRows(); }
     else if (e.target.id === 'p-search') { state.productFilters.search = e.target.value; refreshCatalog(); }
+    else if (e.target.id === 'l-search') { state.leadFilters.search = e.target.value; refreshLeadsTable(); }
   });
   view.addEventListener('change', (e) => {
     const exMap = { 'f-seg': 'segment', 'f-country': 'country', 'f-status': 'status' };
     const pMap = { 'p-industry': 'industry', 'p-family': 'family' };
+    const lMap = { 'l-seg': 'segment', 'l-country': 'country', 'l-priority': 'priority' };
     if (exMap[e.target.id]) { state.filters[exMap[e.target.id]] = e.target.value; refreshRows(); }
     else if (pMap[e.target.id]) { state.productFilters[pMap[e.target.id]] = e.target.value; refreshCatalog(); }
+    else if (lMap[e.target.id]) { state.leadFilters[lMap[e.target.id]] = e.target.value; refreshLeadsTable(); }
   });
 
   // Tooltips + cross-highlight (delegated once)
@@ -937,6 +1323,17 @@ function wireEvents() {
     if (el) { hideTooltip(); unhighlight(el); }
   });
   view.addEventListener('mousemove', moveTooltip);
+
+  // Drill-panel (drawer) events — the #drawer element is stable, outside #view.
+  const drawer = $('#drawer');
+  drawer.addEventListener('click', (e) => {
+    if (e.target.closest('[data-drawer-close]') || e.target.hasAttribute('data-drawer-backdrop')) { closeDrawer(); return; }
+    if (e.target.closest('[data-action="draft-email"]')) {
+      const note = $('#emailStub', drawer);
+      if (note) note.hidden = false;
+    }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
 }
 
 /* ------------------------------------------------------------------ *
@@ -955,16 +1352,20 @@ function loadRelevance(ids) {
 async function boot() {
   wireEvents();
   try {
-    const [meta, exhibitions, products] = await Promise.all([
+    const [meta, exhibitions, products, leads, competitors] = await Promise.all([
       fetch('data/meta.json').then((r) => r.json()),
       fetch('data/exhibitions.json').then((r) => r.json()),
       fetch('data/products.json').then((r) => r.json()).catch(() => []),
+      fetch('data/leads.json').then((r) => r.json()).catch(() => []),
+      fetch('data/competitors.json').then((r) => r.json()).catch(() => []),
     ]);
     state.meta = meta;
     state.exhibitions = exhibitions;
-    // Tolerate both the seed array and the scraper's { products, _meta, _debug } shape.
-    const rawProducts = Array.isArray(products) ? products : (products.products || []);
-    state.products = rawProducts.filter((p) => p && p.id && p.name);
+    // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.
+    const unwrap = (raw, key) => (Array.isArray(raw) ? raw : (raw[key] || []));
+    state.products = unwrap(products, 'products').filter((p) => p && p.id && p.name);
+    state.leads = unwrap(leads, 'leads').filter((l) => l && l.id && l.company);
+    state.competitors = unwrap(competitors, 'competitors').filter((c) => c && c.id && c.company);
     loadRelevance(exhibitions.map((d) => d.id));
 
     const updated = meta.updated_at
