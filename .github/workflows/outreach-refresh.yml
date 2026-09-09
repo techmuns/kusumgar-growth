@@ -1,0 +1,87 @@
+name: Outreach refresh
+
+# Drafts Nishad-style emails + finds contacts, writing public/data/outreach.json.
+# Manual (with inputs) + monthly cron. Commits only when outreach.json changed.
+on:
+  workflow_dispatch:
+    inputs:
+      max:
+        description: 'Max leads to process per run (cost cap)'
+        required: false
+        default: '25'
+      priority_only:
+        description: 'Only High-priority leads (true/false)'
+        required: false
+        default: 'false'
+  schedule:
+    - cron: '0 8 20 * *' # 08:00 UTC on the 20th of every month
+
+permissions:
+  contents: write
+
+concurrency:
+  group: outreach-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      # Required for drafting; Firecrawl also powers the website contact fallback.
+      BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
+      FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+      # Optional (defaulted in code): region + model fallback chain.
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
+      # Optional contact-discovery providers.
+      CONTACTOUT_API_KEY: ${{ secrets.CONTACTOUT_API_KEY }}
+      LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
+      LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
+      SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
+      MAX: ${{ github.event.inputs.max || '25' }}
+      PRIORITY_ONLY: ${{ github.event.inputs.priority_only || 'false' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright (only if LinkedIn creds are set)
+        run: |
+          if [ -n "$LINKEDIN_EMAIL" ] && [ -n "$LINKEDIN_PASSWORD" ]; then
+            npm i playwright && npx playwright install --with-deps chromium
+          else
+            echo "No LinkedIn creds — skipping Playwright install."
+          fi
+
+      - name: Draft emails (graceful without Bedrock)
+        run: node scripts/draft-emails.mjs
+
+      - name: Find contacts (graceful without provider keys)
+        run: node scripts/find-contacts.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/outreach.json)" ]; then
+            echo "No changes to outreach.json — nothing to commit."
+            exit 0
+          fi
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/outreach.json
+          git commit -m "chore(data): refresh outreach drafts & contacts"
+
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1
