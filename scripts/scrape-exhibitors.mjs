@@ -17,7 +17,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { firecrawlScrape, apiKey as firecrawlKey } from './lib/firecrawl.mjs';
+import { firecrawlScrape, firecrawlSearch, scrapedoGet, apiKey as firecrawlKey, haveScrapedo } from './lib/firecrawl.mjs';
 import { askClaude, haveBedrock } from './lib/llm.mjs';
 
 const p = (envName, rel) => process.env[envName] || fileURLToPath(new URL(rel, import.meta.url));
@@ -45,20 +45,57 @@ async function loadArr(path, key) {
   }
 }
 
+// Score a candidate URL by how likely it is to be a real exhibitor list.
+function urlScore(u) {
+  const s = `${u.url || ''} ${u.title || ''}`.toLowerCase();
+  let n = 0;
+  if (/exhibitor/.test(s)) n += 5;
+  if (/exhibitors|exhibitor-list|exhibitor_list|exhibitor-directory/.test(s)) n += 4;
+  if (/10times\.com|eventseye|expo|tradefair|messe/.test(s)) n += 2;
+  if (/list|directory|catalogue|catalog/.test(s)) n += 1;
+  if (/login|signin|register|ticket|pdf$/.test(s)) n -= 3;
+  return n;
+}
+
+// Find exhibitor-list text: web-search for real exhibitor-list pages, then read the best ones.
 async function exhibitorText(show, debug) {
-  const queries = [
-    `https://10times.com/search?kw=${encodeURIComponent(show.name)}`,
-    `https://www.eventseye.com/fairs/searchresult.php?keyword=${encodeURIComponent(show.name)}`,
-  ];
   let text = '';
-  for (const url of queries) {
-    const data = await firecrawlScrape(url, { formats: ['markdown'] }, debug);
-    if (data && data.markdown) {
-      text += '\n' + data.markdown;
-      if (text.length > 6000) break;
+  const seen = new Set();
+  const candidates = [];
+  const queries = [
+    `${show.name} exhibitor list`,
+    `${show.name} exhibitors ${show.country || ''}`.trim(),
+  ];
+  for (const q of queries) {
+    const results = await firecrawlSearch(q, debug);
+    if (Array.isArray(results)) {
+      for (const r of results) {
+        const url = r.url || r.link;
+        if (url && !seen.has(url)) { seen.add(url); candidates.push({ url, title: r.title || '', description: r.description || '' }); }
+      }
+    }
+    if (candidates.length >= 8) break;
+  }
+  // The search snippets themselves sometimes carry company names.
+  text += candidates.map((c) => `${c.title} — ${c.description}`).join('\n');
+
+  // Read the most exhibitor-list-looking pages.
+  const ranked = candidates.sort((a, b) => urlScore(b) - urlScore(a)).slice(0, 3);
+  for (const c of ranked) {
+    const data = await firecrawlScrape(c.url, { formats: ['markdown'] }, debug);
+    if (data && data.markdown) text += '\n\n' + data.markdown;
+    else if (haveScrapedo()) { const html = await scrapedoGet(c.url); if (html) text += '\n\n' + html.slice(0, 6000); }
+    if (text.length > 9000) break;
+  }
+
+  // Fallback: the old direct directory search pages if we still have almost nothing.
+  if (text.trim().length < 400) {
+    for (const url of [`https://10times.com/search?kw=${encodeURIComponent(show.name)}`]) {
+      const data = await firecrawlScrape(url, { formats: ['markdown'] }, debug);
+      if (data && data.markdown) text += '\n' + data.markdown;
     }
   }
-  return text.slice(0, 8000);
+  return text.slice(0, 10000);
 }
 
 async function main() {
