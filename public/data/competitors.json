@@ -1,0 +1,14 @@
+[
+{"id":"challenge-sailcloth-challenge-outdoor","company":"Challenge Sailcloth / Challenge Outdoor","country":"Taiwan","focus":"Coated nylon & polyester for outdoor, bags, marine","positioning":"Premium","segments":["Outdoor","Marine","Tool & Equipment Bags"],"source":"research"},
+{"id":"formosa-taffeta","company":"Formosa Taffeta","country":"Taiwan","focus":"Nylon & polyester fabrics, coatings at scale","positioning":"Scale","segments":["Outdoor","Tool & Equipment Bags","Automotive Seating"],"source":"research"},
+{"id":"kolon-industries","company":"Kolon Industries","country":"South Korea","focus":"Technical nylon, coated fabrics, airbags","positioning":"Technology","segments":["Automotive Seating","Military & Tactical","Marine Covers"],"source":"research"},
+{"id":"hyosung","company":"Hyosung","country":"South Korea","focus":"Nylon & polyester yarns and fabrics","positioning":"Scale","segments":["Automotive Seating","Tool & Equipment Bags"],"source":"research"},
+{"id":"sioen-industries","company":"Sioen Industries","country":"Belgium","focus":"Coated technical textiles, protective covers","positioning":"Premium / Technical","segments":["Protective Covers & Industrial","Marine Covers","Workwear & Safety"],"source":"research"},
+{"id":"serge-ferrari","company":"Serge Ferrari","country":"France","focus":"Coated membranes & technical textiles","positioning":"Premium","segments":["Protective Covers & Industrial","Marine Covers"],"source":"research"},
+{"id":"trelleborg","company":"Trelleborg","country":"Sweden","focus":"Engineered coated fabrics","positioning":"Technical","segments":["Marine Covers","Protective Covers & Industrial"],"source":"research"},
+{"id":"heytex","company":"Heytex","country":"Germany","focus":"Coated technical textiles, tarpaulins","positioning":"Scale","segments":["Protective Covers & Industrial","Pool & Outdoor Covers"],"source":"research"},
+{"id":"seaman-corporation","company":"Seaman Corporation","country":"USA","focus":"XR coated fabrics","positioning":"Technical","segments":["Marine Covers","Protective Covers & Industrial"],"source":"research"},
+{"id":"herculite","company":"Herculite","country":"USA","focus":"Coated fabrics for covers & awnings","positioning":"Regional","segments":["Pool & Outdoor Covers","Protective Covers & Industrial"],"source":"research"},
+{"id":"dickson-coatings","company":"Dickson Coatings","country":"France","focus":"Coated technical textiles","positioning":"Premium","segments":["Marine Covers","Protective Covers & Industrial"],"source":"research"},
+{"id":"zhejiang-msd","company":"Zhejiang MSD","country":"China","focus":"Coated fabrics & covers at low cost","positioning":"Cost / Scale","segments":["Pool & Outdoor Covers","Protective Covers & Industrial","Marine Covers"],"source":"research"}
+]
