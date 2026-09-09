@@ -91,8 +91,8 @@
       padding: 8px 10px;
       border-radius: 10px;
       box-shadow: 0 10px 30px rgba(2, 6, 23, .25);
-      max-width: 240px;
-      white-space: nowrap;
+      max-width: 260px;
+      white-space: normal;
     }
     #tooltip.show { opacity: 1; transform: translateY(0); }
     #tooltip .tt-title { font-weight: 700; }
@@ -108,11 +108,21 @@
     }
     .reveal-pill.in { opacity: 1; transform: translateY(0); }
 
+    /* coverage-matrix dots: pop in on load, ring on hover */
+    .reveal-pop {
+      opacity: 0;
+      transform: scale(.3);
+      transition: opacity .35s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1);
+    }
+    .reveal-pop.in { opacity: 1; transform: scale(1); }
+    .mx-dot { transition: box-shadow .12s ease; cursor: default; }
+    .mx-dot:hover { box-shadow: 0 0 0 3px rgba(2, 6, 23, .10); }
+
     .fade-in { animation: fadeIn .35s ease both; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
     @media (prefers-reduced-motion: reduce) {
-      .reveal-bar, .reveal-arc, .reveal-pill, .tab-underline, .fade-in { transition: none !important; animation: none !important; }
+      .reveal-bar, .reveal-arc, .reveal-pill, .reveal-pop, .reveal-scale, .tab-underline, .fade-in { transition: none !important; animation: none !important; }
     }
   </style>
 </head>

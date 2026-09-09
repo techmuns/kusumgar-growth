@@ -6,14 +6,40 @@
  * Design tokens
  * ------------------------------------------------------------------ */
 
-// Segment colors (room left for future segments).
+// Segment colors — one consistent map across Exhibitions (Phase 1) and Products (Phase 2).
 const SEGMENT_COLORS = {
-  'Aeronautical': '#0ea5e9',        // sky
-  'Industrial': '#f59e0b',          // amber
-  'Military & Tactical': '#6366f1', // indigo
-  'Workwear': '#10b981',            // emerald
-  'Medical': '#f43f5e',             // rose   (future)
-  'Marine': '#3b82f6',              // blue   (future)
+  'Aeronautical': '#0ea5e9',         // sky
+  'Industrial': '#f59e0b',           // amber
+  'Military & Tactical': '#6366f1',  // indigo
+  'Workwear': '#10b981',             // emerald (Phase-1 exhibitions segment)
+  'Workwear & Safety': '#10b981',    // emerald (Phase-2 products segment)
+  'Automotive': '#8b5cf6',           // violet
+  'Medical & Emergency': '#f43f5e',  // rose
+  'Medical': '#f43f5e',              // rose (alias)
+  'Outdoor': '#14b8a6',              // teal
+  'Marine': '#3b82f6',               // blue
+};
+
+// The 8 market segments products are mapped against (column order for the coverage matrix).
+const PRODUCT_SEGMENTS = [
+  'Aeronautical', 'Military & Tactical', 'Industrial', 'Workwear & Safety',
+  'Automotive', 'Medical & Emergency', 'Outdoor', 'Marine',
+];
+
+// Fabric-family display order + icons for the catalog section headers.
+const FAMILY_ORDER = ['Nylon Fabrics', 'Polyester Fabrics', 'Aramid & FR Fabrics', 'Coated & Laminated', 'Industrial Textiles & Tapes'];
+const FAMILY_ICONS = {
+  'Nylon Fabrics': '🪶', 'Polyester Fabrics': '🧵', 'Aramid & FR Fabrics': '🔥',
+  'Coated & Laminated': '🧴', 'Industrial Textiles & Tapes': '🏭', 'Other Kusumgar Fabrics': '🧩',
+};
+
+// Product-segment → Exhibitions-segment mapping for the live "N shows" badges.
+// Segments not listed here have no exhibition segment yet (→ 0 shows).
+const SEG_TO_EXHIB = {
+  'Aeronautical': 'Aeronautical',
+  'Military & Tactical': 'Military & Tactical',
+  'Industrial': 'Industrial',
+  'Workwear & Safety': 'Workwear',
 };
 
 // Engagement status colors + display order.
@@ -28,7 +54,7 @@ const ENGAGED = new Set(['Exhibited', 'Visited', 'Attended']);
 
 const TABS = [
   { id: 'exhibitions', label: 'Exhibitions', icon: '🎪', live: true },
-  { id: 'products', label: 'Products', icon: '🧵', live: false },
+  { id: 'products', label: 'Products', icon: '🧵', live: true },
   { id: 'leads', label: 'Leads', icon: '🎯', live: false },
   { id: 'competitors', label: 'Competitors', icon: '🛡️', live: false },
   { id: 'outreach', label: 'Outreach', icon: '📮', live: false },
@@ -53,8 +79,11 @@ const state = {
   sub: 'overview',        // 'overview' | 'list'
   meta: null,
   exhibitions: [],
+  products: [],
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
   filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false },
+  productsSub: 'catalog', // 'catalog' | 'coverage'
+  productFilters: { search: '', industry: 'all', family: 'all' },
 };
 
 const REL_KEY = (id) => `kgr.relevant.${id}`;
@@ -593,6 +622,211 @@ function renderPlaceholder(tab) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Products tab — Catalog + Where-it-sells (both computed live from JSON)
+ * ------------------------------------------------------------------ */
+
+// Pick a property icon by keyword.
+function iconForProperty(prop) {
+  const p = String(prop).toLowerCase();
+  if (/(water|repellent|waterproof|dwr)/.test(p)) return '💧';
+  if (/abrasion/.test(p)) return '🛡️';
+  if (/(flame|fire|retardant|arc|\bfr\b)/.test(p)) return '🔥';
+  if (/uv/.test(p)) return '☀️';
+  if (/light/.test(p)) return '🪶';
+  if (/(heat|temp|thermal)/.test(p)) return '🌡️';
+  if (/(permeab|porosity|airtight|air perme)/.test(p)) return '✈️';
+  if (/ballistic/.test(p)) return '🎯';
+  if (/(antimicrob|wipe|clean|hygien)/.test(p)) return '🧼';
+  if (/breath/.test(p)) return '🌬️';
+  if (/(colorfast|printable)/.test(p)) return '🎨';
+  if (/(tear|tensile|tenacity|strength|impact|rigid|structured|heavy|durable|fatigue|adhesion|stable|stability|dimensional)/.test(p)) return '💪';
+  return '✦';
+}
+
+const segShort = (seg) => seg.split(' & ')[0];
+
+// Live count of exhibitions in the segment (via the product→exhibition mapping).
+function showsForSegment(seg) {
+  const ex = SEG_TO_EXHIB[seg];
+  return ex ? state.exhibitions.filter((d) => d.segment === ex).length : 0;
+}
+
+function familiesPresent(list) {
+  const present = [...new Set(list.map((p) => p.family))];
+  const ordered = FAMILY_ORDER.filter((f) => present.includes(f));
+  const extras = present.filter((f) => !FAMILY_ORDER.includes(f)).sort();
+  return [...ordered, ...extras];
+}
+
+function filteredProducts() {
+  const f = state.productFilters;
+  const q = f.search.trim().toLowerCase();
+  return state.products.filter((p) => {
+    if (f.industry !== 'all' && !(p.segments || []).includes(f.industry)) return false;
+    if (f.family !== 'all' && p.family !== f.family) return false;
+    if (q) {
+      const hay = `${p.name} ${p.base || ''} ${p.family} ${(p.coatings || []).join(' ')} ${(p.properties || []).join(' ')} ${(p.segments || []).join(' ')} ${(p.applications || []).join(' ')}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function productCard(p) {
+  const coatings = (p.coatings || []).map((c) =>
+    `<span class="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">${escapeHtml(c)}</span>`).join('');
+  const props = (p.properties || []).slice(0, 4).map((pr) =>
+    `<span class="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-100">
+       <span aria-hidden="true">${iconForProperty(pr)}</span>${escapeHtml(pr)}</span>`).join('');
+  const segs = (p.segments || []).map((s) => coloredChip(s, segColor(s))).join(' ');
+  const deniers = p.deniers && p.deniers !== '—' ? ` · ${escapeHtml(p.deniers)}` : '';
+  const apps = (p.applications || []).join(', ');
+  const srcBadge = p.source && p.source !== 'seed'
+    ? `<span class="ml-1 rounded bg-indigo-50 px-1.5 py-0.5 align-middle text-[10px] font-semibold text-indigo-500" title="Found on ${escapeHtml(p.source)}">↗</span>` : '';
+  return `
+    <article class="fade-in flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+      <div class="mb-2">
+        <h4 class="font-display text-[15px] font-bold leading-tight text-slate-800">${escapeHtml(p.name)}${srcBadge}</h4>
+        <p class="mt-0.5 text-[12px] text-slate-500">${escapeHtml(p.base || '')}${deniers}</p>
+      </div>
+      ${coatings ? `<div class="mb-2 flex flex-wrap gap-1">${coatings}</div>` : ''}
+      ${props ? `<div class="mb-3 flex flex-wrap gap-1.5">${props}</div>` : ''}
+      <div class="mt-auto">
+        <div class="mb-2 flex flex-wrap gap-1.5">${segs}</div>
+        ${apps ? `<p class="truncate text-[11px] text-slate-400" title="${escapeHtml(apps)}">🧭 ${escapeHtml(apps)}</p>` : ''}
+      </div>
+    </article>`;
+}
+
+function renderCatalogGrid() {
+  const list = filteredProducts();
+  if (!list.length) {
+    return `<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No products match these filters.</div>`;
+  }
+  return familiesPresent(list).map((fam) => {
+    const items = list.filter((p) => p.family === fam);
+    return `
+      <section class="mb-6 last:mb-0">
+        <div class="mb-3 flex items-center gap-2">
+          <h3 class="font-display text-sm font-bold text-slate-700">${FAMILY_ICONS[fam] || '🧵'} ${escapeHtml(fam)}</h3>
+          <span class="tnum text-[11px] font-semibold text-slate-400">${items.length}</span>
+          <span class="h-px flex-1 bg-slate-100"></span>
+        </div>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">${items.map(productCard).join('')}</div>
+      </section>`;
+  }).join('');
+}
+
+function refreshCatalog() {
+  const grid = $('#catalogGrid');
+  if (grid) grid.innerHTML = renderCatalogGrid();
+  const c = $('#pCount'); if (c) c.textContent = filteredProducts().length;
+}
+
+function renderCatalog() {
+  const f = state.productFilters;
+  const families = familiesPresent(state.products);
+  return `
+    <div class="fade-in">
+      <div class="mb-3 flex flex-wrap items-center gap-2">
+        <div class="relative min-w-[180px] flex-1">
+          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+          <input id="p-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search products…"
+            class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+        </div>
+        ${selectHtml('p-industry', 'All industries', f.industry, PRODUCT_SEGMENTS)}
+        ${selectHtml('p-family', 'All fabric families', f.family, families)}
+      </div>
+      <div class="mb-3 px-0.5 text-[12px] text-slate-500"><span id="pCount" class="tnum font-semibold text-slate-700">${filteredProducts().length}</span> products</div>
+      <div id="catalogGrid">${renderCatalogGrid()}</div>
+    </div>`;
+}
+
+function renderCoverage() {
+  const families = familiesPresent(state.products);
+  const cell = (fam, seg) => state.products.filter((p) => p.family === fam && (p.segments || []).includes(seg));
+
+  // Column headers: segment color, short name, and a LIVE "N shows" badge from exhibitions.json.
+  const headerRow = `<div></div>` + PRODUCT_SEGMENTS.map((seg) => {
+    const color = segColor(seg), n = showsForSegment(seg);
+    const badge = n > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400';
+    return `<div class="px-1 pb-2 text-center">
+      <div class="mx-auto mb-1 h-1.5 w-6 rounded-full" style="background:${color}"></div>
+      <div class="text-[11px] font-semibold leading-tight text-slate-600">${escapeHtml(segShort(seg))}</div>
+      <div class="mt-1 inline-block rounded-full ${badge} px-1.5 py-0.5 text-[10px] font-semibold tnum">${n} shows</div>
+    </div>`;
+  }).join('');
+
+  let stagger = 0;
+  const rows = families.map((fam) => {
+    const cells = PRODUCT_SEGMENTS.map((seg) => {
+      const items = cell(fam, seg);
+      if (!items.length) return `<div class="grid place-items-center py-2"><span class="h-1 w-1 rounded-full bg-slate-200"></span></div>`;
+      const color = segColor(seg);
+      const d = Math.min(18 + (items.length - 1) * 7, 34);
+      const sub = items.map((p) => `${p.name} — ${(p.applications || []).slice(0, 2).join(', ')}`).join('  ·  ');
+      stagger += 24;
+      return `<div class="grid place-items-center py-2">
+        <div class="mx-dot reveal-pop grid place-items-center rounded-full font-bold text-white"
+          data-tip-title="${escapeHtml(segShort(fam) + ' → ' + seg)}" data-tip-color="${color}" data-tip-sub="${escapeHtml(sub)}"
+          style="width:${d}px;height:${d}px;background:${color};font-size:11px;transition-delay:${stagger}ms">${items.length}</div>
+      </div>`;
+    }).join('');
+    return `<div class="flex items-center overflow-hidden pr-2 text-[12px] font-semibold text-slate-600">${FAMILY_ICONS[fam] || '🧵'}<span class="ml-1 truncate">${escapeHtml(fam)}</span></div>${cells}`;
+  }).join('');
+
+  const gridStyle = `grid-template-columns: minmax(120px,1.4fr) repeat(${PRODUCT_SEGMENTS.length}, minmax(58px,1fr));`;
+  const matrix = `
+    <div class="overflow-x-auto">
+      <div class="grid min-w-[660px] items-center gap-y-1" style="${gridStyle}">${headerRow}${rows}</div>
+    </div>`;
+
+  const legend = `<div class="mt-3 flex flex-wrap gap-x-3 gap-y-1.5">` + PRODUCT_SEGMENTS.map((seg) =>
+    `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${segColor(seg)}"></span>
+      <span class="text-[12px] font-medium text-slate-600">${escapeHtml(seg)}</span></div>`).join('') + `</div>`;
+
+  // Auto-computed insight chips (NOT hand-written): served / with-shows / whitespace.
+  const served = [...new Set(state.products.flatMap((p) => p.segments || []))];
+  const withShows = served.filter((s) => showsForSegment(s) > 0).length;
+  const whitespace = PRODUCT_SEGMENTS.filter((s) => served.includes(s) && showsForSegment(s) === 0);
+  const wsShort = whitespace.map(segShort).join(', ');
+  const insight = `
+    <div class="mt-4 flex flex-wrap gap-2">
+      <span class="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm shadow-sm ring-1 ring-slate-100">
+        <span class="grid h-6 w-6 place-items-center rounded-lg" style="background:#6366f11a;color:#6366f1">🌐</span>
+        <span class="font-medium text-slate-600">Industries served</span>
+        <span class="tnum font-bold text-slate-900">${served.length}</span>
+      </span>
+      <span class="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm shadow-sm ring-1 ring-slate-100">
+        <span class="grid h-6 w-6 place-items-center rounded-lg" style="background:#10b9811a;color:#10b981">🎪</span>
+        <span class="font-medium text-slate-600">With exhibitions</span>
+        <span class="tnum font-bold text-slate-900">${withShows}</span>
+      </span>
+      ${whitespace.length ? `<span class="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm shadow-sm ring-1 ring-amber-200">
+        <span aria-hidden="true">🔍</span><span class="font-semibold text-amber-700">Whitespace:</span>
+        <span class="font-medium text-amber-700">${escapeHtml(wsShort)}</span>
+        <span class="hidden text-[12px] text-amber-600 sm:inline">— products but no shows yet</span>
+      </span>` : ''}
+    </div>`;
+
+  return `<div class="fade-in">${chartCard('🧭', 'Where it sells', 'dot = # products serving that industry', matrix + legend)}${insight}</div>`;
+}
+
+function renderProducts() {
+  if (!state.products.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No product catalog loaded.</div>`;
+  }
+  const subBtn = (id, label) => {
+    const active = state.productsSub === id;
+    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
+    return `<button type="button" data-psub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
+  };
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('catalog', '📦 Catalog')}${subBtn('coverage', '🎯 Where it sells')}</div>`;
+  const body = state.productsSub === 'catalog' ? renderCatalog() : renderCoverage();
+  return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+/* ------------------------------------------------------------------ *
  * Render pipeline
  * ------------------------------------------------------------------ */
 
@@ -614,8 +848,13 @@ function renderTabs() {
 function render() {
   renderTabs();
   const tab = TABS.find((t) => t.id === state.tab);
-  view.innerHTML = tab.live ? renderExhibitions() : renderPlaceholder(tab);
+  if (state.tab === 'exhibitions') view.innerHTML = renderExhibitions();
+  else if (state.tab === 'products') view.innerHTML = renderProducts();
+  else view.innerHTML = renderPlaceholder(tab);
+
+  // Views with SVG/dot entrance animations.
   if (state.tab === 'exhibitions' && state.sub === 'overview') revealCharts();
+  else if (state.tab === 'products' && state.productsSub === 'coverage') revealCharts();
 }
 
 // Kick chart entrance animations after the DOM paints (idempotent, so a
@@ -627,6 +866,7 @@ function doReveal() {
   });
   view.querySelectorAll('.reveal-scale').forEach((el) => { el.style.transform = 'scaleX(1)'; });
   view.querySelectorAll('.reveal-pill').forEach((el) => el.classList.add('in'));
+  view.querySelectorAll('.reveal-pop').forEach((el) => el.classList.add('in'));
 }
 function revealCharts() {
   revealScheduled = false;
@@ -656,10 +896,13 @@ function wireEvents() {
     render();
   });
 
-  // Sub-toggle, relevance triage, relevant-only toggle (all inside #view)
+  // Sub-toggles, relevance triage, relevant-only toggle (all inside #view)
   view.addEventListener('click', (e) => {
     const sub = e.target.closest('[data-sub]');
     if (sub) { state.sub = sub.getAttribute('data-sub'); render(); return; }
+
+    const psub = e.target.closest('[data-psub]');
+    if (psub) { state.productsSub = psub.getAttribute('data-psub'); render(); return; }
 
     const toggle = e.target.closest('[data-toggle]');
     if (toggle) { state.filters.relevantOnly = !state.filters.relevantOnly; render(); return; }
@@ -672,14 +915,16 @@ function wireEvents() {
     }
   });
 
-  // Filters (search input + selects)
+  // Filters (search inputs + selects)
   view.addEventListener('input', (e) => {
     if (e.target.id === 'f-search') { state.filters.search = e.target.value; refreshRows(); }
+    else if (e.target.id === 'p-search') { state.productFilters.search = e.target.value; refreshCatalog(); }
   });
   view.addEventListener('change', (e) => {
-    const map = { 'f-seg': 'segment', 'f-country': 'country', 'f-status': 'status' };
-    const key = map[e.target.id];
-    if (key) { state.filters[key] = e.target.value; refreshRows(); }
+    const exMap = { 'f-seg': 'segment', 'f-country': 'country', 'f-status': 'status' };
+    const pMap = { 'p-industry': 'industry', 'p-family': 'family' };
+    if (exMap[e.target.id]) { state.filters[exMap[e.target.id]] = e.target.value; refreshRows(); }
+    else if (pMap[e.target.id]) { state.productFilters[pMap[e.target.id]] = e.target.value; refreshCatalog(); }
   });
 
   // Tooltips + cross-highlight (delegated once)
@@ -710,12 +955,16 @@ function loadRelevance(ids) {
 async function boot() {
   wireEvents();
   try {
-    const [meta, exhibitions] = await Promise.all([
+    const [meta, exhibitions, products] = await Promise.all([
       fetch('data/meta.json').then((r) => r.json()),
       fetch('data/exhibitions.json').then((r) => r.json()),
+      fetch('data/products.json').then((r) => r.json()).catch(() => []),
     ]);
     state.meta = meta;
     state.exhibitions = exhibitions;
+    // Tolerate both the seed array and the scraper's { products, _meta, _debug } shape.
+    const rawProducts = Array.isArray(products) ? products : (products.products || []);
+    state.products = rawProducts.filter((p) => p && p.id && p.name);
     loadRelevance(exhibitions.map((d) => d.id));
 
     const updated = meta.updated_at

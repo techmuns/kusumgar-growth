@@ -1,0 +1,57 @@
+name: Products refresh
+
+# Refreshes public/data/products.json from kusumgar.com via Firecrawl.
+# Manual (workflow_dispatch) + monthly cron. Commits only when the catalog changed.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 1 * *' # 06:00 UTC on the 1st of every month
+
+permissions:
+  contents: write
+
+concurrency:
+  group: products-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Scrape products (graceful without a key)
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+        run: node scripts/scrape-products.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/products.json)" ]; then
+            echo "No changes to products.json — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/products.json
+          git commit -m "chore(data): refresh products.json from kusumgar.com"
+
+          # Rebase-retry push loop so it survives races with other pushes.
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1
