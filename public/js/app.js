@@ -69,6 +69,22 @@ function positionBucket(pos) {
   return POSITION_BUCKETS.find((b) => b.test(p)) || POSITION_BUCKETS[3];
 }
 
+// Outreach pipeline (Phase 4) — Nishad's real flow, in order, each with a color.
+const OUTREACH_STAGES = [
+  { key: 'To contact', color: '#94a3b8' },       // slate
+  { key: 'Connected', color: '#0ea5e9' },        // sky
+  { key: 'Email sent', color: '#6366f1' },       // indigo
+  { key: 'No reply', color: '#f59e0b' },         // amber
+  { key: 'Meeting set', color: '#8b5cf6' },      // violet
+  { key: 'Sample requested', color: '#14b8a6' }, // teal
+  { key: 'Won', color: '#10b981' },              // emerald
+  { key: 'Lost', color: '#f43f5e' },             // rose
+];
+const STAGE_KEYS = OUTREACH_STAGES.map((s) => s.key);
+const STAGE_COLOR = Object.fromEntries(OUTREACH_STAGES.map((s) => [s.key, s.color]));
+const DEAL_TYPES = ['current', 'potential'];
+const MFG_TYPES = ['own', 'jobwork', 'agency'];
+
 // Engagement status colors + display order.
 const STATUS_COLORS = {
   'Exhibited': '#10b981', // emerald
@@ -84,7 +100,7 @@ const TABS = [
   { id: 'products', label: 'Products', icon: '🧵', live: true },
   { id: 'leads', label: 'Leads', icon: '🎯', live: true },
   { id: 'competitors', label: 'Competitors', icon: '🛡️', live: true },
-  { id: 'outreach', label: 'Outreach', icon: '📮', live: false },
+  { id: 'outreach', label: 'Outreach', icon: '📮', live: true },
 ];
 
 const FLAGS = {
@@ -112,6 +128,8 @@ const state = {
   products: [],
   leads: [],
   competitors: [],
+  outreach: {},           // leadId -> { contact, email }  (from outreach.json)
+  pipeline: {},           // leadId -> { stage, dealType, mfg }  (localStorage)
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
   filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false },
   productsSub: 'catalog', // 'catalog' | 'coverage'
@@ -120,7 +138,11 @@ const state = {
   leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', fullOnly: false },
   leadSort: { key: 'company', dir: 'asc' },
   competitorsSub: 'landscape', // 'landscape' | 'list'
+  outreachSub: 'pipeline',     // 'pipeline' | 'tracker'
+  trackerFilters: { search: '', stage: 'all' },
 };
+
+const PIPE_KEY = (id) => `kgr.outreach.${id}`;
 
 const REL_KEY = (id) => `kgr.relevant.${id}`;
 const REL_COLORS = { yes: '#10b981', no: '#f43f5e', undecided: '#94a3b8' };
@@ -883,6 +905,7 @@ function fmtConsumption(v) {
   return single ? fmtNum(single[0]) : String(v);
 }
 const consumptionSortVal = (v) => { const m = String(v || '').match(/\d+/); return m ? Number(m[0]) : -1; };
+const fmtDate = (iso) => { try { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch { return String(iso); } };
 
 function priorityChip(pri) {
   if (pri === 'High') return `<span class="inline-flex items-center rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white">High</span>`;
@@ -1081,8 +1104,7 @@ function openLeadDrawer(id) {
       </div>
       <div class="flex-1 overflow-y-auto p-5">${body}</div>
       <div class="border-t border-slate-100 p-5">
-        <button type="button" data-action="draft-email" class="w-full rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-95">✉️ Draft outreach email</button>
-        <div id="emailStub" hidden class="mt-2 rounded-xl bg-indigo-50 px-3 py-2 text-[12px] font-medium text-indigo-700">Coming in the next build — the AI will draft a Nishad-style email here.</div>
+        <button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="w-full rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-95">✉️ Draft outreach email</button>
       </div>
     </aside>`;
   const d = $('#drawer');
@@ -1183,6 +1205,237 @@ function renderCompetitors() {
 }
 
 /* ------------------------------------------------------------------ *
+ * Outreach tab — contacts + email modal + pipeline tracker
+ * ------------------------------------------------------------------ */
+
+const outreachFor = (id) => state.outreach[id] || {};
+const validStage = (s) => STAGE_KEYS.includes(s);
+
+function loadPipeline(ids) {
+  ids.forEach((id) => {
+    try {
+      const raw = localStorage.getItem(PIPE_KEY(id));
+      if (raw) { const v = JSON.parse(raw); if (v && typeof v === 'object') state.pipeline[id] = v; }
+    } catch { /* storage unavailable — ignore */ }
+  });
+}
+function setPipeline(id, patch) {
+  const next = { ...(state.pipeline[id] || {}), ...patch };
+  if (patch.stage && !next.dealType) next.dealType = 'current';
+  if (patch.stage && !next.mfg) next.mfg = 'own';
+  const removed = ('stage' in patch) && !patch.stage;
+  try {
+    if (removed) localStorage.removeItem(PIPE_KEY(id));
+    else localStorage.setItem(PIPE_KEY(id), JSON.stringify(next));
+  } catch { /* storage unavailable — in-memory only */ }
+  if (removed) delete state.pipeline[id];
+  else state.pipeline[id] = next;
+}
+const pipelinedLeads = () => state.leads.filter((l) => validStage(state.pipeline[l.id]?.stage));
+
+function contactBlock(lead) {
+  const c = outreachFor(lead.id).contact;
+  if (c && (c.name || c.email)) {
+    const li = c.linkedin_url ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">LinkedIn ↗</a>` : '';
+    const em = c.email ? `<a href="mailto:${escapeHtml(c.email)}" class="text-indigo-600 hover:underline">${escapeHtml(c.email)}</a>` : '';
+    return `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+      <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
+      <div class="mt-1 text-sm font-bold text-slate-800">${escapeHtml(c.name || '—')}</div>
+      ${c.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(c.title)}</div>` : ''}
+      ${(li || em) ? `<div class="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[12px]">${li}${em}</div>` : ''}
+      ${c.source ? `<div class="mt-1 text-[11px] text-slate-400">via ${escapeHtml(c.source)}${c.confidence ? ` · ${escapeHtml(String(c.confidence))} confidence` : ''}</div>` : ''}
+    </div>`;
+  }
+  return `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+    <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
+    <div class="mt-1 text-[13px] text-slate-600">Best role to target: <span class="font-semibold text-slate-800">${escapeHtml(dash(lead.contact_role))}</span></div>
+    <div class="mt-1 text-[11px] text-slate-400">Run the Outreach refresh workflow to find a named contact.</div>
+  </div>`;
+}
+
+// Email + contact + add-to-outreach modal (opened from a lead's drill-panel or the tracker).
+function openEmailModal(id) {
+  const l = state.leads.find((x) => x.id === id);
+  if (!l) return;
+  const email = outreachFor(id).email;
+  const pl = state.pipeline[id] || {};
+  const emailText = email ? `Subject: ${email.subject}\n\n${email.body}` : '';
+
+  const emailSection = email ? `
+    <div class="rounded-xl ring-1 ring-slate-200">
+      <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-2.5">
+        <div class="min-w-0"><div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Subject</div><div class="truncate text-sm font-bold text-slate-800">${escapeHtml(email.subject)}</div></div>
+        <button type="button" data-copy class="shrink-0 rounded-lg bg-slate-100 px-2.5 py-1.5 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">📋 Copy</button>
+      </div>
+      <div class="max-h-[38vh] overflow-y-auto whitespace-pre-wrap px-4 py-3 text-[13px] leading-relaxed text-slate-700">${escapeHtml(email.body)}</div>
+      ${email.drafted_at ? `<div class="border-t border-slate-100 px-4 py-2 text-[11px] text-slate-400">Drafted ${escapeHtml(fmtDate(email.drafted_at))}${email.model ? ` · ${escapeHtml(email.model)}` : ''}</div>` : ''}
+    </div>`
+    : `<div class="rounded-xl bg-amber-50 px-4 py-4 text-[13px] font-medium text-amber-700 ring-1 ring-amber-200">No draft yet — run the Outreach refresh workflow to generate a Nishad-style email for this lead.</div>`;
+
+  const stageOptions = ['<option value="">— not in pipeline —</option>']
+    .concat(STAGE_KEYS.map((s) => `<option value="${escapeHtml(s)}"${pl.stage === s ? ' selected' : ''}>${escapeHtml(s)}</option>`)).join('');
+  const addSection = `
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-[12px] font-semibold text-slate-500">➕ Add to Outreach</span>
+      <select data-modal-stage="${escapeHtml(id)}" class="rounded-xl border-0 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">${stageOptions}</select>
+      <span id="modalAdded" hidden class="text-[12px] font-semibold text-emerald-600"></span>
+    </div>`;
+
+  const html = `
+    <div data-modal-backdrop class="absolute inset-0 bg-slate-900/40"></div>
+    <div class="modal-card absolute left-1/2 top-1/2 flex max-h-[88vh] w-[calc(100%-2rem)] max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-100 p-4">
+        <div><h3 class="font-display text-base font-extrabold text-slate-900">Outreach — ${escapeHtml(l.company)}</h3><p class="text-[12px] text-slate-500">${escapeHtml(dash(l.segment))} · ${escapeHtml(dash(l.country))}</p></div>
+        <button type="button" data-modal-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
+      </div>
+      <div class="flex-1 space-y-3 overflow-y-auto p-4">${contactBlock(l)}${emailSection}${addSection}</div>
+    </div>
+    <textarea id="modalEmailText" readonly aria-hidden="true" style="position:fixed;left:-9999px;top:0;opacity:0;">${escapeHtml(emailText)}</textarea>`;
+  const m = $('#modal');
+  m.innerHTML = html;
+  requestAnimationFrame(() => m.classList.add('open'));
+}
+function closeModal() {
+  const m = $('#modal');
+  if (!m || !m.classList.contains('open')) return;
+  m.classList.remove('open');
+  setTimeout(() => { if (!m.classList.contains('open')) m.innerHTML = ''; }, 220);
+}
+function copyEmail(btn) {
+  const ta = $('#modalEmailText');
+  if (ta) {
+    let done = false;
+    try { ta.focus(); ta.select(); done = document.execCommand('copy'); } catch { /* noop */ }
+    if (!done) { try { if (navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(() => {}); } catch { /* noop */ } }
+  }
+  btn.textContent = 'Copied ✓';
+  setTimeout(() => { btn.textContent = '📋 Copy'; }, 1500);
+}
+
+function renderPipeline() {
+  const inPipe = pipelinedLeads();
+  if (!inPipe.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-100">
+      <div class="mb-2 text-4xl">🔀</div>
+      <div class="font-display text-lg font-bold text-slate-800">Your pipeline is empty</div>
+      <div class="mt-1 text-sm text-slate-500">Open a lead in the Leads tab → “➕ Add to Outreach”, or use the Tracker.</div>
+      <button type="button" data-goto="leads" class="mt-4 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads</button>
+    </div>`;
+  }
+  const total = inPipe.length;
+  const stageOf = (l) => state.pipeline[l.id].stage;
+  const won = inPipe.filter((l) => stageOf(l) === 'Won').length;
+  const meetings = inPipe.filter((l) => stageOf(l) === 'Meeting set').length;
+
+  const chips = `<div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+    ${statChip('🔀', total, 'In pipeline', '#6366f1')}
+    ${statChip('🗓️', meetings, 'Meetings set', '#8b5cf6')}
+    ${statChip('🏆', won, 'Won', '#10b981')}
+  </div>`;
+
+  const stageItems = OUTREACH_STAGES.map((s) => ({ label: s.key, value: inPipe.filter((l) => stageOf(l) === s.key).length, color: s.color, key: 'stg:' + s.key }));
+  const funnel = buildBars(stageItems, { unit: 'lead' });
+  const funnelNote = `<div class="mt-3 text-[11px] font-medium text-slate-400">Leads at each stage of Nishad's outreach flow.</div>`;
+
+  const cur = inPipe.filter((l) => (state.pipeline[l.id].dealType || 'current') === 'current').length;
+  const dealItems = [
+    { label: 'Current', value: cur, color: '#6366f1', key: 'dl:current' },
+    { label: 'Potential', value: total - cur, color: '#94a3b8', key: 'dl:potential' },
+  ].filter((i) => i.value > 0);
+  const dealBar = buildStackedBar(dealItems, { unit: 'lead' });
+  const dealLegend = `<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">` + dealItems.map((i) =>
+    `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
+
+  const grid = `<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+    <div data-chart>${chartCard('🔀', 'Pipeline funnel', `${total} in play`, funnel + funnelNote)}</div>
+    <div data-chart>${chartCard('⚖️', 'Current vs potential', 'business type', dealBar + dealLegend)}</div>
+  </div>`;
+  return `<div class="fade-in">${chips}${grid}</div>`;
+}
+
+function trackerRows() {
+  const f = state.trackerFilters;
+  const q = f.search.trim().toLowerCase();
+  return pipelinedLeads().filter((l) => {
+    const pl = state.pipeline[l.id];
+    if (f.stage !== 'all' && pl.stage !== f.stage) return false;
+    if (q) { const hay = `${l.company} ${l.segment} ${l.country}`.toLowerCase(); if (!hay.includes(q)) return false; }
+    return true;
+  });
+}
+
+function trackerTableHtml() {
+  const rows = trackerRows();
+  if (!rows.length) {
+    return `<table class="w-full"><tbody><tr><td class="px-4 py-10 text-center text-sm text-slate-400">No leads in the pipeline yet — use “➕ Add leads”.</td></tr></tbody></table>`;
+  }
+  const sel = (id, kind, options, cur, stageColored) => {
+    const opts = options.map((o) => `<option value="${escapeHtml(o)}"${cur === o ? ' selected' : ''}>${escapeHtml(o)}</option>`).join('');
+    if (stageColored) {
+      const col = STAGE_COLOR[cur] || '#64748b';
+      return `<select data-pl-${kind}="${escapeHtml(id)}" class="rounded-lg border-0 px-2 py-1 text-[12px] font-semibold shadow-sm ring-1 ring-slate-200 focus:outline-none" style="background:${col}1f;color:${darken(col, 0.35)}">${opts}</select>`;
+    }
+    return `<select data-pl-${kind}="${escapeHtml(id)}" class="rounded-lg border-0 bg-white px-2 py-1 text-[12px] font-medium text-slate-600 shadow-sm ring-1 ring-slate-200 focus:outline-none">${opts}</select>`;
+  };
+  const body = rows.map((l) => {
+    const pl = state.pipeline[l.id];
+    const c = outreachFor(l.id).contact;
+    const contact = c && c.name ? escapeHtml(c.name) : `<span class="text-slate-400">→ ${escapeHtml(dash(l.contact_role))}</span>`;
+    const hasDraft = outreachFor(l.id).email ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
+    return `<tr class="border-t border-slate-100 hover:bg-slate-50/60">
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'stage', STAGE_KEYS, pl.stage, true)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'deal', DEAL_TYPES, pl.dealType || 'current', false)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'mfg', MFG_TYPES, pl.mfg || 'own', false)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${contact}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-center text-sm">${hasDraft}</td>
+      <td class="whitespace-nowrap px-3 py-2.5"><button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="rounded-lg bg-slate-100 px-2 py-1 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">✉️ Email</button></td>
+    </tr>`;
+  }).join('');
+  const head = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+    <th class="px-3 py-2.5 font-semibold">Company</th><th class="px-3 py-2.5 font-semibold">Segment</th>
+    <th class="px-3 py-2.5 font-semibold">Stage</th><th class="px-3 py-2.5 font-semibold">Deal</th>
+    <th class="px-3 py-2.5 font-semibold">Mfg</th><th class="px-3 py-2.5 font-semibold">Contact</th>
+    <th class="px-3 py-2.5 text-center font-semibold">Draft</th><th class="px-3 py-2.5 font-semibold"></th></tr>`;
+  return `<table class="w-full min-w-[820px] border-collapse text-left"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
+
+function refreshTrackerTable() {
+  const w = $('#trackerTableWrap'); if (w) w.innerHTML = trackerTableHtml();
+  const c = $('#oCount'); if (c) c.textContent = trackerRows().length;
+}
+
+function renderTracker() {
+  const f = state.trackerFilters;
+  const stageSel = ['<option value="all">All stages</option>']
+    .concat(STAGE_KEYS.map((s) => `<option value="${escapeHtml(s)}"${f.stage === s ? ' selected' : ''}>${escapeHtml(s)}</option>`)).join('');
+  return `<div class="fade-in">
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <div class="relative min-w-[170px] flex-1">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+        <input id="o-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search pipeline…" class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+      </div>
+      <select id="o-stage" class="rounded-xl border-0 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">${stageSel}</select>
+      <button type="button" data-goto="leads" class="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads</button>
+    </div>
+    <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="oCount" class="tnum font-semibold text-slate-700">${trackerRows().length}</span> in pipeline</div>
+    <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="trackerTableWrap">${trackerTableHtml()}</div></div>
+  </div>`;
+}
+
+function renderOutreach() {
+  const subBtn = (id, label) => {
+    const active = state.outreachSub === id;
+    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
+    return `<button type="button" data-osub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
+  };
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('pipeline', '🔀 Pipeline')}${subBtn('tracker', '📋 Tracker')}</div>`;
+  const body = state.outreachSub === 'pipeline' ? renderPipeline() : renderTracker();
+  return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+/* ------------------------------------------------------------------ *
  * Render pipeline
  * ------------------------------------------------------------------ */
 
@@ -1208,6 +1461,7 @@ function render() {
   else if (state.tab === 'products') view.innerHTML = renderProducts();
   else if (state.tab === 'leads') view.innerHTML = renderLeads();
   else if (state.tab === 'competitors') view.innerHTML = renderCompetitors();
+  else if (state.tab === 'outreach') view.innerHTML = renderOutreach();
   else view.innerHTML = renderPlaceholder(tab);
 
   // Views with SVG/dot entrance animations.
@@ -1215,6 +1469,7 @@ function render() {
   else if (state.tab === 'products' && state.productsSub === 'coverage') revealCharts();
   else if (state.tab === 'leads' && state.leadsSub === 'overview') revealCharts();
   else if (state.tab === 'competitors' && state.competitorsSub === 'landscape') revealCharts();
+  else if (state.tab === 'outreach' && state.outreachSub === 'pipeline') revealCharts();
 }
 
 // Kick chart entrance animations after the DOM paints (idempotent, so a
@@ -1270,6 +1525,16 @@ function wireEvents() {
     const csub = e.target.closest('[data-csub]');
     if (csub) { state.competitorsSub = csub.getAttribute('data-csub'); render(); return; }
 
+    const osub = e.target.closest('[data-osub]');
+    if (osub) { state.outreachSub = osub.getAttribute('data-osub'); render(); return; }
+
+    const goto = e.target.closest('[data-goto]');
+    if (goto) {
+      state.tab = goto.getAttribute('data-goto');
+      if (state.tab === 'leads') state.leadsSub = 'list';
+      render(); return;
+    }
+
     const toggle = e.target.closest('[data-toggle]');
     if (toggle) { state.filters.relevantOnly = !state.filters.relevantOnly; render(); return; }
 
@@ -1294,6 +1559,9 @@ function wireEvents() {
       return;
     }
 
+    const draftBtn = e.target.closest('[data-action="draft-email"]');
+    if (draftBtn) { openEmailModal(draftBtn.getAttribute('data-lead-id')); return; }
+
     const leadRow = e.target.closest('[data-lead-id]');
     if (leadRow) { openLeadDrawer(leadRow.getAttribute('data-lead-id')); }
   });
@@ -1303,6 +1571,7 @@ function wireEvents() {
     if (e.target.id === 'f-search') { state.filters.search = e.target.value; refreshRows(); }
     else if (e.target.id === 'p-search') { state.productFilters.search = e.target.value; refreshCatalog(); }
     else if (e.target.id === 'l-search') { state.leadFilters.search = e.target.value; refreshLeadsTable(); }
+    else if (e.target.id === 'o-search') { state.trackerFilters.search = e.target.value; refreshTrackerTable(); }
   });
   view.addEventListener('change', (e) => {
     const exMap = { 'f-seg': 'segment', 'f-country': 'country', 'f-status': 'status' };
@@ -1311,6 +1580,16 @@ function wireEvents() {
     if (exMap[e.target.id]) { state.filters[exMap[e.target.id]] = e.target.value; refreshRows(); }
     else if (pMap[e.target.id]) { state.productFilters[pMap[e.target.id]] = e.target.value; refreshCatalog(); }
     else if (lMap[e.target.id]) { state.leadFilters[lMap[e.target.id]] = e.target.value; refreshLeadsTable(); }
+    else if (e.target.id === 'o-stage') { state.trackerFilters.stage = e.target.value; refreshTrackerTable(); }
+    else {
+      // Tracker inline pipeline selects
+      const stageId = e.target.getAttribute('data-pl-stage');
+      const dealId = e.target.getAttribute('data-pl-deal');
+      const mfgId = e.target.getAttribute('data-pl-mfg');
+      if (stageId) { setPipeline(stageId, { stage: e.target.value }); refreshTrackerTable(); }
+      else if (dealId) { setPipeline(dealId, { dealType: e.target.value }); refreshTrackerTable(); }
+      else if (mfgId) { setPipeline(mfgId, { mfg: e.target.value }); refreshTrackerTable(); }
+    }
   });
 
   // Tooltips + cross-highlight (delegated once)
@@ -1328,12 +1607,31 @@ function wireEvents() {
   const drawer = $('#drawer');
   drawer.addEventListener('click', (e) => {
     if (e.target.closest('[data-drawer-close]') || e.target.hasAttribute('data-drawer-backdrop')) { closeDrawer(); return; }
-    if (e.target.closest('[data-action="draft-email"]')) {
-      const note = $('#emailStub', drawer);
-      if (note) note.hidden = false;
+    const draft = e.target.closest('[data-action="draft-email"]');
+    if (draft) { openEmailModal(draft.getAttribute('data-lead-id')); }
+  });
+
+  // Outreach/email modal (stable element outside #view).
+  const modal = $('#modal');
+  modal.addEventListener('click', (e) => {
+    if (e.target.closest('[data-modal-close]') || e.target.hasAttribute('data-modal-backdrop')) { closeModal(); return; }
+    const copy = e.target.closest('[data-copy]');
+    if (copy) copyEmail(copy);
+  });
+  modal.addEventListener('change', (e) => {
+    const id = e.target.getAttribute('data-modal-stage');
+    if (id) {
+      setPipeline(id, { stage: e.target.value });
+      const conf = $('#modalAdded', modal);
+      if (conf) { conf.hidden = false; conf.textContent = e.target.value ? `Added to “${e.target.value}”` : 'Removed from pipeline'; }
     }
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if ($('#modal').classList.contains('open')) closeModal();
+    else closeDrawer();
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -1352,12 +1650,13 @@ function loadRelevance(ids) {
 async function boot() {
   wireEvents();
   try {
-    const [meta, exhibitions, products, leads, competitors] = await Promise.all([
+    const [meta, exhibitions, products, leads, competitors, outreach] = await Promise.all([
       fetch('data/meta.json').then((r) => r.json()),
       fetch('data/exhibitions.json').then((r) => r.json()),
       fetch('data/products.json').then((r) => r.json()).catch(() => []),
       fetch('data/leads.json').then((r) => r.json()).catch(() => []),
       fetch('data/competitors.json').then((r) => r.json()).catch(() => []),
+      fetch('data/outreach.json').then((r) => r.json()).catch(() => ({})),
     ]);
     state.meta = meta;
     state.exhibitions = exhibitions;
@@ -1366,7 +1665,9 @@ async function boot() {
     state.products = unwrap(products, 'products').filter((p) => p && p.id && p.name);
     state.leads = unwrap(leads, 'leads').filter((l) => l && l.id && l.company);
     state.competitors = unwrap(competitors, 'competitors').filter((c) => c && c.id && c.company);
+    state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
     loadRelevance(exhibitions.map((d) => d.id));
+    loadPipeline(state.leads.map((l) => l.id));
 
     const updated = meta.updated_at
       ? new Date(meta.updated_at + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
