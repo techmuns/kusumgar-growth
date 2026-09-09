@@ -1,0 +1,9 @@
+[
+{"id":"10times","name":"10times","kind":"directory","description":"Very broad global event database — exhibitors, venues, organisers","website":"https://10times.com/"},
+{"id":"eventseye","name":"EventsEye","kind":"directory","description":"Huge global trade-show database, searchable by industry/country/month","website":"https://www.eventseye.com/"},
+{"id":"expodefence","name":"ExpoDefence","kind":"directory","description":"Defence-specific exhibition calendar","website":"https://www.expodefence.com/"},
+{"id":"expogage","name":"ExpoGage","kind":"directory","description":"B2B event intelligence + exhibitor history","website":"https://www.expogage.com/"},
+{"id":"gem","name":"Government e-Marketplace (GeM)","kind":"directory","description":"Indian government tenders","website":"https://gem.gov.in/"},
+{"id":"ddp-mod","name":"Indian MoD / DDP lists","kind":"directory","description":"Foreign defence exhibitions relevant to Indian defence companies","website":"https://www.ddpmod.gov.in/en"},
+{"id":"uk-defence-cal","name":"UK Defence Export Calendar","kind":"directory","description":"Government-curated defence export events","website":"https://www.gov.uk/"}
+]

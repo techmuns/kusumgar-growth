@@ -89,4 +89,28 @@ export async function firecrawlMap(url, debug) {
   return data.links || data.data || null;
 }
 
+/**
+ * Web search via Firecrawl. Returns a list of { url, title, description } or null.
+ */
+export async function firecrawlSearch(query, debug) {
+  const data = await callFirecrawl('/v1/search', { query, limit: 8 }, debug);
+  if (!data) return null;
+  return data.data || data.results || null;
+}
+
+/**
+ * Fetch a URL's raw HTML via Scrape.do (proxy scraper). Needs SCRAPEDO_API_KEY.
+ * Returns text or null; never throws.
+ */
+export async function scrapedoGet(url) {
+  const key = process.env.SCRAPEDO_API_KEY;
+  if (!key) return null;
+  try {
+    const res = await fetch(`https://api.scrape.do/?token=${encodeURIComponent(key)}&url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(45_000) });
+    if (!res.ok) { console.error(`[scrapedo] ${res.status}`); return null; }
+    return await res.text();
+  } catch (e) { console.error(`[scrapedo] failed: ${e.message}`); return null; }
+}
+export function haveScrapedo() { return !!process.env.SCRAPEDO_API_KEY; }
+
 export { apiKey };
