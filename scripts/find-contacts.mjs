@@ -1,13 +1,13 @@
 // Fully-automated contact discovery per lead — written into outreach.json[id].contact.
 //
-// Graceful chain (no logins, no Playwright):
-//   1. Hunter.io Domain Search (if HUNTER_API_KEY + a company domain) → askClaude picks the
-//      person matching contact_role → take Hunter's VERIFIED email (email_status: "verified").
-//   2. Always-on FREE discovery: Firecrawl (+ Scrape.do) web-search "<company> <role> linkedin"
-//      → askClaude picks the best public {name, title, linkedin_url}. No login.
-//   3. FREE email fallback (no Hunter): Firecrawl the company contact/about/team page for a
-//      published email (email_status: "published"); else askClaude infers a likely address from
-//      name + domain (email_status: "guessed").
+// Layer A (automated), best-first with graceful fallback (no logins, no Playwright):
+//   PERSON: PDL_API_KEY → People Data Labs person search (accurate); else Firecrawl (+ Scrape.do)
+//           public web-search "<company> <role> site:linkedin.com/in" → askClaude picks best.
+//   EMAIL:  HUNTER_API_KEY → Hunter verified; else PDL work email (verified); else Firecrawl the
+//           company contact/about/team page (published); else askClaude infers from name+domain
+//           (guessed).
+// The UI (Layer B) keeps any MANUAL contact in localStorage that WINS over this auto contact, so
+// this script never effectively overwrites a manual entry.
 //
 // Writes {name,title,linkedin_url,email,email_status,source,confidence}. Best-effort, capped,
 // graceful (missing keys → exit 0, writes nothing), NEVER deletes existing entries, never throws.
@@ -26,6 +26,7 @@ const OUTREACH_PATH = p('KGR_OUTREACH_PATH', '../public/data/outreach.json');
 const MAX = Math.max(1, parseInt(process.env.MAX || '25', 10) || 25);
 const PRIORITY_ONLY = /^(1|true|yes)$/i.test(process.env.PRIORITY_ONLY || '');
 const HUNTER = process.env.HUNTER_API_KEY || '';
+const PDL = process.env.PDL_API_KEY || '';
 
 const domainOf = (l) => { try { return l.website ? new URL(l.website).hostname.replace(/^www\./, '') : ''; } catch { return ''; } };
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
@@ -39,9 +40,32 @@ async function loadLeads() {
   catch (e) { console.error(`[find-contacts] cannot read leads: ${e.message}`); return []; }
 }
 
+// Step 1 (best) — People Data Labs person search (accurate). Returns {name,title,linkedin_url,email} or null.
+async function pdlPerson(lead) {
+  if (!PDL) return null;
+  try {
+    const must = [{ match: { job_company_name: lead.company } }];
+    if (lead.contact_role) must.push({ match: { job_title: lead.contact_role } });
+    const res = await fetch('https://api.peopledatalabs.com/v5/person/search', {
+      method: 'POST',
+      headers: { 'X-Api-Key': PDL, 'content-type': 'application/json' },
+      body: JSON.stringify({ query: { bool: { must } }, size: 5 }),
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!res.ok) { console.error(`[find-contacts] PDL ${res.status}`); return null; }
+    const data = await res.json();
+    const r = ((data && data.data) || [])[0];
+    if (!r) return null;
+    const name = r.full_name || [r.first_name, r.last_name].filter(Boolean).join(' ');
+    const li = r.linkedin_url ? (String(r.linkedin_url).startsWith('http') ? r.linkedin_url : 'https://' + r.linkedin_url) : null;
+    const email = r.work_email || (Array.isArray(r.emails) && r.emails[0] && (r.emails[0].address || r.emails[0])) || null;
+    return name ? { name, title: r.job_title || '', linkedin_url: li, email } : null;
+  } catch (e) { console.error(`[find-contacts] PDL failed (ok): ${e.message}`); return null; }
+}
+
 // Step 2 — public web search for the person (name/title/linkedin). No login.
 async function webPerson(lead, debug) {
-  const results = await firecrawlSearch(`${lead.company} ${lead.contact_role || 'purchasing buyer'} linkedin`, debug);
+  const results = await firecrawlSearch(`${lead.company} ${lead.contact_role || 'purchasing buyer'} site:linkedin.com/in`, debug);
   const text = Array.isArray(results) ? results.map((r) => `${r.title || ''} | ${r.url || ''} | ${r.description || ''}`).join('\n') : '';
   if (text) {
     const pick = await askClaude({
@@ -100,8 +124,8 @@ async function guessEmail(name, domain) {
 }
 
 async function main() {
-  if (!HUNTER && !firecrawlKey() && !haveScrapedo()) {
-    console.log('[find-contacts] no discovery keys (HUNTER / FIRECRAWL / SCRAPEDO) — writing nothing. Exiting 0.');
+  if (!PDL && !HUNTER && !firecrawlKey() && !haveScrapedo()) {
+    console.log('[find-contacts] no discovery keys (PDL / HUNTER / FIRECRAWL / SCRAPEDO) — writing nothing. Exiting 0.');
     return;
   }
   const leads = await loadLeads();
@@ -120,21 +144,32 @@ async function main() {
     for (const l of queue) {
       const domain = domainOf(l);
       const contact = { name: null, title: null, linkedin_url: null, email: null, email_status: null, source: '', confidence: 'low' };
+      let pdlEmail = null;
 
-      if (firecrawlKey() || haveScrapedo()) {
+      // PERSON — best-first: PDL, else public web search.
+      if (PDL) {
+        const person = await pdlPerson(l);
+        if (person) { contact.name = person.name; contact.title = person.title; contact.linkedin_url = person.linkedin_url; contact.source = 'pdl'; contact.confidence = 'high'; pdlEmail = person.email || null; }
+      }
+      if (!contact.name && (firecrawlKey() || haveScrapedo())) {
         const person = await webPerson(l, debug);
-        if (person) { contact.name = person.name; contact.title = person.title; contact.linkedin_url = person.linkedin_url; contact.source = 'web'; contact.confidence = 'medium'; }
+        if (person) { contact.name = person.name; contact.title = person.title; contact.linkedin_url = person.linkedin_url; if (!contact.source) contact.source = 'web'; if (contact.confidence === 'low') contact.confidence = 'medium'; }
       }
 
+      // EMAIL — Hunter (verified) → PDL work email (verified) → website (published) → guess.
       if (HUNTER && domain) {
         const h = await hunterEmail(l, domain);
         if (h && h.email) {
           contact.email = h.email; contact.email_status = 'verified';
           if (!contact.name) contact.name = h.name || null;
           if (!contact.title) contact.title = h.title || '';
-          contact.source = contact.source ? 'web+hunter' : 'hunter';
+          contact.source = /pdl|web/.test(contact.source) ? contact.source + '+hunter' : 'hunter';
           contact.confidence = 'high';
         }
+      }
+      if (!contact.email && pdlEmail) {
+        contact.email = pdlEmail; contact.email_status = 'verified';
+        if (!/pdl/.test(contact.source)) contact.source = contact.source ? contact.source + '+pdl' : 'pdl';
       }
 
       if (!contact.email && (firecrawlKey() || haveScrapedo()) && l.website) {
