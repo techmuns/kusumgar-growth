@@ -18,7 +18,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { firecrawlScrape, apiKey as firecrawlKey } from './lib/firecrawl.mjs';
-import { askClaude, bedrockKey } from './lib/llm.mjs';
+import { askClaude, haveBedrock } from './lib/llm.mjs';
 
 const p = (envName, rel) => process.env[envName] || fileURLToPath(new URL(rel, import.meta.url));
 const LEADS_PATH = p('KGR_LEADS_PATH', '../public/data/leads.json');
@@ -69,7 +69,7 @@ async function main() {
     loadArr(COMPETITORS_PATH, 'competitors'),
   ]);
 
-  if (!firecrawlKey() || !bedrockKey()) {
+  if (!firecrawlKey() || !haveBedrock()) {
     console.log(`[scrape-exhibitors] FIRECRAWL_API_KEY and/or BEDROCK_API_KEY missing — leaving ${seedLeads.length} leads / ${seedComps.length} competitors untouched. Exiting 0.`);
     return;
   }

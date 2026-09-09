@@ -37,10 +37,12 @@ jobs:
 
       - name: Classify exhibitors (graceful without keys)
         env:
+          # Required secrets:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
-          BEDROCK_REGION: ${{ secrets.BEDROCK_REGION }}
-          BEDROCK_MODEL_ID: ${{ secrets.BEDROCK_MODEL_ID }}
+          # Optional (both default in code): AWS region + comma-separated model fallback chain.
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
           TARGET: ${{ github.event.inputs.target || 'auto' }}
           MAX_COMPANIES: ${{ github.event.inputs.max_companies || '40' }}
         run: node scripts/scrape-exhibitors.mjs
