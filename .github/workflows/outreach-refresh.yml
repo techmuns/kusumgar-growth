@@ -33,10 +33,8 @@ jobs:
       # Optional (defaulted in code): region + model fallback chain.
       AWS_REGION: ${{ secrets.AWS_REGION }}
       BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
-      # Optional contact-discovery providers.
-      CONTACTOUT_API_KEY: ${{ secrets.CONTACTOUT_API_KEY }}
-      LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
-      LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
+      # Optional contact-discovery providers (automated, no logins).
+      HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
       SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
       MAX: ${{ github.event.inputs.max || '25' }}
       PRIORITY_ONLY: ${{ github.event.inputs.priority_only || 'false' }}
@@ -48,14 +46,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Install Playwright (only if LinkedIn creds are set)
-        run: |
-          if [ -n "$LINKEDIN_EMAIL" ] && [ -n "$LINKEDIN_PASSWORD" ]; then
-            npm i playwright && npx playwright install --with-deps chromium
-          else
-            echo "No LinkedIn creds — skipping Playwright install."
-          fi
 
       - name: Draft emails (graceful without Bedrock)
         run: node scripts/draft-emails.mjs

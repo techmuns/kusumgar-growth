@@ -33,6 +33,9 @@
     rel="stylesheet"
   />
 
+  <!-- ExcelJS (CDN) for founder-friendly .xlsx export -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
   <style>
     :root {
       --seg-aeronautical: #0ea5e9;
@@ -151,20 +154,32 @@
   <div class="mx-auto w-full max-w-6xl px-4 sm:px-6 pb-16">
 
     <!-- ============ HEADER ============ -->
-    <header class="flex items-center gap-3 sm:gap-4 pt-6 pb-4">
-      <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-display font-extrabold tracking-tight shadow-lg shadow-indigo-500/25">
-        KGR
+    <header class="pt-6 pb-4">
+      <div class="flex items-center gap-3 sm:gap-4">
+        <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-display font-extrabold tracking-tight shadow-lg shadow-indigo-500/25">
+          KGR
+        </div>
+        <div class="min-w-0 flex-1">
+          <h1 class="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            Kusumgar Growth Engine
+          </h1>
+          <p class="text-sm text-slate-500 truncate">AI outreach &amp; exhibition intelligence</p>
+        </div>
+        <div id="updatedPill"
+             class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-500 ring-1 ring-slate-200 backdrop-blur">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+          <span id="updatedText">Updated …</span>
+        </div>
       </div>
-      <div class="min-w-0 flex-1">
-        <h1 class="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 leading-tight">
-          Kusumgar Growth Engine
-        </h1>
-        <p class="text-sm text-slate-500 truncate">AI outreach &amp; exhibition intelligence</p>
-      </div>
-      <div id="updatedPill"
-           class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-500 ring-1 ring-slate-200 backdrop-blur">
-        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-        <span id="updatedText">Updated …</span>
+
+      <!-- Global search (⌘K) -->
+      <div class="relative mt-3">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+        <input id="globalSearch" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchResults"
+          placeholder="Search companies, exhibitions, products, competitors…"
+          class="w-full rounded-xl border-0 bg-white/80 py-2.5 pl-9 pr-14 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 backdrop-blur focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+        <kbd class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 ring-1 ring-slate-200">⌘K</kbd>
+        <div id="searchResults" hidden class="absolute left-0 right-0 z-40 mt-1 max-h-[60vh] overflow-y-auto rounded-xl bg-white p-1.5 shadow-xl ring-1 ring-slate-200"></div>
       </div>
     </header>
 
@@ -177,6 +192,12 @@
 
     <!-- ============ VIEW ROOT ============ -->
     <main id="view" class="pt-5"></main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="mt-10 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+      <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+      <span id="footerFreshness">Kusumgar Growth Engine</span>
+    </footer>
   </div>
 
   <!-- floating tooltip (shared by all charts) -->

@@ -96,6 +96,7 @@ const STATUS_ORDER = ['Exhibited', 'Visited', 'Attended', 'Not yet'];
 const ENGAGED = new Set(['Exhibited', 'Visited', 'Attended']);
 
 const TABS = [
+  { id: 'today', label: 'Today', icon: '🏠', live: true },
   { id: 'exhibitions', label: 'Exhibitions', icon: '🎪', live: true },
   { id: 'products', label: 'Products', icon: '🧵', live: true },
   { id: 'leads', label: 'Leads', icon: '🎯', live: true },
@@ -121,7 +122,7 @@ const MONTHS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep
  * ------------------------------------------------------------------ */
 
 const state = {
-  tab: 'exhibitions',
+  tab: 'today',
   sub: 'overview',        // 'overview' | 'list'
   meta: null,
   exhibitions: [],
@@ -131,7 +132,7 @@ const state = {
   outreach: {},           // leadId -> { contact, email }  (from outreach.json)
   pipeline: {},           // leadId -> { stage, dealType, mfg }  (localStorage)
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
-  filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false },
+  filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false },
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'overview',   // 'overview' | 'list'
@@ -546,6 +547,7 @@ function filteredRows() {
     if (f.country !== 'all' && d.country !== f.country) return false;
     if (f.status !== 'all' && d.status !== f.status) return false;
     if (f.relevantOnly && state.relevance[d.id] !== 'yes') return false;
+    if (f.discoveredOnly && d.source !== 'discovered') return false;
     if (q) {
       const hay = `${d.name} ${d.country} ${d.place || ''} ${d.segment}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -578,7 +580,7 @@ function rowsHtml() {
     <tr class="border-t border-slate-100 hover:bg-slate-50/60">
       <td class="whitespace-nowrap px-3 py-2.5">${relControl(d.id)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(d.segment, segColor(d.segment))}</td>
-      <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(d.name)}</td>
+      <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${d.source === 'discovered' ? ` <span class="ml-1 inline-flex items-center rounded-full bg-fuchsia-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-fuchsia-600" title="${escapeHtml(d.relevance_reason || 'Auto-discovered')}">✨ New</span>` : ''}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(d.country)}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500">${escapeHtml(d.place || '—')}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500 tnum">${escapeHtml(d.dates || '—')}</td>
@@ -603,6 +605,10 @@ function renderList() {
   const toggleCls = toggleOn
     ? 'bg-indigo-600 text-white ring-indigo-600'
     : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
+  const discovered = state.exhibitions.filter((d) => d.source === 'discovered').length;
+  const disCls = f.discoveredOnly
+    ? 'bg-fuchsia-600 text-white ring-fuchsia-600'
+    : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
 
   return `
     <div class="fade-in">
@@ -618,6 +624,10 @@ function renderList() {
         <button type="button" data-toggle="relevantOnly" aria-pressed="${toggleOn}"
           class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">
           ⭐ Relevant only
+        </button>
+        <button type="button" data-distoggle aria-pressed="${f.discoveredOnly}"
+          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${disCls}">
+          ✨ Newly discovered${discovered ? ` <span class="tnum">${discovered}</span>` : ''}
         </button>
       </div>
 
@@ -1054,6 +1064,7 @@ function renderLeadsList() {
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
         <button type="button" data-ltoggle aria-pressed="${f.fullOnly}"
           class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">📇 Fully profiled only</button>
+        <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
       </div>
       <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> leads · <span class="text-slate-400">click a row for the full profile</span></div>
       <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="leadsTableWrap">${leadsTableHtml()}</div></div>
@@ -1211,6 +1222,14 @@ function renderCompetitors() {
 const outreachFor = (id) => state.outreach[id] || {};
 const validStage = (s) => STAGE_KEYS.includes(s);
 
+// Colored email-status badge: verified=green, published=blue, guessed=amber.
+const EMAIL_STATUS = { verified: ['#10b981', 'Verified'], published: ['#3b82f6', 'Published'], guessed: ['#f59e0b', 'Guessed'] };
+function emailStatusBadge(status) {
+  const m = EMAIL_STATUS[status];
+  if (!m) return '';
+  return `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:${m[0]}1f;color:${darken(m[0], 0.3)}">✉ ${m[1]}</span>`;
+}
+
 function loadPipeline(ids) {
   ids.forEach((id) => {
     try {
@@ -1242,7 +1261,7 @@ function contactBlock(lead) {
       <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
       <div class="mt-1 text-sm font-bold text-slate-800">${escapeHtml(c.name || '—')}</div>
       ${c.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(c.title)}</div>` : ''}
-      ${(li || em) ? `<div class="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[12px]">${li}${em}</div>` : ''}
+      ${(li || em || c.email_status) ? `<div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">${li}${em}${emailStatusBadge(c.email_status)}</div>` : ''}
       ${c.source ? `<div class="mt-1 text-[11px] text-slate-400">via ${escapeHtml(c.source)}${c.confidence ? ` · ${escapeHtml(String(c.confidence))} confidence` : ''}</div>` : ''}
     </div>`;
   }
@@ -1380,7 +1399,9 @@ function trackerTableHtml() {
   const body = rows.map((l) => {
     const pl = state.pipeline[l.id];
     const c = outreachFor(l.id).contact;
-    const contact = c && c.name ? escapeHtml(c.name) : `<span class="text-slate-400">→ ${escapeHtml(dash(l.contact_role))}</span>`;
+    const contact = c && c.name
+      ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name)}${emailStatusBadge(c.email_status)}</span>`
+      : `<span class="text-slate-400">→ ${escapeHtml(dash(l.contact_role))}</span>`;
     const hasDraft = outreachFor(l.id).email ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
     return `<tr class="border-t border-slate-100 hover:bg-slate-50/60">
       <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
@@ -1418,6 +1439,7 @@ function renderTracker() {
       </div>
       <select id="o-stage" class="rounded-xl border-0 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">${stageSel}</select>
       <button type="button" data-goto="leads" class="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads</button>
+      <button type="button" data-export="outreach" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
     </div>
     <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="oCount" class="tnum font-semibold text-slate-700">${trackerRows().length}</span> in pipeline</div>
     <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="trackerTableWrap">${trackerTableHtml()}</div></div>
@@ -1433,6 +1455,196 @@ function renderOutreach() {
   const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('pipeline', '🔀 Pipeline')}${subBtn('tracker', '📋 Tracker')}</div>`;
   const body = state.outreachSub === 'pipeline' ? renderPipeline() : renderTracker();
   return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+/* ------------------------------------------------------------------ *
+ * Today / Home tab — surfaces existing data (no new state)
+ * ------------------------------------------------------------------ */
+
+function renderToday() {
+  const leads = state.leads;
+  // Hot leads: High-priority with a drafted email; fall back to High-priority.
+  const drafted = leads.filter((l) => l.priority === 'High' && outreachFor(l.id).email);
+  const hot = (drafted.length ? drafted : leads.filter((l) => l.priority === 'High')).slice(0, 6);
+  const hotCards = hot.length ? `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">` + hot.map((l) => {
+    const hasDraft = !!outreachFor(l.id).email;
+    return `<button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="flex flex-col rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-100 transition hover:ring-indigo-200">
+      <div class="mb-1 flex items-center justify-between gap-2">
+        <h4 class="truncate font-display text-[15px] font-bold text-slate-800">${escapeHtml(l.company)}</h4>
+        ${hasDraft ? '<span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">✉️ draft ready</span>' : '<span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-400">draft</span>'}
+      </div>
+      <div class="mb-2 flex flex-wrap gap-1.5">${coloredChip(l.segment, leadSegColor(l.segment))}</div>
+      <p class="mt-auto truncate text-[12px] text-slate-500">${escapeHtml(dash(l.application || l.fabric_fit))}</p>
+    </button>`;
+  }).join('') + `</div>`
+    : `<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No high-priority leads yet.</div>`;
+
+  // Coming up: next dated exhibitions.
+  const upcoming = state.exhibitions.filter((d) => d.start).sort((a, b) => a.start.localeCompare(b.start)).slice(0, 6);
+  const comingList = upcoming.length ? upcoming.map((d) => {
+    const col = segColor(d.segment);
+    const isNew = d.source === 'discovered' ? ' <span class="rounded-full bg-fuchsia-100 px-1.5 py-0.5 text-[10px] font-bold text-fuchsia-600">✨</span>' : '';
+    return `<div class="flex items-center gap-3 border-t border-slate-100 py-2.5 first:border-t-0">
+      <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${col}"></span>
+      <div class="min-w-0 flex-1"><div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${isNew}</div><div class="text-[12px] text-slate-500">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(d.country)}${d.place ? ' · ' + escapeHtml(d.place) : ''}</div></div>
+      <div class="shrink-0 text-right text-[12px] font-medium text-slate-500 tnum">${escapeHtml(dash(d.dates))}</div>
+    </div>`;
+  }).join('') : `<div class="py-6 text-center text-sm text-slate-400">No dated shows yet.</div>`;
+  const comingCard = chartCard('📅', 'Coming up', `${upcoming.length} next shows`, comingList);
+
+  // Pipeline snapshot.
+  const inPipe = pipelinedLeads();
+  let snap;
+  if (!inPipe.length) {
+    snap = chartCard('📊', 'Pipeline snapshot', 'outreach stages', `<div class="py-6 text-center"><p class="text-sm text-slate-400">No leads in the pipeline yet.</p><button type="button" data-goto="outreach" class="mt-3 rounded-xl bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700">Open Outreach</button></div>`);
+  } else {
+    const stageItems = OUTREACH_STAGES.map((s) => ({ label: s.key, value: inPipe.filter((l) => state.pipeline[l.id].stage === s.key).length, color: s.color, key: 'tsg:' + s.key })).filter((i) => i.value > 0);
+    const cur = inPipe.filter((l) => (state.pipeline[l.id].dealType || 'current') === 'current').length;
+    const dealItems = [
+      { label: 'Current', value: cur, color: '#6366f1', key: 'tdl:current' },
+      { label: 'Potential', value: inPipe.length - cur, color: '#94a3b8', key: 'tdl:potential' },
+    ].filter((i) => i.value > 0);
+    const dealLegend = `<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">` + dealItems.map((i) => `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
+    snap = chartCard('📊', 'Pipeline snapshot', `${inPipe.length} in play`, buildBars(stageItems, { unit: 'lead' }) + `<div class="mt-3 border-t border-slate-100 pt-3">${buildStackedBar(dealItems, { unit: 'lead' })}${dealLegend}</div>`);
+  }
+
+  return `<div class="fade-in space-y-5">
+    <section>
+      <h3 class="mb-3 font-display text-sm font-bold text-slate-700">🔥 Hot leads</h3>
+      ${hotCards}
+    </section>
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+      <div data-chart>${comingCard}</div>
+      <div data-chart>${snap}</div>
+    </div>
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ *
+ * Global search (⌘K)
+ * ------------------------------------------------------------------ */
+
+function setSearchExpanded(v) { const i = $('#globalSearch'); if (i) i.setAttribute('aria-expanded', v ? 'true' : 'false'); }
+function hideSearch() { const out = $('#searchResults'); if (out) { out.hidden = true; out.innerHTML = ''; } setSearchExpanded(false); }
+
+function runGlobalSearch(q) {
+  const out = $('#searchResults');
+  if (!out) return;
+  q = String(q || '').trim().toLowerCase();
+  if (!q) { hideSearch(); return; }
+  const has = (s) => String(s || '').toLowerCase().includes(q);
+  const groups = [
+    { type: 'lead', icon: '🎯', label: 'Companies', items: state.leads.filter((l) => has(l.company)).slice(0, 6).map((l) => ({ id: l.id, title: l.company, sub: l.segment })) },
+    { type: 'exhibition', icon: '🎪', label: 'Exhibitions', items: state.exhibitions.filter((d) => has(d.name)).slice(0, 6).map((d) => ({ id: d.id, title: d.name, sub: d.country })) },
+    { type: 'product', icon: '🧵', label: 'Products', items: state.products.filter((pr) => has(pr.name)).slice(0, 6).map((pr) => ({ id: pr.id, title: pr.name, sub: pr.family })) },
+    { type: 'competitor', icon: '🛡️', label: 'Competitors', items: state.competitors.filter((c) => has(c.company)).slice(0, 6).map((c) => ({ id: c.id, title: c.company, sub: c.country })) },
+  ].filter((g) => g.items.length);
+
+  out.innerHTML = groups.length ? groups.map((g) => `
+    <div class="px-2 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">${g.icon} ${g.label}</div>
+    ${g.items.map((it) => `<button type="button" data-search-go="${g.type}:${escapeHtml(it.id)}" class="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-50">
+      <span class="truncate text-sm font-semibold text-slate-700">${escapeHtml(it.title)}</span>
+      <span class="shrink-0 text-[11px] text-slate-400">${escapeHtml(it.sub || '')}</span>
+    </button>`).join('')}`).join('')
+    : `<div class="px-3 py-4 text-center text-[13px] text-slate-400">No matches for “${escapeHtml(q)}”.</div>`;
+  out.hidden = false;
+  setSearchExpanded(true);
+}
+
+function searchGo(token) {
+  const i = token.indexOf(':');
+  const type = token.slice(0, i), id = token.slice(i + 1);
+  hideSearch();
+  const si = $('#globalSearch'); if (si) si.value = '';
+  if (type === 'lead') { state.tab = 'leads'; state.leadsSub = 'list'; render(); openLeadDrawer(id); }
+  else if (type === 'exhibition') { const ex = state.exhibitions.find((x) => x.id === id); state.tab = 'exhibitions'; state.sub = 'list'; state.filters = { ...state.filters, search: ex ? ex.name : '', segment: 'all', country: 'all', status: 'all' }; render(); }
+  else if (type === 'product') { const pr = state.products.find((x) => x.id === id); state.tab = 'products'; state.productsSub = 'catalog'; state.productFilters = { search: pr ? pr.name : '', industry: 'all', family: 'all' }; render(); }
+  else if (type === 'competitor') { state.tab = 'competitors'; state.competitorsSub = 'list'; render(); }
+}
+
+/* ------------------------------------------------------------------ *
+ * Excel export (ExcelJS via CDN)
+ * ------------------------------------------------------------------ */
+
+function styleHeader(ws) {
+  const row = ws.getRow(1);
+  row.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF6366F1' } };
+  row.alignment = { vertical: 'middle' };
+  row.height = 20;
+}
+
+function buildLeadsSheet(wb) {
+  const ws = wb.addWorksheet('Leads');
+  ws.columns = [
+    { header: 'Company', key: 'company', width: 30 },
+    { header: 'Segment', key: 'segment', width: 26 },
+    { header: 'Country', key: 'country', width: 14 },
+    { header: 'Application', key: 'application', width: 30 },
+    { header: 'Fabric fit', key: 'fabric_fit', width: 26 },
+    { header: 'Est. use (m²/yr)', key: 'est', width: 16 },
+    { header: 'Sourcing', key: 'sourcing', width: 22 },
+    { header: 'Contact role', key: 'role', width: 26 },
+    { header: 'Priority', key: 'priority', width: 10 },
+    { header: 'Contact name', key: 'cname', width: 22 },
+    { header: 'Contact email', key: 'cemail', width: 28 },
+    { header: 'Email status', key: 'estatus', width: 14 },
+    { header: 'Has draft', key: 'draft', width: 10 },
+  ];
+  sortedLeads(filteredLeads()).forEach((l) => {
+    const c = outreachFor(l.id).contact || {};
+    ws.addRow({
+      company: l.company, segment: l.segment, country: l.country || '', application: l.application || '',
+      fabric_fit: l.fabric_fit || '', est: l.est_consumption || '', sourcing: l.sourcing_model || '',
+      role: l.contact_role || '', priority: l.priority || '', cname: c.name || '', cemail: c.email || '',
+      estatus: c.email_status || '', draft: outreachFor(l.id).email ? 'Yes' : '',
+    });
+  });
+  styleHeader(ws);
+  ws.views = [{ state: 'frozen', ySplit: 1 }];
+}
+
+function buildOutreachSheet(wb) {
+  const ws = wb.addWorksheet('Outreach pipeline');
+  ws.columns = [
+    { header: 'Company', key: 'company', width: 30 },
+    { header: 'Segment', key: 'segment', width: 26 },
+    { header: 'Stage', key: 'stage', width: 18 },
+    { header: 'Current/Potential', key: 'deal', width: 18 },
+    { header: 'Own/Jobwork/Agency', key: 'mfg', width: 20 },
+    { header: 'Contact', key: 'contact', width: 24 },
+    { header: 'Has draft', key: 'draft', width: 10 },
+  ];
+  pipelinedLeads().forEach((l) => {
+    const pl = state.pipeline[l.id];
+    const c = outreachFor(l.id).contact || {};
+    ws.addRow({
+      company: l.company, segment: l.segment, stage: pl.stage, deal: pl.dealType || 'current',
+      mfg: pl.mfg || 'own', contact: c.name || l.contact_role || '', draft: outreachFor(l.id).email ? 'Yes' : '',
+    });
+  });
+  styleHeader(ws);
+  ws.views = [{ state: 'frozen', ySplit: 1 }];
+}
+
+function exportExcel(kind) {
+  if (!window.ExcelJS) { console.error('ExcelJS not loaded yet'); return; }
+  try {
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'Kusumgar Growth Engine';
+    if (kind === 'leads') buildLeadsSheet(wb);
+    else if (kind === 'outreach') buildOutreachSheet(wb);
+    else return;
+    wb.xlsx.writeBuffer().then((buf) => {
+      const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kusumgar-${kind}-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }).catch((e) => console.error('export failed', e));
+  } catch (e) { console.error('export failed', e); }
 }
 
 /* ------------------------------------------------------------------ *
@@ -1457,7 +1669,8 @@ function renderTabs() {
 function render() {
   renderTabs();
   const tab = TABS.find((t) => t.id === state.tab);
-  if (state.tab === 'exhibitions') view.innerHTML = renderExhibitions();
+  if (state.tab === 'today') view.innerHTML = renderToday();
+  else if (state.tab === 'exhibitions') view.innerHTML = renderExhibitions();
   else if (state.tab === 'products') view.innerHTML = renderProducts();
   else if (state.tab === 'leads') view.innerHTML = renderLeads();
   else if (state.tab === 'competitors') view.innerHTML = renderCompetitors();
@@ -1465,7 +1678,8 @@ function render() {
   else view.innerHTML = renderPlaceholder(tab);
 
   // Views with SVG/dot entrance animations.
-  if (state.tab === 'exhibitions' && state.sub === 'overview') revealCharts();
+  if (state.tab === 'today') revealCharts();
+  else if (state.tab === 'exhibitions' && state.sub === 'overview') revealCharts();
   else if (state.tab === 'products' && state.productsSub === 'coverage') revealCharts();
   else if (state.tab === 'leads' && state.leadsSub === 'overview') revealCharts();
   else if (state.tab === 'competitors' && state.competitorsSub === 'landscape') revealCharts();
@@ -1540,6 +1754,12 @@ function wireEvents() {
 
     const ltoggle = e.target.closest('[data-ltoggle]');
     if (ltoggle) { state.leadFilters.fullOnly = !state.leadFilters.fullOnly; render(); return; }
+
+    const distoggle = e.target.closest('[data-distoggle]');
+    if (distoggle) { state.filters.discoveredOnly = !state.filters.discoveredOnly; render(); return; }
+
+    const exportBtn = e.target.closest('[data-export]');
+    if (exportBtn) { exportExcel(exportBtn.getAttribute('data-export')); return; }
 
     const sortTh = e.target.closest('[data-sort]');
     if (sortTh) {
@@ -1632,6 +1852,22 @@ function wireEvents() {
     if ($('#modal').classList.contains('open')) closeModal();
     else closeDrawer();
   });
+
+  // Global search (⌘K / Ctrl-K)
+  const gs = $('#globalSearch');
+  if (gs) {
+    gs.addEventListener('input', () => runGlobalSearch(gs.value));
+    gs.addEventListener('focus', () => { if (gs.value.trim()) runGlobalSearch(gs.value); });
+    gs.addEventListener('keydown', (e) => { if (e.key === 'Escape') { hideSearch(); gs.blur(); } });
+  }
+  const sr = $('#searchResults');
+  if (sr) sr.addEventListener('click', (e) => { const b = e.target.closest('[data-search-go]'); if (b) searchGo(b.getAttribute('data-search-go')); });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); const i = $('#globalSearch'); if (i) { i.focus(); i.select(); } }
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#globalSearch') && !e.target.closest('#searchResults')) hideSearch();
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -1659,20 +1895,21 @@ async function boot() {
       fetch('data/outreach.json').then((r) => r.json()).catch(() => ({})),
     ]);
     state.meta = meta;
-    state.exhibitions = exhibitions;
     // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.
-    const unwrap = (raw, key) => (Array.isArray(raw) ? raw : (raw[key] || []));
+    const unwrap = (raw, key) => (Array.isArray(raw) ? raw : (raw && raw[key]) || []);
+    state.exhibitions = unwrap(exhibitions, 'exhibitions').filter((d) => d && d.id && d.name);
     state.products = unwrap(products, 'products').filter((p) => p && p.id && p.name);
     state.leads = unwrap(leads, 'leads').filter((l) => l && l.id && l.company);
     state.competitors = unwrap(competitors, 'competitors').filter((c) => c && c.id && c.company);
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
-    loadRelevance(exhibitions.map((d) => d.id));
+    loadRelevance(state.exhibitions.map((d) => d.id));
     loadPipeline(state.leads.map((l) => l.id));
 
     const updated = meta.updated_at
       ? new Date(meta.updated_at + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
       : '—';
     const ut = $('#updatedText'); if (ut) ut.textContent = `Updated ${updated}`;
+    const ff = $('#footerFreshness'); if (ff) ff.textContent = `Kusumgar Growth Engine · data updated ${updated}`;
   } catch (err) {
     console.error('Failed to load data', err);
     view.innerHTML = `<div class="rounded-2xl bg-white p-8 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-100">Couldn’t load exhibition data. Please refresh.</div>`;

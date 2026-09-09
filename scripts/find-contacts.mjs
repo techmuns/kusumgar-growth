@@ -1,18 +1,22 @@
-// Best-effort CONTACT discovery per lead's target role, written into outreach.json[id].contact.
+// Fully-automated contact discovery per lead — written into outreach.json[id].contact.
 //
-// Source order (whichever secrets exist): ContactOut API → LinkedIn (Playwright login) →
-// Firecrawl (company website). Bedrock (askClaude) picks the best-matching person for the role.
-// Best-effort, capped, and GRACEFUL — LinkedIn WILL sometimes be blocked; that's fine, fall
-// through. Never throws, never deletes existing outreach.json entries (merges per id).
+// Graceful chain (no logins, no Playwright):
+//   1. Hunter.io Domain Search (if HUNTER_API_KEY + a company domain) → askClaude picks the
+//      person matching contact_role → take Hunter's VERIFIED email (email_status: "verified").
+//   2. Always-on FREE discovery: Firecrawl (+ Scrape.do) web-search "<company> <role> linkedin"
+//      → askClaude picks the best public {name, title, linkedin_url}. No login.
+//   3. FREE email fallback (no Hunter): Firecrawl the company contact/about/team page for a
+//      published email (email_status: "published"); else askClaude infers a likely address from
+//      name + domain (email_status: "guessed").
 //
-// Graceful: if NONE of CONTACTOUT_API_KEY / (LINKEDIN_EMAIL+LINKEDIN_PASSWORD) / FIRECRAWL_API_KEY
-// is set → logs and exits 0, writes nothing.
+// Writes {name,title,linkedin_url,email,email_status,source,confidence}. Best-effort, capped,
+// graceful (missing keys → exit 0, writes nothing), NEVER deletes existing entries, never throws.
 //
 // Test hooks: KGR_OUTREACH_PATH / KGR_LEADS_PATH.
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { firecrawlScrape, apiKey as firecrawlKey } from './lib/firecrawl.mjs';
+import { firecrawlScrape, firecrawlSearch, scrapedoGet, apiKey as firecrawlKey, haveScrapedo } from './lib/firecrawl.mjs';
 import { askClaude } from './lib/llm.mjs';
 
 const p = (env, rel) => process.env[env] || fileURLToPath(new URL(rel, import.meta.url));
@@ -21,11 +25,10 @@ const OUTREACH_PATH = p('KGR_OUTREACH_PATH', '../public/data/outreach.json');
 
 const MAX = Math.max(1, parseInt(process.env.MAX || '25', 10) || 25);
 const PRIORITY_ONLY = /^(1|true|yes)$/i.test(process.env.PRIORITY_ONLY || '');
-const CONTACTOUT = process.env.CONTACTOUT_API_KEY || '';
-const LI_EMAIL = process.env.LINKEDIN_EMAIL || '';
-const LI_PASS = process.env.LINKEDIN_PASSWORD || '';
+const HUNTER = process.env.HUNTER_API_KEY || '';
 
 const domainOf = (l) => { try { return l.website ? new URL(l.website).hostname.replace(/^www\./, '') : ''; } catch { return ''; } };
+const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
 
 async function loadOutreach() {
   try { const o = JSON.parse(await readFile(OUTREACH_PATH, 'utf8')); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
@@ -36,91 +39,69 @@ async function loadLeads() {
   catch (e) { console.error(`[find-contacts] cannot read leads: ${e.message}`); return []; }
 }
 
-// ---- source: ContactOut ----
-async function contactOut(lead) {
-  if (!CONTACTOUT) return [];
-  try {
-    const res = await fetch('https://api.contactout.com/v1/people/search', {
-      method: 'POST',
-      headers: { authorization: CONTACTOUT, token: CONTACTOUT, 'content-type': 'application/json' },
-      body: JSON.stringify({ company: [domainOf(lead) || lead.company], job_title: [lead.contact_role || ''].filter(Boolean), reveal_info: true, page: 1 }),
-      signal: AbortSignal.timeout(30_000),
+// Step 2 — public web search for the person (name/title/linkedin). No login.
+async function webPerson(lead, debug) {
+  const results = await firecrawlSearch(`${lead.company} ${lead.contact_role || 'purchasing buyer'} linkedin`, debug);
+  const text = Array.isArray(results) ? results.map((r) => `${r.title || ''} | ${r.url || ''} | ${r.description || ''}`).join('\n') : '';
+  if (text) {
+    const pick = await askClaude({
+      system: 'From LinkedIn/web search results, pick the ONE person best matching the target role. Return STRICT JSON single object {"name","title","linkedin_url"} or {}.',
+      user: `Company: ${lead.company}\nTarget role: ${lead.contact_role || ''}\nResults:\n${text.slice(0, 4000)}`,
+      json: true, maxTokens: 300,
     });
-    if (!res.ok) { console.error(`[find-contacts] ContactOut ${res.status}`); return []; }
-    const data = await res.json();
-    const raw = data?.profiles || data?.data || [];
-    const list = Array.isArray(raw) ? raw : Object.values(raw || {});
-    return list.map((pr) => ({
-      name: pr.full_name || pr.name,
-      title: pr.title || pr.headline || '',
-      linkedin_url: pr.li_vanity || pr.linkedin_url || pr.url || null,
-      email: pr.work_email || pr.email || (Array.isArray(pr.work_emails) && pr.work_emails[0]) || null,
-    })).filter((x) => x.name);
-  } catch (e) { console.error(`[find-contacts] ContactOut failed (ok): ${e.message}`); return []; }
-}
-
-// ---- source: LinkedIn via Playwright (best-effort; often blocked) ----
-async function linkedIn(lead) {
-  if (!LI_EMAIL || !LI_PASS) return [];
-  let browser;
-  try {
-    const { chromium } = await import('playwright');
-    browser = await chromium.launch({ headless: true });
-    const page = await (await browser.newContext()).newPage();
-    await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded', timeout: 45_000 });
-    await page.fill('#username', LI_EMAIL);
-    await page.fill('#password', LI_PASS);
-    await page.click('button[type="submit"]');
-    await page.waitForTimeout(4000);
-    if (/checkpoint|challenge/i.test(page.url())) throw new Error('login checkpoint');
-    const q = encodeURIComponent(`${lead.company} ${lead.contact_role || ''}`.trim());
-    await page.goto(`https://www.linkedin.com/search/results/people/?keywords=${q}`, { waitUntil: 'domcontentloaded', timeout: 45_000 });
-    await page.waitForTimeout(3500);
-    const cands = await page.$$eval('a[href*="/in/"]', (as) => as.slice(0, 8).map((a) => ({
-      name: (a.innerText || '').split('\n')[0].trim(),
-      linkedin_url: a.href.split('?')[0],
-    })).filter((x) => x.name && x.name.length > 1));
-    await browser.close();
-    return cands;
-  } catch (e) {
-    console.error(`[find-contacts] LinkedIn failed (ok, falling through): ${e.message}`);
-    try { if (browser) await browser.close(); } catch { /* noop */ }
-    return [];
+    if (pick && pick.name) return { name: pick.name, title: pick.title || '', linkedin_url: pick.linkedin_url || null };
+    const li = Array.isArray(results) ? results.find((r) => /linkedin\.com\/in\//.test(r.url || '')) : null;
+    if (li) return { name: null, title: null, linkedin_url: li.url.split('?')[0] };
   }
+  return null;
 }
 
-// ---- source: company website via Firecrawl ----
-async function websiteContacts(lead, debug) {
-  if (!firecrawlKey() || !lead.website) return [];
+// Step 1 — Hunter verified email.
+async function hunterEmail(lead, domain) {
+  try {
+    const res = await fetch(`https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${encodeURIComponent(HUNTER)}`, { signal: AbortSignal.timeout(30_000) });
+    if (!res.ok) { console.error(`[find-contacts] Hunter ${res.status}`); return null; }
+    const data = await res.json();
+    const emails = (data && data.data && data.data.emails) || [];
+    if (!emails.length) return null;
+    const pick = await askClaude({
+      system: 'Pick the person best matching the target role. Return STRICT JSON {"email","name","title"} or {}.',
+      user: `Target role: ${lead.contact_role || ''}\nPeople JSON:\n${JSON.stringify(emails.slice(0, 15)).slice(0, 4000)}`,
+      json: true, maxTokens: 300,
+    });
+    if (pick && pick.email) return { email: pick.email, name: pick.name || '', title: pick.title || '' };
+    const v = emails.find((e) => e.verification && e.verification.status === 'valid') || emails[0];
+    return v ? { email: v.value, name: [v.first_name, v.last_name].filter(Boolean).join(' '), title: v.position || '' } : null;
+  } catch (e) { console.error(`[find-contacts] Hunter failed (ok): ${e.message}`); return null; }
+}
+
+// Step 3a — published email on the company website.
+async function websiteEmail(lead, debug) {
   const base = String(lead.website).replace(/\/$/, '');
   let text = '';
   for (const u of [`${base}/contact`, `${base}/about`, base]) {
-    const data = await firecrawlScrape(u, { formats: ['markdown'] }, debug);
-    if (data && data.markdown) { text += '\n' + data.markdown; if (text.length > 5000) break; }
+    const d = await firecrawlScrape(u, { formats: ['markdown'] }, debug);
+    if (d && d.markdown) { text += '\n' + d.markdown; if (text.length > 4000) break; }
   }
-  if (!text.trim()) return [];
-  const res = await askClaude({
-    system: 'You extract named people (with titles and emails when present) from a company web page. Return ONLY a JSON array of {name,title,email}.',
-    user: `Company: ${lead.company}\nTarget role: ${lead.contact_role || ''}\n\nPage text:\n${text.slice(0, 6000)}\n\nReturn up to 8 people as JSON array.`,
-    json: true, maxTokens: 700,
-  });
-  return Array.isArray(res) ? res.filter((x) => x && x.name).map((x) => ({ ...x, linkedin_url: x.linkedin_url || null, email: x.email || null })) : [];
+  if (!text && haveScrapedo()) { const html = await scrapedoGet(base); if (html) text += html.slice(0, 5000); }
+  const m = text.match(EMAIL_RE);
+  if (m && !/example\.|sentry|wixpress|\.png|\.jpg/i.test(m[0])) return m[0];
+  return null;
 }
 
-async function pickBest(lead, candidates) {
-  const res = await askClaude({
-    system: 'You pick the single best contact for a B2B fabric-sales outreach, matching the target role as closely as possible. Return STRICT JSON only.',
-    user: `Target role: ${lead.contact_role || 'purchasing or technical buyer'}\nCompany: ${lead.company}\nCandidates JSON:\n${JSON.stringify(candidates).slice(0, 4000)}\n\nReturn {"name","title","linkedin_url","email","confidence":"high|medium|low"} for the best match, or {} if none fit.`,
-    json: true, maxTokens: 400,
+// Step 3b — infer likely address from name + domain.
+async function guessEmail(name, domain) {
+  const g = await askClaude({
+    system: 'Infer the single most likely corporate work email for this person using common patterns (first.last@, flast@, first@). Return STRICT JSON {"email":"..."} only.',
+    user: `Name: ${name}\nDomain: ${domain}`,
+    json: true, maxTokens: 120,
   });
-  if (res && res.name) return res;
-  const c = candidates[0];
-  return c ? { name: c.name, title: c.title || '', linkedin_url: c.linkedin_url || null, email: c.email || null, confidence: 'low' } : null;
+  return (g && g.email && EMAIL_RE.test(g.email)) ? g.email : null;
 }
 
 async function main() {
-  if (!CONTACTOUT && !(LI_EMAIL && LI_PASS) && !firecrawlKey()) {
-    console.log('[find-contacts] no contact-discovery keys set (ContactOut / LinkedIn / Firecrawl) — writing nothing. Exiting 0.');
+  if (!HUNTER && !firecrawlKey() && !haveScrapedo()) {
+    console.log('[find-contacts] no discovery keys (HUNTER / FIRECRAWL / SCRAPEDO) — writing nothing. Exiting 0.');
     return;
   }
   const leads = await loadLeads();
@@ -137,18 +118,36 @@ async function main() {
   let found = 0;
   try {
     for (const l of queue) {
-      let candidates = [], source = '';
-      if (CONTACTOUT) { candidates = await contactOut(l); if (candidates.length) source = 'contactout'; }
-      if (!candidates.length && LI_EMAIL && LI_PASS) { candidates = await linkedIn(l); if (candidates.length) source = 'linkedin'; }
-      if (!candidates.length && firecrawlKey()) { candidates = await websiteContacts(l, debug); if (candidates.length) source = 'website'; }
-      if (!candidates.length) continue;
+      const domain = domainOf(l);
+      const contact = { name: null, title: null, linkedin_url: null, email: null, email_status: null, source: '', confidence: 'low' };
 
-      const best = await pickBest(l, candidates);
-      if (!best || !best.name) continue;
-      outreach[l.id] = {
-        ...(outreach[l.id] || {}),
-        contact: { name: best.name, title: best.title || '', linkedin_url: best.linkedin_url || null, email: best.email || null, source, confidence: best.confidence || 'medium' },
-      };
+      if (firecrawlKey() || haveScrapedo()) {
+        const person = await webPerson(l, debug);
+        if (person) { contact.name = person.name; contact.title = person.title; contact.linkedin_url = person.linkedin_url; contact.source = 'web'; contact.confidence = 'medium'; }
+      }
+
+      if (HUNTER && domain) {
+        const h = await hunterEmail(l, domain);
+        if (h && h.email) {
+          contact.email = h.email; contact.email_status = 'verified';
+          if (!contact.name) contact.name = h.name || null;
+          if (!contact.title) contact.title = h.title || '';
+          contact.source = contact.source ? 'web+hunter' : 'hunter';
+          contact.confidence = 'high';
+        }
+      }
+
+      if (!contact.email && (firecrawlKey() || haveScrapedo()) && l.website) {
+        const pub = await websiteEmail(l, debug);
+        if (pub) { contact.email = pub; contact.email_status = 'published'; if (!contact.source) contact.source = 'website'; }
+      }
+      if (!contact.email && domain && contact.name) {
+        const g = await guessEmail(contact.name, domain);
+        if (g) { contact.email = g; contact.email_status = 'guessed'; if (!contact.source) contact.source = 'guess'; }
+      }
+
+      if (!contact.name && !contact.email) continue;
+      outreach[l.id] = { ...(outreach[l.id] || {}), contact };
       found++;
     }
   } catch (e) { console.error(`[find-contacts] pipeline error (continuing): ${e.message}`); }
