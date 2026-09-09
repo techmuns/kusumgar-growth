@@ -34,6 +34,7 @@ jobs:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
       # Optional contact-discovery providers (automated, no logins).
+      PDL_API_KEY: ${{ secrets.PDL_API_KEY }}
       HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
       SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
       MAX: ${{ github.event.inputs.max || '25' }}

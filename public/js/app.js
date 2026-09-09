@@ -136,7 +136,7 @@ const state = {
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'overview',   // 'overview' | 'list'
-  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', fullOnly: false },
+  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', fullOnly: false, needsContact: false },
   leadSort: { key: 'company', dir: 'asc' },
   competitorsSub: 'landscape', // 'landscape' | 'list'
   outreachSub: 'pipeline',     // 'pipeline' | 'tracker'
@@ -988,6 +988,7 @@ function filteredLeads() {
     if (f.country !== 'all' && l.country !== f.country) return false;
     if (f.priority !== 'all' && l.priority !== f.priority) return false;
     if (f.fullOnly && l.detail !== 'full') return false;
+    if (f.needsContact && !leadNeedsContact(l.id)) return false;
     if (q) {
       const hay = `${l.company} ${l.country} ${l.segment} ${l.application || ''} ${l.fabric_fit || ''} ${l.contact_role || ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -995,6 +996,12 @@ function filteredLeads() {
     return true;
   });
 }
+// A lead "needs contact" if it has no verified/published/manual email (i.e. guessed or none).
+const leadNeedsContact = (id) => {
+  const c = resolvedContact(id);
+  const st = c && c.email_status;
+  return !(st === 'verified' || st === 'verified (manual)' || st === 'published');
+};
 
 function sortedLeads(list) {
   const { key, dir } = state.leadSort;
@@ -1051,6 +1058,8 @@ function renderLeadsList() {
   const segs = [...new Set(state.leads.map((l) => l.segment))].sort();
   const countries = [...new Set(state.leads.map((l) => l.country))].sort();
   const toggleCls = f.fullOnly ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
+  const needCount = state.leads.filter((l) => leadNeedsContact(l.id)).length;
+  const needCls = f.needsContact ? 'bg-amber-500 text-white ring-amber-500' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
   return `
     <div class="fade-in">
       <div class="mb-3 flex flex-wrap items-center gap-2">
@@ -1064,6 +1073,8 @@ function renderLeadsList() {
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
         <button type="button" data-ltoggle aria-pressed="${f.fullOnly}"
           class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">📇 Fully profiled only</button>
+        <button type="button" data-lneed aria-pressed="${f.needsContact}"
+          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${needCls}">📮 Needs contact${needCount ? ` <span class="tnum">${needCount}</span>` : ''}</button>
         <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
       </div>
       <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> leads · <span class="text-slate-400">click a row for the full profile</span></div>
@@ -1106,6 +1117,27 @@ function openLeadDrawer(id) {
       ${row('Contact role', escapeHtml(dash(l.contact_role)))}
       ${row('Source', escapeHtml(dash(l.source)))}
     </div>`;
+  // Layer B — manual contact bridge (Nishad's real ContactOut-extension workflow).
+  const rc = resolvedContact(l.id);
+  const rcHas = rc && (rc.name || rc.email);
+  const bridge = `
+    <div class="mb-3 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+      <div class="mb-1.5 flex items-center justify-between gap-2">
+        <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</span>
+        ${emailStatusBadge(rc && rc.email_status, true)}
+      </div>
+      ${rcHas
+        ? `<div class="text-sm font-bold text-slate-800">${escapeHtml(rc.name || rc.email)}</div>${rc.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(rc.title)}</div>` : ''}${rc.email ? `<div class="mt-0.5 text-[12px]"><a href="mailto:${escapeHtml(rc.email)}" class="text-indigo-600 hover:underline">${escapeHtml(rc.email)}</a></div>` : ''}`
+        : `<div class="text-[13px] text-slate-600">Best role to target: <span class="font-semibold text-slate-800">${escapeHtml(dash(l.contact_role))}</span></div>`}
+      <div class="mt-2 flex flex-wrap gap-2">
+        <a href="${escapeHtml(linkedinSearchUrl(l))}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-lg bg-[#0a66c2] px-2.5 py-1.5 text-[12px] font-semibold text-white hover:opacity-90">🔗 Find contact on LinkedIn ↗</a>
+        ${rc && rc.linkedin_url ? `<a href="${escapeHtml(rc.linkedin_url)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-[12px] font-semibold text-[#0a66c2] ring-1 ring-slate-200 hover:bg-slate-50">Open profile ↗</a>` : ''}
+      </div>
+      <div class="mt-2 flex gap-2">
+        <input type="email" data-manual-email="${escapeHtml(l.id)}" value="${escapeHtml(rc && rc.email ? rc.email : '')}" placeholder="paste email from LinkedIn…" class="min-w-0 flex-1 rounded-lg border-0 bg-white px-3 py-1.5 text-[13px] text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+        <button type="button" data-action="save-draft" data-lead-id="${escapeHtml(l.id)}" class="shrink-0 rounded-lg bg-emerald-600 px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-emerald-700">Save &amp; draft</button>
+      </div>
+    </div>`;
   const html = `
     <div data-drawer-backdrop class="absolute inset-0 bg-slate-900/30"></div>
     <aside class="drawer-panel absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
@@ -1115,6 +1147,7 @@ function openLeadDrawer(id) {
       </div>
       <div class="flex-1 overflow-y-auto p-5">${body}</div>
       <div class="border-t border-slate-100 p-5">
+        ${bridge}
         <button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="w-full rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-95">✉️ Draft outreach email</button>
       </div>
     </aside>`;
@@ -1222,12 +1255,67 @@ function renderCompetitors() {
 const outreachFor = (id) => state.outreach[id] || {};
 const validStage = (s) => STAGE_KEYS.includes(s);
 
-// Colored email-status badge: verified=green, published=blue, guessed=amber.
-const EMAIL_STATUS = { verified: ['#10b981', 'Verified'], published: ['#3b82f6', 'Published'], guessed: ['#f59e0b', 'Guessed'] };
-function emailStatusBadge(status) {
+// Colored email-status badge: verified & verified(manual)=green, published=blue, guessed=amber, none=grey.
+const EMAIL_STATUS = {
+  'verified': ['#10b981', 'Verified'],
+  'verified (manual)': ['#10b981', 'Verified ✋'],
+  'published': ['#3b82f6', 'Published'],
+  'guessed': ['#f59e0b', 'Guessed'],
+};
+function emailStatusBadge(status, showNone = false) {
   const m = EMAIL_STATUS[status];
-  if (!m) return '';
+  if (!m) return showNone ? `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:#94a3b81f;color:#64748b">✉ No email</span>` : '';
   return `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:${m[0]}1f;color:${darken(m[0], 0.3)}">✉ ${m[1]}</span>`;
+}
+
+/* ---- Two-layer contacts: manual (localStorage, Layer B) wins over auto (outreach.json, Layer A) ---- */
+const MANUAL_KEY = (id) => `kgr.contact.${id}`;
+function manualContact(id) {
+  try { const r = localStorage.getItem(MANUAL_KEY(id)); return r ? JSON.parse(r) : null; } catch { return null; }
+}
+// Merged contact: manual email/status/source override auto; auto supplies name/title/linkedin.
+function resolvedContact(id) {
+  const a = outreachFor(id).contact || null;
+  const m = manualContact(id);
+  if (!m) return a;
+  return {
+    name: (a && a.name) || m.name || null,
+    title: (a && a.title) || m.title || '',
+    linkedin_url: (a && a.linkedin_url) || m.linkedin_url || null,
+    email: m.email || (a && a.email) || null,
+    email_status: m.email_status || (a && a.email_status) || null,
+    source: m.source || (a && a.source) || '',
+    confidence: (a && a.confidence) || 'manual',
+  };
+}
+// Draft: engine draft (outreach.json) wins; else a manual template draft.
+function resolvedEmail(id) {
+  const e = outreachFor(id).email;
+  if (e) return e;
+  const m = manualContact(id);
+  return (m && m.draft) ? m.draft : null;
+}
+const hasDraftFor = (id) => !!resolvedEmail(id);
+const linkedinSearchUrl = (lead) => `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(`${lead.company} ${lead.contact_role || ''}`.trim())}`;
+
+// Client-side Nishad-style template fill (Layer B — no LLM needed).
+function draftFromTemplate(lead) {
+  const industry = lead.segment || 'technical textiles';
+  const application = lead.application || lead.segment || 'your products';
+  const fit = lead.fabric_fit || 'coated & laminated technical fabrics';
+  const subject = `Technical Textiles for ${lead.segment || application} / Kusumgar`;
+  const body = `My name is Nishad Kusumgar, and I represent Kusumgar Private Limited (www.kusumgar.com), a leading technical textile manufacturer based in India, with over 50 years of expertise in producing synthetic technical textiles. Our state-of-the-art production facility includes weaving, dyeing, finishing, coating, and calendaring, enabling us to offer end-to-end solutions. Our fabrics are widely used across industries such as Military, Industrial, Outdoor, Medical, Automotive, Aeronautical, and Workwear.\n\nCoated and laminated fabrics are a core focus of our business, and we specialize in providing customized solutions for various sectors. We believe our capabilities and infrastructure align well with the requirements of the ${industry} industry, particularly for ${application}. Here are some of the solutions we can offer:\n- ${fit} tailored for ${application}\n- Custom coatings and finishes (PU, PVC, silicone, FR) engineered for durability\n- Colour-matched, made-to-spec rolls with consistent, repeatable quality\nThese fabrics can be tailored with various colour options, finishes, and coatings to meet your exact specifications.\n\nI would greatly appreciate the opportunity to arrange a conference call with you and your team in the coming weeks to discuss how Kusumgar can support your fabric requirements.\n\nThank you for your time and consideration. I look forward to your response.`;
+  return { subject, body, drafted_at: new Date().toISOString(), model: 'manual' };
+}
+function saveManualContact(id, email) {
+  const l = state.leads.find((x) => x.id === id);
+  if (!l || !email) return;
+  const auto = outreachFor(id).contact || {};
+  const rec = {
+    name: auto.name || null, title: auto.title || '', linkedin_url: auto.linkedin_url || null,
+    email, email_status: 'verified (manual)', source: 'contactout-extension', draft: draftFromTemplate(l),
+  };
+  try { localStorage.setItem(MANUAL_KEY(id), JSON.stringify(rec)); } catch { /* storage unavailable */ }
 }
 
 function loadPipeline(ids) {
@@ -1253,7 +1341,7 @@ function setPipeline(id, patch) {
 const pipelinedLeads = () => state.leads.filter((l) => validStage(state.pipeline[l.id]?.stage));
 
 function contactBlock(lead) {
-  const c = outreachFor(lead.id).contact;
+  const c = resolvedContact(lead.id);
   if (c && (c.name || c.email)) {
     const li = c.linkedin_url ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">LinkedIn ↗</a>` : '';
     const em = c.email ? `<a href="mailto:${escapeHtml(c.email)}" class="text-indigo-600 hover:underline">${escapeHtml(c.email)}</a>` : '';
@@ -1261,14 +1349,14 @@ function contactBlock(lead) {
       <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
       <div class="mt-1 text-sm font-bold text-slate-800">${escapeHtml(c.name || '—')}</div>
       ${c.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(c.title)}</div>` : ''}
-      ${(li || em || c.email_status) ? `<div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">${li}${em}${emailStatusBadge(c.email_status)}</div>` : ''}
+      <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">${li}${em}${emailStatusBadge(c.email_status, true)}</div>
       ${c.source ? `<div class="mt-1 text-[11px] text-slate-400">via ${escapeHtml(c.source)}${c.confidence ? ` · ${escapeHtml(String(c.confidence))} confidence` : ''}</div>` : ''}
     </div>`;
   }
   return `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
     <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
     <div class="mt-1 text-[13px] text-slate-600">Best role to target: <span class="font-semibold text-slate-800">${escapeHtml(dash(lead.contact_role))}</span></div>
-    <div class="mt-1 text-[11px] text-slate-400">Run the Outreach refresh workflow to find a named contact.</div>
+    <div class="mt-1 text-[11px] text-slate-400">Use “🔗 Find contact on LinkedIn” in the lead panel, or run the Outreach refresh.</div>
   </div>`;
 }
 
@@ -1276,7 +1364,7 @@ function contactBlock(lead) {
 function openEmailModal(id) {
   const l = state.leads.find((x) => x.id === id);
   if (!l) return;
-  const email = outreachFor(id).email;
+  const email = resolvedEmail(id);
   const pl = state.pipeline[id] || {};
   const emailText = email ? `Subject: ${email.subject}\n\n${email.body}` : '';
 
@@ -1398,11 +1486,11 @@ function trackerTableHtml() {
   };
   const body = rows.map((l) => {
     const pl = state.pipeline[l.id];
-    const c = outreachFor(l.id).contact;
-    const contact = c && c.name
-      ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name)}${emailStatusBadge(c.email_status)}</span>`
+    const c = resolvedContact(l.id);
+    const contact = c && (c.name || c.email)
+      ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name || c.email)}${emailStatusBadge(c.email_status, true)}</span>`
       : `<span class="text-slate-400">→ ${escapeHtml(dash(l.contact_role))}</span>`;
-    const hasDraft = outreachFor(l.id).email ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
+    const hasDraft = hasDraftFor(l.id) ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
     return `<tr class="border-t border-slate-100 hover:bg-slate-50/60">
       <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
@@ -1464,10 +1552,10 @@ function renderOutreach() {
 function renderToday() {
   const leads = state.leads;
   // Hot leads: High-priority with a drafted email; fall back to High-priority.
-  const drafted = leads.filter((l) => l.priority === 'High' && outreachFor(l.id).email);
+  const drafted = leads.filter((l) => l.priority === 'High' && hasDraftFor(l.id));
   const hot = (drafted.length ? drafted : leads.filter((l) => l.priority === 'High')).slice(0, 6);
   const hotCards = hot.length ? `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">` + hot.map((l) => {
-    const hasDraft = !!outreachFor(l.id).email;
+    const hasDraft = hasDraftFor(l.id);
     return `<button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="flex flex-col rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-100 transition hover:ring-indigo-200">
       <div class="mb-1 flex items-center justify-between gap-2">
         <h4 class="truncate font-display text-[15px] font-bold text-slate-800">${escapeHtml(l.company)}</h4>
@@ -1592,12 +1680,12 @@ function buildLeadsSheet(wb) {
     { header: 'Has draft', key: 'draft', width: 10 },
   ];
   sortedLeads(filteredLeads()).forEach((l) => {
-    const c = outreachFor(l.id).contact || {};
+    const c = resolvedContact(l.id) || {};
     ws.addRow({
       company: l.company, segment: l.segment, country: l.country || '', application: l.application || '',
       fabric_fit: l.fabric_fit || '', est: l.est_consumption || '', sourcing: l.sourcing_model || '',
       role: l.contact_role || '', priority: l.priority || '', cname: c.name || '', cemail: c.email || '',
-      estatus: c.email_status || '', draft: outreachFor(l.id).email ? 'Yes' : '',
+      estatus: c.email_status || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
     });
   });
   styleHeader(ws);
@@ -1617,10 +1705,10 @@ function buildOutreachSheet(wb) {
   ];
   pipelinedLeads().forEach((l) => {
     const pl = state.pipeline[l.id];
-    const c = outreachFor(l.id).contact || {};
+    const c = resolvedContact(l.id) || {};
     ws.addRow({
       company: l.company, segment: l.segment, stage: pl.stage, deal: pl.dealType || 'current',
-      mfg: pl.mfg || 'own', contact: c.name || l.contact_role || '', draft: outreachFor(l.id).email ? 'Yes' : '',
+      mfg: pl.mfg || 'own', contact: c.name || c.email || l.contact_role || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
     });
   });
   styleHeader(ws);
@@ -1755,6 +1843,9 @@ function wireEvents() {
     const ltoggle = e.target.closest('[data-ltoggle]');
     if (ltoggle) { state.leadFilters.fullOnly = !state.leadFilters.fullOnly; render(); return; }
 
+    const lneed = e.target.closest('[data-lneed]');
+    if (lneed) { state.leadFilters.needsContact = !state.leadFilters.needsContact; render(); return; }
+
     const distoggle = e.target.closest('[data-distoggle]');
     if (distoggle) { state.filters.discoveredOnly = !state.filters.discoveredOnly; render(); return; }
 
@@ -1827,6 +1918,14 @@ function wireEvents() {
   const drawer = $('#drawer');
   drawer.addEventListener('click', (e) => {
     if (e.target.closest('[data-drawer-close]') || e.target.hasAttribute('data-drawer-backdrop')) { closeDrawer(); return; }
+    const save = e.target.closest('[data-action="save-draft"]');
+    if (save) {
+      const id = save.getAttribute('data-lead-id');
+      const inp = drawer.querySelector(`[data-manual-email="${CSS.escape(id)}"]`);
+      const email = inp ? inp.value.trim() : '';
+      if (email) { saveManualContact(id, email); openEmailModal(id); }
+      return;
+    }
     const draft = e.target.closest('[data-action="draft-email"]');
     if (draft) { openEmailModal(draft.getAttribute('data-lead-id')); }
   });
