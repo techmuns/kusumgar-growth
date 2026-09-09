@@ -1,89 +1,45 @@
-// Reusable Amazon Bedrock (Claude) wrapper for the Kusumgar Growth Engine pipelines.
-//
-// Design goals (later phases reuse this):
-//   - Reads env: BEDROCK_API_KEY (bearer token), BEDROCK_REGION (default "us-east-1"),
-//     BEDROCK_MODEL_ID (REQUIRED — never hardcode a model id; if unset, log and return null).
-//   - askClaude({system, user, json, maxTokens}) invokes the Bedrock Runtime endpoint and
-//     returns content[0].text (parsed JSON when json=true).
-//   - Never throws: returns null on any error / missing key. 30s timeout, 1 retry.
+// scripts/lib/llm.mjs — Bedrock Claude via the Converse API (proven pattern).
+const REGION = process.env.AWS_REGION || 'us-east-1';
+const BKEY   = process.env.BEDROCK_API_KEY || '';
+const MODELS = (process.env.BEDROCK_MODEL_IDS ||
+  'anthropic.claude-sonnet-5,us.anthropic.claude-sonnet-5,us.anthropic.claude-sonnet-4-5-20250929-v1:0')
+  .split(',').map(s => s.trim()).filter(Boolean);
 
-const REGION = process.env.BEDROCK_REGION || 'us-east-1';
-const TIMEOUT_MS = 30_000;
-const MAX_ATTEMPTS = 2; // initial + 1 retry
+export function haveBedrock() { return !!BKEY; }
 
-function apiKey() { return process.env.BEDROCK_API_KEY || ''; }
-function modelId() { return process.env.BEDROCK_MODEL_ID || ''; }
-// Base override exists only for testing; production uses the regional Bedrock host.
-function endpointFor(model) {
-  const base = process.env.BEDROCK_ENDPOINT || `https://bedrock-runtime.${REGION}.amazonaws.com`;
-  return `${base.replace(/\/$/, '')}/model/${encodeURIComponent(model)}/invoke`;
-}
-
-// Best-effort JSON extraction from a model text response.
-function parseJson(text) {
-  if (text == null) return null;
-  let t = String(text).trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/,'');
-  try { return JSON.parse(t); } catch { /* fall through */ }
-  const m = t.match(/[[{][\s\S]*[\]}]/);
-  if (m) { try { return JSON.parse(m[0]); } catch { /* ignore */ } }
-  return null;
-}
-
-/**
- * Ask Claude on Bedrock. Returns the assistant text (or parsed JSON when json=true),
- * or null on any failure. Never throws.
- */
-export async function askClaude({ system, user, json = false, maxTokens = 1024 } = {}) {
-  const key = apiKey();
-  const model = modelId();
-  if (!key) { console.error('[llm] BEDROCK_API_KEY not set — returning null.'); return null; }
-  if (!model) { console.error('[llm] BEDROCK_MODEL_ID not set (required) — returning null.'); return null; }
-
-  const body = {
-    anthropic_version: 'bedrock-2023-05-31',
-    max_tokens: maxTokens,
-    ...(system ? { system } : {}),
-    messages: [{ role: 'user', content: user }],
-  };
-
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-    try {
-      const res = await fetch(endpointFor(model), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${key}`,
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-      clearTimeout(timer);
-
-      const text = await res.text();
-      console.log(`[llm] invoke ${model} attempt ${attempt} -> ${res.status}`);
-      if (!res.ok) {
-        console.error(`[llm] error ${res.status}: ${text.slice(0, 240)}`);
-        if (attempt === MAX_ATTEMPTS) return null;
-        continue;
-      }
-
-      let payload;
-      try { payload = JSON.parse(text); } catch { console.error('[llm] non-JSON response'); return null; }
-      const content = payload && Array.isArray(payload.content) ? payload.content : [];
-      const out = content.map((b) => (b && typeof b.text === 'string' ? b.text : '')).join('').trim();
-      if (!out) return null;
-      return json ? parseJson(out) : out;
-    } catch (err) {
-      clearTimeout(timer);
-      const msg = err && err.name === 'AbortError' ? `timeout after ${TIMEOUT_MS}ms` : (err && err.message) || String(err);
-      console.error(`[llm] attempt ${attempt} failed: ${msg}`);
-      if (attempt === MAX_ATTEMPTS) return null;
+// askClaude({system, user, json, maxTokens}) -> string | parsed-JSON | null.
+// Never throws. Returns null if no key or all models exhausted.
+export async function askClaude({ system, user, json = false, maxTokens = 1024 }) {
+  if (!BKEY) return null;
+  const body = JSON.stringify({
+    system: [{ text: system }],
+    messages: [{ role: 'user', content: [{ text: user }] }],
+    inferenceConfig: { temperature: 0, maxTokens },
+  });
+  let lastErr = '';
+  const ROUNDS = 4;                       // a few patient waves; classification isn't time-critical
+  for (let round = 0; round < ROUNDS; round++) {
+    for (const model of MODELS) {
+      try {
+        const res = await fetch(`https://bedrock-runtime.${REGION}.amazonaws.com/model/${encodeURIComponent(model)}/converse`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${BKEY}`, 'content-type': 'application/json', accept: 'application/json' },
+          body,
+          signal: AbortSignal.timeout(120_000),
+        });
+        if (res.status === 429 || res.status >= 500) { lastErr = `HTTP ${res.status} busy`; continue; }   // busy -> next model/wave
+        if ([400,403,404].includes(res.status)) { lastErr = `HTTP ${res.status} ${(await res.text()).slice(0,160)}`; continue; } // model unusable -> next id
+        if (res.status !== 200) { lastErr = `HTTP ${res.status}`; continue; }
+        const data = await res.json();
+        const parts = data?.output?.message?.content;
+        const text = Array.isArray(parts) ? parts.map(p => p?.text || '').join('') : '';
+        if (!text) { lastErr = 'empty'; continue; }
+        if (json) { const m = text.match(/\{[\s\S]*\}/); try { return JSON.parse(m ? m[0] : text); } catch { return null; } }
+        return text;
+      } catch (e) { lastErr = `net: ${e.message}`; }
     }
+    if (round < ROUNDS - 1) await new Promise(r => setTimeout(r, 30_000));
   }
+  console.log(`Bedrock exhausted: ${lastErr}`);
   return null;
 }
-
-export { apiKey as bedrockKey, modelId };
