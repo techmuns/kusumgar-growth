@@ -4511,50 +4511,264 @@
       "detail": "basic",
       "source": "exhibition:intersec",
       "type": "potential_customer"
+    },
+    {
+      "id": "artec-corporation",
+      "company": "ARTEC Corporation",
+      "segment": "Tool & Equipment Bags",
+      "country": "USA",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:ata-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "american-plastics-sewit",
+      "company": "American Plastics/Sewit",
+      "segment": "Protective Covers & Industrial",
+      "country": "USA",
+      "website": null,
+      "application": null,
+      "fabric_fit": "600D PVC-Coated Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:ata-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "anci-inc",
+      "company": "ANCI Inc",
+      "segment": "Tool & Equipment Bags",
+      "country": "USA",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:ata-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "pip-global-safety",
+      "company": "PIP Global Safety",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "warson-brands",
+      "company": "WARSON BRANDS",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "castel",
+      "company": "CASTEL",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "cofra-s-r-l",
+      "company": "COFRA S.R.L.",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "sparco-s-p-a",
+      "company": "Sparco S.p.a.",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "mekap-srl",
+      "company": "MEKAP SRL",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "elementhub-milano",
+      "company": "ELEMENTHUB MILANO",
+      "segment": "Protective Covers & Industrial",
+      "country": "France",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:expoprotection",
+      "type": "potential_customer"
+    },
+    {
+      "id": "fsm",
+      "company": "FSM",
+      "segment": "Protective Covers & Industrial",
+      "country": "UK",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:safety-health-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "safety-groups-uk",
+      "company": "Safety Groups UK",
+      "segment": "Protective Covers & Industrial",
+      "country": "UK",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:safety-health-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "healthy-work-company",
+      "company": "Healthy Work Company",
+      "segment": "Protective Covers & Industrial",
+      "country": "UK",
+      "website": null,
+      "application": null,
+      "fabric_fit": "FR Protective Workwear Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:safety-health-expo",
+      "type": "potential_customer"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T06:31:24.983Z",
+    "scraped_at": "2026-09-10T06:44:32.443Z",
     "targets": [
-      "aplusa",
-      "intersec",
-      "nsc"
+      "ata-expo",
+      "expoprotection",
+      "safety-health-expo"
     ],
-    "pages_used": 4,
+    "pages_used": 6,
     "classified": 40,
-    "added_leads": 18,
-    "added_competitors": 0
+    "added_leads": 13,
+    "added_competitors": 1
   },
   "_debug": [
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.aplusa-online.com/vis/v1/en/directory/a\",\"title\":\"Exhibitor Index 2025 -- A+A Trade Fair - 04 - Messe Düsseldorf - Trade Fair\",\"description\":\"Find all exhibitors of Trade Fair Düsseldorf. Exhibito"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://advancedtextilesexpo.com/exhibit/\",\"title\":\"Exhibitor Information - Advanced Textiles Expo\",\"description\":\"# Exhibitor Information\\n## Who Attends?\\n#### Industrial Textile-Related Products and Servic"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![](https://www.itsamericaevents.com/content/dam/sitebuilder/rna/its-america-events/its-america-conference-expo/2026/images/itsa-hero-section.png/_jcr_content/renditions/original.image_file.1999.600.file/"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to Main Content](https://americancoatingsshow2026.smallworldlabs.com/#main)\\n\\n# Exhibitor Directory\\n\\n[![AmericanCoatingsShow2026](https://static.prod01.ue1.p.pcomm.net/americancoatingsshow2026/co"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to Main Content](https://advancedtextilesexpo2025.smallworldlabs.com/#main)\\n\\n# Exhibitor Directory\\n\\n[![Advanced Textiles Expo 2025](https://static.prod01.ue1.p.pcomm.net/advancedtextilesexpo2025"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://intersec.ae.messefrankfurt.com/dubai/en/exhibitor-search/exhibitor-search.html\",\"title\":\"2026 Exhibitor List - Intersec Dubai\",\"description\":\"Exhibitors & products at Intersec 2026 · 5 Health & Safety"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.expoprotection.com/en-gb.html\",\"title\":\"Risk Prevention and Management - Expoprotection\",\"description\":\"# IT Partners\\n## Featured Exhibitors\\n[![Exhibitors Carousel Cover](https://pub-mediabox-st"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"Cookie Settings\\n\\n# Exhibitors\\n\\nLoading\\n\\n- [All](https://www.internationalsecurityexpo.com/exhibitors?azletter= \\\"\\\")\\n- [0 - 9](https://www.internationalsecurityexpo.com/exhibitors?azletter=0-9 \\\"0-"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![10times](https://im.10times.com/1.png?c=web&s=eventdetail-exhibitors&p=pageview&e=3218492&k=1470d9e4d1daa638663e69e0577052cf)\\n\\nAdd a review\\n\\n03 - 05 Nov 2026\\n\\n# [Expo Protection](https://10times.c"
+    },
+    {
+      "path": "/v1/search",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.healthandsafetyevent.com/exhibitor-list\",\"title\":\"Exhibitor List | The Health & Safety Event\",\"description\":\"# Exhibitor List\\n## Event Partners and Supporters\\n![FSM](https://cdn.asp.events/CLIEN"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"Log In / Create Account\\n\\n## Informa helps businesses and professionals in hundreds of ways.\\n\\nOur international portfolio of live events, world-leading research publications, and innovative digital ser"
     }
   ]
 }

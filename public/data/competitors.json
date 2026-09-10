@@ -214,43 +214,67 @@
         "->"
       ],
       "source": "exhibition:techtextil"
+    },
+    {
+      "id": "anhui-kingtex-new-material-technology-co",
+      "company": "Anhui Kingtex New Material Technology Co.",
+      "country": "USA",
+      "focus": "Anhui Kingtex New Material Technology Co. manufactures technical fabrics and new materials, directly competing with Kusumgar's fabric production capabilities.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:ata-expo"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T06:16:43.775Z",
+    "scraped_at": "2026-09-10T06:44:32.443Z",
     "targets": [
-      "techtextil",
-      "techtextil-north-america"
+      "ata-expo",
+      "expoprotection",
+      "safety-health-expo"
     ],
-    "pages_used": 4,
+    "pages_used": 6,
     "classified": 40,
-    "added_leads": 3,
-    "added_competitors": 12
+    "added_leads": 13,
+    "added_competitors": 1
   },
   "_debug": [
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://techtextil.messefrankfurt.com/frankfurt/en/exhibitor-search.html\",\"title\":\"Exhibitors & products at Techtextil 2026\",\"description\":\"All exhibitors · Sumitomo Chemical Company Limited · 2a S.p.a. · Nan"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://advancedtextilesexpo.com/exhibit/\",\"title\":\"Exhibitor Information - Advanced Textiles Expo\",\"description\":\"# Exhibitor Information\\n## Who Attends?\\n#### Industrial Textile-Related Products and Servic"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip](https://techtextil-north-america.us.messefrankfurt.com/us/en/exhibitorsandproducts/exhibitorlist-25.html#content)\\n\\nClose search\\n\\n## Search\\n\\nOverall search\\n\\nOverall search\\n\\nSearch\\n\\nTechn"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to Main Content](https://advancedtextilesexpo2025.smallworldlabs.com/#main)\\n\\n# Exhibitor Directory\\n\\n[![Advanced Textiles Expo 2025](https://static.prod01.ue1.p.pcomm.net/advancedtextilesexpo2025"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://techtextil-north-america.us.messefrankfurt.com/us/en/exhibitorsandproducts.html\",\"title\":\"Exhibitors & Products - Techtextil North America\",\"description\":\"## Search\\n[![Techtextil North America](https"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.expoprotection.com/en-gb.html\",\"title\":\"Risk Prevention and Management - Expoprotection\",\"description\":\"# IT Partners\\n## Featured Exhibitors\\n[![Exhibitors Carousel Cover](https://pub-mediabox-st"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip](https://techtextil-north-america.us.messefrankfurt.com/us/en/exhibitorsandproducts/exhibitorlist-25.html#content)\\n\\nClose search\\n\\n## Search\\n\\nOverall search\\n\\nOverall search\\n\\nSearch\\n\\nTechn"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![10times](https://im.10times.com/1.png?c=web&s=eventdetail-exhibitors&p=pageview&e=3218492&k=1470d9e4d1daa638663e69e0577052cf)\\n\\nAdd a review\\n\\n03 - 05 Nov 2026\\n\\n# [Expo Protection](https://10times.c"
+    },
+    {
+      "path": "/v1/search",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.healthandsafetyevent.com/exhibitor-list\",\"title\":\"Exhibitor List | The Health & Safety Event\",\"description\":\"# Exhibitor List\\n## Event Partners and Supporters\\n![FSM](https://cdn.asp.events/CLIEN"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"Log In / Create Account\\n\\n## Informa helps businesses and professionals in hundreds of ways.\\n\\nOur international portfolio of live events, world-leading research publications, and innovative digital ser"
     }
   ]
 }
