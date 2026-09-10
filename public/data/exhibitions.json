@@ -490,5 +490,31 @@
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
   "relevance_reason": "Premier boat industry event bringing together marine professionals who would require technical fabrics for boat manufacturing and marine equipment"
+ },
+ {
+  "id": "euronaval",
+  "segment": "Military & Tactical",
+  "name": "EURONAVAL",
+  "country": "France",
+  "place": null,
+  "dates": null,
+  "start": null,
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-10T11:03:32.653Z",
+  "relevance_reason": "International Naval Defence & Maritime Exhibition focusing on high technology for naval defence and maritime security - relevant for military-grade technical textiles like tactical nylon and high-tenacity fabrics used in naval/maritime defense applications"
+ },
+ {
+  "id": "sidec",
+  "segment": "Military & Tactical",
+  "name": "SIDEC",
+  "country": "Slovenia",
+  "place": null,
+  "dates": null,
+  "start": null,
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-10T11:03:32.653Z",
+  "relevance_reason": "Slovenian International Defence Industry Exhibition showcasing innovations for the defence industry - relevant for military and tactical textile applications including parachute fabrics, tactical nylon, and ballistic polyester"
  }
 ]
