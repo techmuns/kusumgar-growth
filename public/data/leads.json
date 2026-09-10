@@ -6735,18 +6735,242 @@
       "detail": "basic",
       "source": "exhibition:dx-korea",
       "type": "potential_customer"
+    },
+    {
+      "id": "cia-d-cooperative-industries-aerospace-defense",
+      "company": "CIA&D (Cooperative Industries Aerospace & Defense)",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester, Aramid Defence Substrate, High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:defence-tech-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "spartan-aerospace-group",
+      "company": "Spartan Aerospace Group",
+      "segment": "Tool & Equipment Bags",
+      "country": "Canada",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:defence-tech-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "iai-israel-aerospace-industries",
+      "company": "IAI – ISRAEL AEROSPACE INDUSTRIES",
+      "segment": "Tool & Equipment Bags",
+      "country": "Israel",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon, Aramid Defence Substrate, 1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:defence-tech-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "zorronet",
+      "company": "ZORRONET",
+      "segment": "Tool & Equipment Bags",
+      "country": null,
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:defence-tech-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "3g-shielding-specialties",
+      "company": "3G Shielding Specialties",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "Aramid Defence Substrate",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:defence-tech-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "aerial-imagery-group-llc",
+      "company": "Aerial Imagery Group, LLC",
+      "segment": "Protective Covers & Industrial",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": null,
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Low",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "aerial-northwest-llc",
+      "company": "Aerial Northwest, LLC",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "ajb-enterprises-llc",
+      "company": "AJB Enterprises LLC",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "akamai-aerial-llc",
+      "company": "Akamai Aerial LLC",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "all-aerial-visual-llc",
+      "company": "All Aerial Visual, LLC.",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Low",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "alpha-drone-omega",
+      "company": "Alpha Drone Omega",
+      "segment": "Tool & Equipment Bags",
+      "country": null,
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "amigo-technology-llc",
+      "company": "Amigo Technology, LLC",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "anyang-hawk-aviation-technology-co-ltd",
+      "company": "Anyang Hawk Aviation Technology Co., Ltd.",
+      "segment": "Tool & Equipment Bags",
+      "country": "China",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
+    },
+    {
+      "id": "arcgine-technologies",
+      "company": "ARCGine Technologies",
+      "segment": "Tool & Equipment Bags",
+      "country": null,
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:drone-world-expo",
+      "type": "potential_customer"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T07:56:11.248Z",
+    "scraped_at": "2026-09-10T08:07:25.037Z",
     "targets": [
-      "dsa",
-      "dvd",
-      "dx-korea"
+      "defence-tech-expo",
+      "drone-world-expo",
+      "edex"
     ],
-    "pages_used": 6,
+    "pages_used": 4,
     "classified": 40,
-    "added_leads": 15,
+    "added_leads": 14,
     "added_competitors": 0
   },
   "_debug": [
@@ -6754,43 +6978,31 @@
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.dsaexhibition.com/exhibitor-list\",\"title\":\"Exhibitor List - DSA Exhibition\",\"description\":\"Exhibitor List · Exhibitor List · How to Exhibit · Book A Space · Branding & Sponsorship · Exhibitors Pro"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.spacetechexpo.com/exhibitor-list/\",\"title\":\"exhibitor list 2026 - Space Tech Expo USA\",\"description\":\"# EXHIBITOR LIST 2026\\n### **Exhibitors A-Z**\\n#### [Advanced Test Equipment Rentals](https://"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Rectangle 131](https://www.expocaptive.com/wp-content/uploads/2025/09/Rectangle-131.png)\\n\\n- [Home](https://stag.expocaptive.com/)\\n- [Security & Defense](https://stag.expocaptive.com/security-defense-"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"GET THE LATEST NEWS\\n\\nX\\n\\nX\\n\\n![spc-horizontal-cu_1760456133112.png](https://editor-upload-cdn.optimonk.com/userImages/182878/68ee6d409efc74dedf3654e6/SPC-HORIZONTAL-CU_1760456133112.png)\\n\\nGET THE LA"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.militarysystems-tech.com/events/dvd-2026-18-19-september\",\"title\":\"DVD 2026, 18 – 19 September - Military Systems and Technology\",\"description\":\"in 6 days · The event provides a unique opportunity"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.expouav.com/\",\"title\":\"Commercial UAV Expo | Drone Conference & Trade Show\",\"description\":\"Exhibitor List · Indoor Airspace · Marketing Opportunities · CONFERENCE · Schedule at a ... You can view "
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"### **Come See The Future at Modern Day Marine at the Walter E. Washington Convention Center!**\\n\\n400+ companies, live product demonstrations, and industry presentations covering the latest in emerging m"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"# Exhibitors list\\n\\nUAV SHOW 2026\\n\\n* * *\\n\\nFilter\\n\\n\\n\\nSectors\\n\\n\\nAllDualDéfenseCivil\\n\\nThemed pathways\\n\\n\\nAllDéfense/sécurité civile/surveillanceRecherche développement/innovationElectronique/"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"The Association of the United States Army (AUSA) uses cookies and similar technologies to improve your experience and better understand how visitors use our website. Cookies that require consent will only"
-    },
-    {
-      "path": "/v1/search",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.unmannedsystemstechnology.com/events/dx-korea/\",\"title\":\"DX KOREA 2026 | September 16–19, 2026 | Goyang, South Korea\",\"description\":\"The 7th edition of the exhibition is expected to feature 700 co"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"Loading...\\n\\nToggle navigation\\n\\n[![](https://expo.semi.org/korea2026/custom/images/interface/SCKorea_Rev.png)](https://expo.semi.org/korea2026/Public/enter.aspx)\\n\\n- [Search](https://expo.semi.org/kor"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[011-45055579](tel:01145055577) \\\\| [info@droneexpo.in](mailto:info@droneexpo.in)\\n\\n[Conference Registration](https://www.droneexpo.in/delegate-registration) [\\\\|](https://www.droneexpo.in/exhibitors-lis"
     }
   ]
 }
