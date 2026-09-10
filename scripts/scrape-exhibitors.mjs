@@ -163,17 +163,19 @@ async function main() {
 
         const c = await askClaude({
           system,
-          user: `Company: ${name}\nContext: exhibitor at ${show.name} (segment ${show.segment}, ${show.country}).\nReturn JSON: {"classification":"potential_customer|competitor|not_relevant","segment":"<one of the listed segments or ->","fabric_fit":"<closest Kusumgar fabric or ->","priority":"High|Medium|Low","positioning":"Cost / Scale|Premium|Technology / Technical|Regional","reasoning":"<one short sentence>"}`,
+          user: `Company: ${name}\nContext: exhibitor at ${show.name} (a show held in ${show.country}; segment ${show.segment}).\nNote: the show's location is NOT the company's country — set "country" to where THIS company is actually headquartered (infer from its name/known HQ), or "-" if you truly cannot tell.\nReturn JSON: {"classification":"potential_customer|competitor|not_relevant","country":"<company's home country, or ->","segment":"<one of the listed segments or ->","fabric_fit":"<closest Kusumgar fabric or ->","priority":"High|Medium|Low","positioning":"Cost / Scale|Premium|Technology / Technical|Regional","reasoning":"<one short sentence>"}`,
           json: true, maxTokens: 400,
         });
         if (!c || !c.classification) continue;
+        // Company's own HQ country (never the show's location); null when unknown.
+        const cc = (typeof c.country === 'string' && c.country.trim() && !/^-+$/.test(c.country.trim())) ? c.country.trim() : null;
 
         if (c.classification === 'potential_customer') {
           seen.add(nm);
           addedLeads.push({
             id: slug(name), company: String(name).trim(),
             segment: c.segment && c.segment !== '-' ? c.segment : 'Protective Covers & Industrial',
-            country: show.country || null, website: null,
+            country: cc, website: null,
             application: null, fabric_fit: c.fabric_fit && c.fabric_fit !== '-' ? c.fabric_fit : null,
             est_consumption: null, sourcing_model: null, contact_role: null,
             priority: ['High', 'Medium', 'Low'].includes(c.priority) ? c.priority : 'Medium',
@@ -183,7 +185,7 @@ async function main() {
           seen.add(nm);
           const POS_ALLOWED = ['Cost / Scale', 'Premium', 'Technology / Technical', 'Regional'];
           addedComps.push({
-            id: slug(name), company: String(name).trim(), country: show.country || null,
+            id: slug(name), company: String(name).trim(), country: cc,
             focus: c.reasoning || '—',
             positioning: POS_ALLOWED.includes(c.positioning) ? c.positioning : 'Regional',
             segments: c.segment && c.segment !== '-' ? [c.segment] : [],
