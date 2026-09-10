@@ -143,6 +143,8 @@ const state = {
   outreach: {},           // leadId -> { contact, email }  (from outreach.json)
   pipeline: {},           // leadId -> { stage, dealType, mfg }  (localStorage)
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
+  onlyFound: (() => { try { return localStorage.getItem('kgr.onlyfound') === '1'; } catch { return false; } })(),
+  master: null,           // full unfiltered {leads,competitors,exhibitions} — for the "only found" toggle
   filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false },
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
@@ -483,7 +485,7 @@ function renderOverview() {
   const donutSeg = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(segItems, { centerNum: total, centerLabel: 'shows' })}${buildLegend(segItems, { total })}</div>`;
 
   // 2) Country bars (top 7)
-  const countryCounts = [...countBy(data, (d) => d.country).entries()]
+  const countryCounts = [...countBy(data, (d) => d.country || 'Unknown').entries()]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   const top = countryCounts.slice(0, 7);
   const maxC = top[0] ? top[0][1] : 1, minC = top[top.length - 1] ? top[top.length - 1][1] : 0;
@@ -555,7 +557,7 @@ function filteredRows() {
   const q = f.search.trim().toLowerCase();
   return state.exhibitions.filter((d) => {
     if (f.segment !== 'all' && d.segment !== f.segment) return false;
-    if (f.country !== 'all' && d.country !== f.country) return false;
+    if (f.country !== 'all' && (d.country || 'Unknown') !== f.country) return false;
     if (f.status !== 'all' && d.status !== f.status) return false;
     if (f.relevantOnly && state.relevance[d.id] !== 'yes') return false;
     if (f.discoveredOnly && d.source !== 'discovered') return false;
@@ -609,7 +611,7 @@ function selectHtml(id, label, value, options) {
 function renderList() {
   const f = state.filters;
   const segments = [...new Set(state.exhibitions.map((d) => d.segment))].sort();
-  const countries = [...new Set(state.exhibitions.map((d) => d.country))].sort();
+  const countries = [...new Set(state.exhibitions.map((d) => d.country || 'Unknown'))].sort();
   const statuses = STATUS_ORDER.filter((s) => state.exhibitions.some((d) => d.status === s));
 
   const toggleOn = f.relevantOnly;
@@ -960,7 +962,7 @@ function renderLeadsOverview() {
     .map(([s, v]) => ({ label: s, value: v, color: leadSegColor(s), key: 'lseg:' + s }));
   const donut = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(segItems, { centerNum: total, centerLabel: 'leads', unit: 'lead' })}${buildLegend(segItems, { total, unit: 'lead' })}</div>`;
 
-  const countryCounts = [...countBy(leads, (d) => d.country).entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 10);
+  const countryCounts = [...countBy(leads, (d) => d.country || 'Unknown').entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 10);
   const maxC = countryCounts[0] ? countryCounts[0][1] : 1, minC = countryCounts.length ? countryCounts[countryCounts.length - 1][1] : 0;
   const countryItems = countryCounts.map(([c, v]) => ({ label: c, value: v, flag: FLAGS[c] || '', key: 'lc:' + c, color: lerpColor('#818cf8', '#db2777', maxC === minC ? 0.5 : (v - minC) / (maxC - minC)) }));
   const countryLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#818cf8,#db2777)"></span><span>more leads</span></div>`;
@@ -995,7 +997,7 @@ function filteredLeads() {
   const q = f.search.trim().toLowerCase();
   return state.leads.filter((l) => {
     if (f.segment !== 'all' && l.segment !== f.segment) return false;
-    if (f.country !== 'all' && l.country !== f.country) return false;
+    if (f.country !== 'all' && (l.country || 'Unknown') !== f.country) return false;
     if (f.priority !== 'all' && l.priority !== f.priority) return false;
     if (f.fullOnly && l.detail !== 'full') return false;
     if (f.needsContact && !leadNeedsContact(l.id)) return false;
@@ -1066,7 +1068,7 @@ function refreshLeadsTable() {
 function renderLeadsList() {
   const f = state.leadFilters;
   const segs = [...new Set(state.leads.map((l) => l.segment))].sort();
-  const countries = [...new Set(state.leads.map((l) => l.country))].sort();
+  const countries = [...new Set(state.leads.map((l) => l.country || 'Unknown'))].sort();
   const toggleCls = f.fullOnly ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
   const needCount = state.leads.filter((l) => leadNeedsContact(l.id)).length;
   const needCls = f.needsContact ? 'bg-amber-500 text-white ring-amber-500' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
@@ -1204,7 +1206,7 @@ function renderCompetitorsLandscape() {
       <p class="mt-3 text-[13px] text-slate-500"><span class="font-semibold text-slate-700">Kusumgar's edge:</span> a reliable India-based alternative to China — wins on service and customisation, not just the lowest price.</p>
     </section>`;
 
-  const countryCounts = [...countBy(comps, (d) => d.country).entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const countryCounts = [...countBy(comps, (d) => d.country || 'Unknown').entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   const maxC = countryCounts[0] ? countryCounts[0][1] : 1, minC = countryCounts.length ? countryCounts[countryCounts.length - 1][1] : 0;
   const countryItems = countryCounts.map(([c, v]) => ({ label: c, value: v, flag: FLAGS[c] || '', key: 'cc:' + c, color: lerpColor('#818cf8', '#db2777', maxC === minC ? 0.5 : (v - minC) / (maxC - minC)) }));
   const countryLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#818cf8,#db2777)"></span><span>more competitors</span></div>`;
@@ -1775,8 +1777,38 @@ function renderTabs() {
   }).join('');
 }
 
+/* ---- "Show only what we found" — narrow leads/competitors/exhibitions to engine-generated
+ * rows (client's seed data hidden, never deleted). Products stay (Kusumgar's own catalog). ---- */
+const FOUND = {
+  leads: (l) => String(l.source || '').startsWith('exhibition'),
+  competitors: (c) => String(c.source || '').includes('exhibition'),
+  exhibitions: (e) => e.source === 'discovered',
+};
+function applyOnlyFound() {
+  if (!state.master) return;
+  const F = state.onlyFound;
+  ['leads', 'competitors', 'exhibitions'].forEach((k) => {
+    state[k] = F ? state.master[k].filter(FOUND[k]) : state.master[k];
+  });
+}
+function foundCounts() {
+  const m = state.master || { leads: state.leads, competitors: state.competitors, exhibitions: state.exhibitions };
+  return { leads: m.leads.filter(FOUND.leads).length, competitors: m.competitors.filter(FOUND.competitors).length, exhibitions: m.exhibitions.filter(FOUND.exhibitions).length };
+}
+function syncOnlyFoundBtn() {
+  const btn = $('#onlyFoundToggle'); if (!btn) return;
+  const on = state.onlyFound;
+  const c = foundCounts();
+  btn.setAttribute('aria-pressed', String(on));
+  btn.className = `inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold shadow-sm ring-1 transition-colors ${on ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}`;
+  btn.textContent = on
+    ? `✨ Showing only what we found (${c.leads} leads · ${c.competitors} competitors)`
+    : '✨ Show only what we found';
+}
+
 function render() {
   renderTabs();
+  syncOnlyFoundBtn();
   const tab = TABS.find((t) => t.id === state.tab);
   if (state.tab === 'today') view.innerHTML = renderToday();
   else if (state.tab === 'exhibitions') view.innerHTML = renderExhibitions();
@@ -1831,6 +1863,15 @@ function wireEvents() {
   $('#tabBar').addEventListener('click', (e) => {
     const b = e.target.closest('[data-tab]'); if (!b) return;
     state.tab = b.getAttribute('data-tab');
+    render();
+  });
+
+  // "Show only what we found" — hide the client's seed data to see just the engine's additions.
+  const oft = $('#onlyFoundToggle');
+  if (oft) oft.addEventListener('click', () => {
+    state.onlyFound = !state.onlyFound;
+    try { localStorage.setItem('kgr.onlyfound', state.onlyFound ? '1' : '0'); } catch { /* noop */ }
+    applyOnlyFound();
     render();
   });
 
@@ -2027,6 +2068,9 @@ async function boot() {
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
     loadRelevance(state.exhibitions.map((d) => d.id));
     loadPipeline(state.leads.map((l) => l.id));
+    // Keep the full sets so the "only found" toggle can hide/restore seed rows without a reload.
+    state.master = { leads: state.leads, competitors: state.competitors, exhibitions: state.exhibitions };
+    applyOnlyFound();
 
     const updated = meta.updated_at
       ? new Date(meta.updated_at + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
