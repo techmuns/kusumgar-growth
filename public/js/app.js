@@ -57,17 +57,28 @@ const leadSegColor = (s) => LEAD_SEGMENT_COLORS[s] || anyColor(s);
 
 const PRIORITY_COLORS = { High: '#10b981', Medium: '#94a3b8', Low: '#94a3b8' };
 
-// Competitor positioning buckets (first match wins; note Premium beats Technical).
+// How each competitor competes (first match wins; note Premium beats Technical).
+// Labels are plain-English so a non-technical reader gets them at a glance.
 const POSITION_BUCKETS = [
-  { label: 'Cost / Scale', color: '#f59e0b', test: (p) => /cost|scale/.test(p) },
-  { label: 'Premium', color: '#6366f1', test: (p) => /premium/.test(p) },
-  { label: 'Technology / Technical', color: '#0ea5e9', test: (p) => /techn/.test(p) },
-  { label: 'Regional', color: '#94a3b8', test: (p) => /regional/.test(p) },
+  { label: 'Low cost, high volume', color: '#f59e0b', test: (p) => /cost|scale/.test(p) },
+  { label: 'Premium quality', color: '#6366f1', test: (p) => /premium/.test(p) },
+  { label: 'Tech & specialised', color: '#0ea5e9', test: (p) => /techn/.test(p) },
+  { label: 'Local / regional', color: '#94a3b8', test: (p) => /regional/.test(p) },
 ];
 function positionBucket(pos) {
   const p = String(pos || '').toLowerCase();
   return POSITION_BUCKETS.find((b) => b.test(p)) || POSITION_BUCKETS[3];
 }
+
+// Plain-English display names for the vaguer industry labels (display only —
+// the underlying values stay the same so colors, filters and data don't change).
+const SEG_LABELS = {
+  'Aeronautical': 'Aviation & Aerospace',
+  'Military & Tactical': 'Military & Defence',
+  'Outdoor': 'Outdoor & Recreation',
+  'Marine': 'Marine & Boating',
+};
+const segLabel = (s) => SEG_LABELS[s] || s;
 
 // Outreach pipeline (Phase 4) — Nishad's real flow, in order, each with a color.
 const OUTREACH_STAGES = [
@@ -468,7 +479,7 @@ function renderOverview() {
   // 1) Segment donut
   const segItems = [...segCounts.entries()]
     .sort((a, b) => b[1] - a[1])
-    .map(([seg, v]) => ({ label: seg, value: v, color: segColor(seg), key: 'seg:' + seg }));
+    .map(([seg, v]) => ({ label: segLabel(seg), value: v, color: segColor(seg), key: 'seg:' + seg }));
   const donutSeg = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(segItems, { centerNum: total, centerLabel: 'shows' })}${buildLegend(segItems, { total })}</div>`;
 
   // 2) Country bars (top 7)
@@ -510,17 +521,17 @@ function renderOverview() {
   const chips = `
     <div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
       ${statChip('🎪', total, 'Total shows', '#6366f1')}
-      ${statChip('🧩', segments, 'Segments', '#0ea5e9')}
-      ${statChip('✅', engaged, 'Already engaged', '#10b981')}
-      ${statChip('🗓️', upcoming, 'Upcoming (dated)', '#ec4899')}
+      ${statChip('🧩', segments, 'Industries', '#0ea5e9')}
+      ${statChip('✅', engaged, 'Already been to', '#10b981')}
+      ${statChip('🗓️', upcoming, 'Upcoming', '#ec4899')}
     </div>`;
 
   // Independent column stacks: no coupled-row gaps, balanced heights, and on
   // mobile they collapse to one column in this order (donut leads).
-  const donutCard = `<div data-chart>${chartCard('🧩', 'Shows by segment', 'share of portfolio', donutSeg)}</div>`;
+  const donutCard = `<div data-chart>${chartCard('🧩', 'Shows by industry', 'which markets they cover', donutSeg)}</div>`;
   const timelineCard = `<div data-chart>${chartCard('🗓️', 'Upcoming in 2026', plural(upcomingShows.length, 'dated show'), buildTimeline(upcomingShows) + tlLegend)}</div>`;
   const countriesCard = `<div data-chart>${chartCard('🌍', 'Top countries', 'by number of shows', buildBars(barItems) + barsLegend)}</div>`;
-  const engagementCard = `<div data-chart>${chartCard('📈', 'Engagement status', `${engaged} of ${statusTotal} engaged`, buildStackedBar(statusItems) + statusLegend)}</div>`;
+  const engagementCard = `<div data-chart>${chartCard('📈', 'Our involvement', `been to ${engaged} of ${statusTotal}`, buildStackedBar(statusItems) + statusLegend)}</div>`;
 
   const grid = `
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
@@ -579,7 +590,7 @@ function rowsHtml() {
   return rows.map((d) => `
     <tr class="border-t border-slate-100 hover:bg-slate-50/60">
       <td class="whitespace-nowrap px-3 py-2.5">${relControl(d.id)}</td>
-      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(d.segment, segColor(d.segment))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(segLabel(d.segment), segColor(d.segment))}</td>
       <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${d.source === 'discovered' ? ` <span class="ml-1 inline-flex items-center rounded-full bg-fuchsia-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-fuchsia-600" title="${escapeHtml(d.relevance_reason || 'Auto-discovered')}">✨ New</span>` : ''}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(d.country)}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500">${escapeHtml(d.place || '—')}</td>
@@ -640,8 +651,8 @@ function renderList() {
         <table class="w-full min-w-[760px] border-collapse text-left">
           <thead>
             <tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-              <th class="px-3 py-2.5 font-semibold">Triage</th>
-              <th class="px-3 py-2.5 font-semibold">Segment</th>
+              <th class="px-3 py-2.5 font-semibold">Relevant?</th>
+              <th class="px-3 py-2.5 font-semibold">Industry</th>
               <th class="px-3 py-2.5 font-semibold">Exhibition</th>
               <th class="px-3 py-2.5 font-semibold">Country</th>
               <th class="px-3 py-2.5 font-semibold">Place</th>
@@ -745,7 +756,7 @@ function productRow(p) {
     `<span class="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">${escapeHtml(c)}</span>`).join(' ') || '<span class="text-slate-300">—</span>';
   const props = (p.properties || []).slice(0, 4).map((pr) =>
     `<span class="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-100"><span aria-hidden="true">${iconForProperty(pr)}</span>${escapeHtml(pr)}</span>`).join(' ') || '<span class="text-slate-300">—</span>';
-  const segs = (p.segments || []).map((s) => coloredChip(s, segColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
+  const segs = (p.segments || []).map((s) => coloredChip(segLabel(s), segColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
   const deniers = p.deniers && p.deniers !== '—' ? ` · ${escapeHtml(p.deniers)}` : '';
   const apps = (p.applications || []).join(', ');
   const srcBadge = p.source && p.source !== 'seed'
@@ -767,12 +778,12 @@ function renderCatalogGrid() {
     return `<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No products match these filters.</div>`;
   }
   const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-    <th class="px-3 py-2.5">Product</th>
-    <th class="px-3 py-2.5">Base / deniers</th>
+    <th class="px-3 py-2.5">Fabric</th>
+    <th class="px-3 py-2.5">Material &amp; weight</th>
     <th class="px-3 py-2.5">Coatings</th>
-    <th class="px-3 py-2.5">Key properties</th>
+    <th class="px-3 py-2.5">Key features</th>
     <th class="px-3 py-2.5">Industries</th>
-    <th class="px-3 py-2.5">Applications</th>
+    <th class="px-3 py-2.5">Used for</th>
   </tr>`;
   const groups = familiesPresent(list).map((fam) => {
     const items = list.filter((p) => p.family === fam);
@@ -850,7 +861,7 @@ function renderCoverage() {
 
   const legend = `<div class="mt-3 flex flex-wrap gap-x-3 gap-y-1.5">` + PRODUCT_SEGMENTS.map((seg) =>
     `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${segColor(seg)}"></span>
-      <span class="text-[12px] font-medium text-slate-600">${escapeHtml(seg)}</span></div>`).join('') + `</div>`;
+      <span class="text-[12px] font-medium text-slate-600">${escapeHtml(segLabel(seg))}</span></div>`).join('') + `</div>`;
 
   // Auto-computed insight chips (NOT hand-written): served / with-shows / whitespace.
   const served = [...new Set(state.products.flatMap((p) => p.segments || []))];
@@ -870,13 +881,13 @@ function renderCoverage() {
         <span class="tnum font-bold text-slate-900">${withShows}</span>
       </span>
       ${whitespace.length ? `<span class="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm shadow-sm ring-1 ring-amber-200">
-        <span aria-hidden="true">🔍</span><span class="font-semibold text-amber-700">Whitespace:</span>
+        <span aria-hidden="true">🔍</span><span class="font-semibold text-amber-700">Untapped:</span>
         <span class="font-medium text-amber-700">${escapeHtml(wsShort)}</span>
-        <span class="hidden text-[12px] text-amber-600 sm:inline">— products but no shows yet</span>
+        <span class="hidden text-[12px] text-amber-600 sm:inline">— we make fabric for these, but attend no shows yet</span>
       </span>` : ''}
     </div>`;
 
-  return `<div class="fade-in">${chartCard('🧭', 'Where it sells', 'dot = # products serving that industry', matrix + legend)}${insight}</div>`;
+  return `<div class="fade-in">${chartCard('🧭', 'Which industries we serve', 'bigger dot = more of our fabrics fit that industry', matrix + legend)}${insight}</div>`;
 }
 
 function renderProducts() {
@@ -933,7 +944,7 @@ function renderLeadsOverview() {
       ${statChip('🎯', total, 'Total leads', '#6366f1')}
       ${statChip('🧩', segCounts.size, 'Segments', '#0ea5e9')}
       ${statChip('⭐', high, 'High priority', '#10b981')}
-      ${statChip('📇', fullCount, 'Fully profiled', '#f59e0b')}
+      ${statChip('📇', fullCount, 'Full details', '#f59e0b')}
     </div>`;
 
   // Live source split (grows once the classify engine appends exhibition leads).
@@ -967,8 +978,8 @@ function renderLeadsOverview() {
   const grid = `
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
       <div class="space-y-4">
-        <div data-chart>${chartCard('🧩', 'Leads by segment', 'who they sell to', donut)}</div>
-        <div data-chart>${chartCard('🧵', 'Leads by fabric fit', 'mapped Kusumgar fabric', buildBars(fitItems, { unit: 'lead' }) + fitLegend)}</div>
+        <div data-chart>${chartCard('🧩', 'Leads by industry', 'what they make', donut)}</div>
+        <div data-chart>${chartCard('🧵', 'Leads by best-fit fabric', 'our closest fabric for them', buildBars(fitItems, { unit: 'lead' }) + fitLegend)}</div>
       </div>
       <div class="space-y-4">
         <div data-chart>${chartCard('🌍', 'Top countries', 'by number of leads', buildBars(countryItems, { unit: 'lead' }) + countryLegend)}</div>
@@ -1019,10 +1030,10 @@ function sortedLeads(list) {
 }
 
 const LEAD_COLS = [
-  { key: 'company', label: 'Company' }, { key: 'segment', label: 'Segment' },
-  { key: 'country', label: 'Country' }, { key: 'application', label: 'Application' },
-  { key: 'fabric_fit', label: 'Fabric fit' }, { key: 'est', label: 'Est. use (m²/yr)' },
-  { key: 'sourcing_model', label: 'Sourcing' }, { key: 'contact_role', label: 'Contact role' },
+  { key: 'company', label: 'Company' }, { key: 'segment', label: 'Industry' },
+  { key: 'country', label: 'Country' }, { key: 'application', label: 'Used for' },
+  { key: 'fabric_fit', label: 'Best-fit fabric' }, { key: 'est', label: 'Est. yearly use (m²)' },
+  { key: 'sourcing_model', label: 'How they buy' }, { key: 'contact_role', label: 'Who to contact' },
   { key: 'priority', label: 'Priority' },
 ];
 
@@ -1071,7 +1082,7 @@ function renderLeadsList() {
         ${selectHtml('l-country', 'All countries', f.country, countries)}
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
         <button type="button" data-ltoggle aria-pressed="${f.fullOnly}"
-          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">📇 Fully profiled only</button>
+          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">📇 Full details only</button>
         <button type="button" data-lneed aria-pressed="${f.needsContact}"
           class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${needCls}">📮 Needs contact${needCount ? ` <span class="tnum">${needCount}</span>` : ''}</button>
         <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
@@ -1102,19 +1113,19 @@ function openLeadDrawer(id) {
   const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-slate-100 py-2.5"><span class="shrink-0 text-[12px] font-medium text-slate-400">${escapeHtml(label)}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
   const website = l.website ? `<a href="${escapeHtml(l.website)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${escapeHtml(String(l.website).replace(/^https?:\/\//, ''))}</a>` : '—';
   const badge = l.detail === 'full'
-    ? '<span class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600">Fully profiled</span>'
-    : '<span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-400">Basic</span>';
+    ? '<span class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600">Full details</span>'
+    : '<span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-400">Quick info</span>';
   const body = `
     <div class="flex flex-wrap items-center gap-2">${coloredChip(l.segment, leadSegColor(l.segment))}${priorityChip(l.priority)}${badge}</div>
     <div class="mt-4">
       ${row('Country', (l.country ? (FLAGS[l.country] || '') + ' ' : '') + escapeHtml(dash(l.country)))}
       ${row('Website', website)}
-      ${row('Application', escapeHtml(dash(l.application)))}
-      ${row('Fabric fit', escapeHtml(dash(l.fabric_fit)))}
-      ${row('Est. use (m²/yr)', escapeHtml(fmtConsumption(l.est_consumption)))}
-      ${row('Sourcing model', escapeHtml(dash(l.sourcing_model)))}
-      ${row('Contact role', escapeHtml(dash(l.contact_role)))}
-      ${row('Source', escapeHtml(dash(l.source)))}
+      ${row('Used for', escapeHtml(dash(l.application)))}
+      ${row('Best-fit fabric', escapeHtml(dash(l.fabric_fit)))}
+      ${row('Est. yearly use (m²)', escapeHtml(fmtConsumption(l.est_consumption)))}
+      ${row('How they buy', escapeHtml(dash(l.sourcing_model)))}
+      ${row('Who to contact', escapeHtml(dash(l.contact_role)))}
+      ${row('Where we found them', escapeHtml(dash(l.source)))}
     </div>`;
   // Layer B — manual contact bridge (Nishad's real ContactOut-extension workflow).
   const rc = resolvedContact(l.id);
@@ -1127,7 +1138,7 @@ function openLeadDrawer(id) {
       </div>
       ${rcHas
         ? `<div class="text-sm font-bold text-slate-800">${escapeHtml(rc.name || rc.email)}</div>${rc.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(rc.title)}</div>` : ''}${rc.email ? `<div class="mt-0.5 text-[12px]"><a href="mailto:${escapeHtml(rc.email)}" class="text-indigo-600 hover:underline">${escapeHtml(rc.email)}</a></div>` : ''}`
-        : `<div class="text-[13px] text-slate-600">Best role to target: <span class="font-semibold text-slate-800">${escapeHtml(dash(l.contact_role))}</span></div>`}
+        : `<div class="text-[13px] text-slate-600">Best person to contact: <span class="font-semibold text-slate-800">${escapeHtml(dash(l.contact_role))}</span></div>`}
       <div class="mt-2 flex flex-wrap gap-2">
         <a href="${escapeHtml(linkedinSearchUrl(l))}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-lg bg-[#0a66c2] px-2.5 py-1.5 text-[12px] font-semibold text-white hover:opacity-90">🔗 Find contact on LinkedIn ↗</a>
         ${rc && rc.linkedin_url ? `<a href="${escapeHtml(rc.linkedin_url)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-[12px] font-semibold text-[#0a66c2] ring-1 ring-slate-200 hover:bg-slate-50">Open profile ↗</a>` : ''}
@@ -1172,10 +1183,10 @@ function renderCompetitorsLandscape() {
   const total = comps.length;
 
   const supply = [
-    { country: 'China', flag: '🇨🇳', role: 'Cost', color: '#f59e0b' },
+    { country: 'China', flag: '🇨🇳', role: 'Low cost', color: '#f59e0b' },
     { country: 'Taiwan', flag: '🇹🇼', role: 'Premium', color: '#6366f1' },
-    { country: 'South Korea', flag: '🇰🇷', role: 'Technology', color: '#0ea5e9' },
-    { country: 'Vietnam', flag: '🇻🇳', role: 'Manufacturing', color: '#10b981' },
+    { country: 'South Korea', flag: '🇰🇷', role: 'High-tech', color: '#0ea5e9' },
+    { country: 'Vietnam', flag: '🇻🇳', role: 'Volume making', color: '#10b981' },
   ];
   const supplyChips = supply.map((s) =>
     `<div class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-sm ring-1 ring-slate-100">
@@ -1184,19 +1195,19 @@ function renderCompetitorsLandscape() {
     </div>`).join('') +
     `<div class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-3 py-2 text-white shadow-sm">
       <span>🇮🇳</span><span class="text-sm font-extrabold">India</span>
-      <span class="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">China+1 · Kusumgar</span>
+      <span class="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">Kusumgar</span>
     </div>`;
   const strip = `
     <section class="fade-in mb-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
-      <h3 class="mb-3 font-display text-sm font-bold text-slate-800">🌐 Global supply map</h3>
+      <h3 class="mb-3 font-display text-sm font-bold text-slate-800">🌐 Where the competition comes from</h3>
       <div class="flex flex-wrap gap-2">${supplyChips}</div>
-      <p class="mt-3 text-[13px] text-slate-500"><span class="font-semibold text-slate-700">Kusumgar's edge:</span> a China+1 technical supplier — competes on service &amp; customisation, not price.</p>
+      <p class="mt-3 text-[13px] text-slate-500"><span class="font-semibold text-slate-700">Kusumgar's edge:</span> a reliable India-based alternative to China — wins on service and customisation, not just the lowest price.</p>
     </section>`;
 
   const countryCounts = [...countBy(comps, (d) => d.country).entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   const maxC = countryCounts[0] ? countryCounts[0][1] : 1, minC = countryCounts.length ? countryCounts[countryCounts.length - 1][1] : 0;
   const countryItems = countryCounts.map(([c, v]) => ({ label: c, value: v, flag: FLAGS[c] || '', key: 'cc:' + c, color: lerpColor('#818cf8', '#db2777', maxC === minC ? 0.5 : (v - minC) / (maxC - minC)) }));
-  const countryLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#818cf8,#db2777)"></span><span>more rivals</span></div>`;
+  const countryLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#818cf8,#db2777)"></span><span>more competitors</span></div>`;
 
   const posMap = new Map();
   comps.forEach((c) => { const b = positionBucket(c.positioning); posMap.set(b.label, (posMap.get(b.label) || 0) + 1); });
@@ -1204,12 +1215,12 @@ function renderCompetitorsLandscape() {
     const b = POSITION_BUCKETS.find((x) => x.label === label);
     return { label, value: v, color: b ? b.color : '#94a3b8', key: 'pos:' + label };
   });
-  const posDonut = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(posItems, { centerNum: total, centerLabel: 'rivals', unit: 'competitor' })}${buildLegend(posItems, { total, unit: 'competitor' })}</div>`;
+  const posDonut = `<div class="flex items-center gap-3 sm:gap-4">${buildDonut(posItems, { centerNum: total, centerLabel: 'competitors', unit: 'competitor' })}${buildLegend(posItems, { total, unit: 'competitor' })}</div>`;
 
   const grid = `
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
-      <div data-chart>${chartCard('🌍', 'Competitors by country', 'where rivals are based', buildBars(countryItems, { unit: 'competitor' }) + countryLegend)}</div>
-      <div data-chart>${chartCard('🏷️', 'By positioning', 'how they compete', posDonut)}</div>
+      <div data-chart>${chartCard('🌍', 'Competitors by country', 'where they are based', buildBars(countryItems, { unit: 'competitor' }) + countryLegend)}</div>
+      <div data-chart>${chartCard('🏷️', 'How they compete', 'their main strategy', posDonut)}</div>
     </div>`;
 
   return strip + grid;
@@ -1223,18 +1234,18 @@ function renderCompetitorsList() {
   const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
     <th class="px-3 py-2.5">Company</th>
     <th class="px-3 py-2.5">Country</th>
-    <th class="px-3 py-2.5">Positioning</th>
-    <th class="px-3 py-2.5">Focus</th>
-    <th class="px-3 py-2.5">Segments</th>
+    <th class="px-3 py-2.5">How they compete</th>
+    <th class="px-3 py-2.5">What they make</th>
+    <th class="px-3 py-2.5">Industries</th>
   </tr>`;
   const rows = comps.map((c) => {
     const b = positionBucket(c.positioning);
-    const segs = (c.segments || []).map((s) => coloredChip(s, anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
+    const segs = (c.segments || []).map((s) => coloredChip(segLabel(s), anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
     return `
       <tr class="border-t border-slate-100 align-top hover:bg-slate-50/60">
         <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(c.company)}</td>
         <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${c.country ? (FLAGS[c.country] || '') + ' ' : ''}${escapeHtml(dash(c.country))}</td>
-        <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(c.positioning, b.color)}</td>
+        <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(b.label, b.color)}</td>
         <td class="px-3 py-2.5"><div class="max-w-[380px] text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</div></td>
         <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1.5">${segs}</div></td>
       </tr>`;
@@ -1253,7 +1264,7 @@ function renderCompetitors() {
     const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
     return `<button type="button" data-csub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
   };
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('landscape', '🗺️ Landscape')}${subBtn('list', '📋 List')}</div>`;
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('landscape', '🗺️ Overview')}${subBtn('list', '📋 List')}</div>`;
   const body = state.competitorsSub === 'landscape' ? renderCompetitorsLandscape() : renderCompetitorsList();
   return `<div class="mb-4">${toggle}</div>${body}`;
 }
