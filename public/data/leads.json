@@ -4719,56 +4719,148 @@
       "detail": "basic",
       "source": "exhibition:safety-health-expo",
       "type": "potential_customer"
+    },
+    {
+      "id": "h-bner-gmbh-co-kg",
+      "company": "HÜBNER GmbH & Co. KG",
+      "segment": "Protective Covers & Industrial",
+      "country": "India",
+      "website": null,
+      "application": null,
+      "fabric_fit": "Meta-Aramid Railway Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:iree",
+      "type": "potential_customer"
+    },
+    {
+      "id": "liebherr-transportation-systems-mannheim-gmbh",
+      "company": "Liebherr-Transportation Systems Mannheim GmbH",
+      "segment": "Protective Covers & Industrial",
+      "country": "India",
+      "website": null,
+      "application": null,
+      "fabric_fit": "Meta-Aramid Railway Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:iree",
+      "type": "potential_customer"
+    },
+    {
+      "id": "aargee-equipments-pvt-ltd",
+      "company": "AARGEE EQUIPMENTS PVT LTD",
+      "segment": "Protective Covers & Industrial",
+      "country": "India",
+      "website": null,
+      "application": null,
+      "fabric_fit": "600D PU-Coated Polyester, 600D PVC-Coated Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:iree",
+      "type": "potential_customer"
+    },
+    {
+      "id": "abbott-diagnostics-medical-private-limited",
+      "company": "ABBOTT DIAGNOSTICS MEDICAL PRIVATE LIMITED",
+      "segment": "Medical & Emergency",
+      "country": "India",
+      "website": null,
+      "application": null,
+      "fabric_fit": "PU-Laminated Mattress Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:iree",
+      "type": "potential_customer"
+    },
+    {
+      "id": "adinath-industries",
+      "company": "ADINATH INDUSTRIES",
+      "segment": "Protective Covers & Industrial",
+      "country": "India",
+      "website": null,
+      "application": null,
+      "fabric_fit": "Meta-Aramid Railway Fabric",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:iree",
+      "type": "potential_customer"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T06:44:32.443Z",
+    "scraped_at": "2026-09-10T06:59:33.444Z",
     "targets": [
-      "ata-expo",
-      "expoprotection",
-      "safety-health-expo"
+      "global-tape-forum",
+      "iree",
+      "innotrans"
     ],
     "pages_used": 6,
     "classified": 40,
-    "added_leads": 13,
-    "added_competitors": 1
+    "added_leads": 5,
+    "added_competitors": 0
   },
   "_debug": [
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://advancedtextilesexpo.com/exhibit/\",\"title\":\"Exhibitor Information - Advanced Textiles Expo\",\"description\":\"# Exhibitor Information\\n## Who Attends?\\n#### Industrial Textile-Related Products and Servic"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://afera.com/agenda/global-tape-forum/\",\"title\":\"Global tape forum - Afera\",\"description\":\"The GTF and GTMC's 8th set of Meetings will be hosted by JATMA at Hamamatsucho Convention Hall in Tokyo, Japan, "
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to Main Content](https://advancedtextilesexpo2025.smallworldlabs.com/#main)\\n\\n# Exhibitor Directory\\n\\n[![Advanced Textiles Expo 2025](https://static.prod01.ue1.p.pcomm.net/advancedtextilesexpo2025"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![](https://afera.com/assets/components/phpthumbof/cache/Afera%20Tape%20Roll.97efb2c2edacc4d152912912923b3b07.jpg)\\n\\n# Global tape forum\\n\\n**The GTF and GTMC’s 8th set of Meetings will be hosted by JATM"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"# Global Tape Forum2026November 17-19, 2026　Hamamatsucho Convention Hall, Tokyo, Japan\\n\\n## What’s New\\n\\n2026.06.30Sponsors and Exhibitors have been updated.\\n\\n2026.04.30Official Website has been opene"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[![Welcome to the Global Tape Forum](https://www.globaltapeforum.com/assets/site/images/carousel_empty.png)\\\\\\\\\\n\\\\\\\\\\nWelcome to the Global Tape Forum\\\\\\\\\\n\\\\\\\\\\nrepresenting the global adhesive tape ind"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.expoprotection.com/en-gb.html\",\"title\":\"Risk Prevention and Management - Expoprotection\",\"description\":\"# IT Partners\\n## Featured Exhibitors\\n[![Exhibitors Carousel Cover](https://pub-mediabox-st"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.ireeindia.com/\",\"title\":\"IREE 2025 16th International Railway Equipment Exhibition\",\"description\":\"[Exhibitors List](https://www.ireeindia.com/pdf/2025/exhibition-form/IREE-Exhibitors-List.pdf)\"},"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![10times](https://im.10times.com/1.png?c=web&s=eventdetail-exhibitors&p=pageview&e=3218492&k=1470d9e4d1daa638663e69e0577052cf)\\n\\nAdd a review\\n\\n03 - 05 Nov 2026\\n\\n# [Expo Protection](https://10times.c"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"Opens in a new windowOpens an external websiteOpens an external website in a new window\\n\\nClose this consent banner\\n\\nThis website utilizes technologies such as cookies to enable essential site function"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.healthandsafetyevent.com/exhibitor-list\",\"title\":\"Exhibitor List | The Health & Safety Event\",\"description\":\"# Exhibitor List\\n## Event Partners and Supporters\\n![FSM](https://cdn.asp.events/CLIEN"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.innotrans.de/en/exhibit\",\"title\":\"Exhibitors - InnoTrans\",\"description\":\"Exhibitor Directory · Arrival & Departure · Visitors A-Z · Students & Trainees · InnoTrans Plus & App · Accommodation · Tic"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"Log In / Create Account\\n\\n## Informa helps businesses and professionals in hundreds of ways.\\n\\nOur international portfolio of live events, world-leading research publications, and innovative digital ser"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Rectangle 131](https://www.expocaptive.com/wp-content/uploads/2025/09/Rectangle-131.png)\\n\\n- [Home](https://www.expocaptive.com/)\\n- [Logistics & Transportation](https://www.expocaptive.com/logistics-t"
     }
   ]
 }
