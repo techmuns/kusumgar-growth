@@ -1445,11 +1445,22 @@ function copyEmail(btn) {
 function renderPipeline() {
   const inPipe = pipelinedLeads();
   if (!inPipe.length) {
-    return `<div class="fade-in rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-100">
-      <div class="mb-2 text-4xl">🔀</div>
-      <div class="font-display text-lg font-bold text-slate-800">Your pipeline is empty</div>
-      <div class="mt-1 text-sm text-slate-500">Open a lead in the Leads tab → “➕ Add to Outreach”, or use the Tracker.</div>
-      <button type="button" data-goto="leads" class="mt-4 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads</button>
+    const step = (n, title, sub) => `<div class="rounded-xl bg-slate-50 p-3 text-left ring-1 ring-slate-100">
+        <div class="font-display text-base font-extrabold text-indigo-500">${n}</div>
+        <div class="mt-0.5 text-[13px] font-semibold text-slate-700">${title}</div>
+        <div class="text-[12px] leading-snug text-slate-500">${sub}</div>
+      </div>`;
+    return `<div class="fade-in rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-100">
+      <div class="mb-2 text-4xl">📮</div>
+      <div class="font-display text-lg font-bold text-slate-800">This is your outreach desk</div>
+      <p class="mx-auto mt-1 max-w-xl text-sm text-slate-500">Pick the leads you want to chase and work them here — from first contact to won. For each one the engine finds the right person and email and drafts a tailored Kusumgar intro, so you just review and send.</p>
+      <div class="mx-auto mt-5 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+        ${step('1', 'Find the buyer', 'the right contact person + their email')}
+        ${step('2', 'Draft the email', 'a tailored intro, written for you')}
+        ${step('3', 'Track the stage', 'to&nbsp;contact → meeting → won')}
+      </div>
+      <button type="button" data-goto="leads" class="mt-6 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads from the Leads tab</button>
+      <p class="mx-auto mt-3 max-w-xl text-[12px] text-slate-400">Tip: open any lead and click “➕ Add to Outreach”, then use “🔗 Find contact on LinkedIn” and “Save &amp; draft” in the lead’s panel.</p>
     </div>`;
   }
   const total = inPipe.length;
@@ -1497,7 +1508,7 @@ function trackerRows() {
 function trackerTableHtml() {
   const rows = trackerRows();
   if (!rows.length) {
-    return `<table class="w-full"><tbody><tr><td class="px-4 py-10 text-center text-sm text-slate-400">No leads in the pipeline yet — use “➕ Add leads”.</td></tr></tbody></table>`;
+    return `<table class="w-full"><tbody><tr><td class="px-4 py-10 text-center text-sm text-slate-400">No leads on your outreach desk yet — add some from the Leads tab (“➕ Add to Outreach”) and they’ll appear here to track and email.</td></tr></tbody></table>`;
   }
   const sel = (id, kind, options, cur, stageColored) => {
     const opts = options.map((o) => `<option value="${escapeHtml(o)}"${cur === o ? ' selected' : ''}>${escapeHtml(o)}</option>`).join('');
