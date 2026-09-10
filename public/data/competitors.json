@@ -1,14 +1,322 @@
-[
-{"id":"challenge-sailcloth-challenge-outdoor","company":"Challenge Sailcloth / Challenge Outdoor","country":"Taiwan","focus":"Coated nylon & polyester for outdoor, bags, marine","positioning":"Premium","segments":["Outdoor","Marine","Tool & Equipment Bags"],"source":"research"},
-{"id":"formosa-taffeta","company":"Formosa Taffeta","country":"Taiwan","focus":"Nylon & polyester fabrics, coatings at scale","positioning":"Scale","segments":["Outdoor","Tool & Equipment Bags","Automotive Seating"],"source":"research"},
-{"id":"kolon-industries","company":"Kolon Industries","country":"South Korea","focus":"Technical nylon, coated fabrics, airbags","positioning":"Technology","segments":["Automotive Seating","Military & Tactical","Marine Covers"],"source":"research"},
-{"id":"hyosung","company":"Hyosung","country":"South Korea","focus":"Nylon & polyester yarns and fabrics","positioning":"Scale","segments":["Automotive Seating","Tool & Equipment Bags"],"source":"research"},
-{"id":"sioen-industries","company":"Sioen Industries","country":"Belgium","focus":"Coated technical textiles, protective covers","positioning":"Premium / Technical","segments":["Protective Covers & Industrial","Marine Covers","Workwear & Safety"],"source":"research"},
-{"id":"serge-ferrari","company":"Serge Ferrari","country":"France","focus":"Coated membranes & technical textiles","positioning":"Premium","segments":["Protective Covers & Industrial","Marine Covers"],"source":"research"},
-{"id":"trelleborg","company":"Trelleborg","country":"Sweden","focus":"Engineered coated fabrics","positioning":"Technical","segments":["Marine Covers","Protective Covers & Industrial"],"source":"research"},
-{"id":"heytex","company":"Heytex","country":"Germany","focus":"Coated technical textiles, tarpaulins","positioning":"Scale","segments":["Protective Covers & Industrial","Pool & Outdoor Covers"],"source":"research"},
-{"id":"seaman-corporation","company":"Seaman Corporation","country":"USA","focus":"XR coated fabrics","positioning":"Technical","segments":["Marine Covers","Protective Covers & Industrial"],"source":"research"},
-{"id":"herculite","company":"Herculite","country":"USA","focus":"Coated fabrics for covers & awnings","positioning":"Regional","segments":["Pool & Outdoor Covers","Protective Covers & Industrial"],"source":"research"},
-{"id":"dickson-coatings","company":"Dickson Coatings","country":"France","focus":"Coated technical textiles","positioning":"Premium","segments":["Marine Covers","Protective Covers & Industrial"],"source":"research"},
-{"id":"zhejiang-msd","company":"Zhejiang MSD","country":"China","focus":"Coated fabrics & covers at low cost","positioning":"Cost / Scale","segments":["Pool & Outdoor Covers","Protective Covers & Industrial","Marine Covers"],"source":"research"}
-]
+{
+  "competitors": [
+    {
+      "id": "challenge-sailcloth-challenge-outdoor",
+      "company": "Challenge Sailcloth / Challenge Outdoor",
+      "country": "Taiwan",
+      "focus": "Coated nylon & polyester for outdoor, bags, marine",
+      "positioning": "Premium",
+      "segments": [
+        "Outdoor",
+        "Marine",
+        "Tool & Equipment Bags"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "formosa-taffeta",
+      "company": "Formosa Taffeta",
+      "country": "Taiwan",
+      "focus": "Nylon & polyester fabrics, coatings at scale",
+      "positioning": "Scale",
+      "segments": [
+        "Outdoor",
+        "Tool & Equipment Bags",
+        "Automotive Seating"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "kolon-industries",
+      "company": "Kolon Industries",
+      "country": "South Korea",
+      "focus": "Technical nylon, coated fabrics, airbags",
+      "positioning": "Technology",
+      "segments": [
+        "Automotive Seating",
+        "Military & Tactical",
+        "Marine Covers"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "hyosung",
+      "company": "Hyosung",
+      "country": "South Korea",
+      "focus": "Nylon & polyester yarns and fabrics",
+      "positioning": "Scale",
+      "segments": [
+        "Automotive Seating",
+        "Tool & Equipment Bags"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "sioen-industries",
+      "company": "Sioen Industries",
+      "country": "Belgium",
+      "focus": "Coated technical textiles, protective covers",
+      "positioning": "Premium / Technical",
+      "segments": [
+        "Protective Covers & Industrial",
+        "Marine Covers",
+        "Workwear & Safety"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "serge-ferrari",
+      "company": "Serge Ferrari",
+      "country": "France",
+      "focus": "Coated membranes & technical textiles",
+      "positioning": "Premium",
+      "segments": [
+        "Protective Covers & Industrial",
+        "Marine Covers"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "trelleborg",
+      "company": "Trelleborg",
+      "country": "Sweden",
+      "focus": "Engineered coated fabrics",
+      "positioning": "Technical",
+      "segments": [
+        "Marine Covers",
+        "Protective Covers & Industrial"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "heytex",
+      "company": "Heytex",
+      "country": "Germany",
+      "focus": "Coated technical textiles, tarpaulins",
+      "positioning": "Scale",
+      "segments": [
+        "Protective Covers & Industrial",
+        "Pool & Outdoor Covers"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "seaman-corporation",
+      "company": "Seaman Corporation",
+      "country": "USA",
+      "focus": "XR coated fabrics",
+      "positioning": "Technical",
+      "segments": [
+        "Marine Covers",
+        "Protective Covers & Industrial"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "herculite",
+      "company": "Herculite",
+      "country": "USA",
+      "focus": "Coated fabrics for covers & awnings",
+      "positioning": "Regional",
+      "segments": [
+        "Pool & Outdoor Covers",
+        "Protective Covers & Industrial"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "dickson-coatings",
+      "company": "Dickson Coatings",
+      "country": "France",
+      "focus": "Coated technical textiles",
+      "positioning": "Premium",
+      "segments": [
+        "Marine Covers",
+        "Protective Covers & Industrial"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "zhejiang-msd",
+      "company": "Zhejiang MSD",
+      "country": "China",
+      "focus": "Coated fabrics & covers at low cost",
+      "positioning": "Cost / Scale",
+      "segments": [
+        "Pool & Outdoor Covers",
+        "Protective Covers & Industrial",
+        "Marine Covers"
+      ],
+      "source": "research"
+    },
+    {
+      "id": "sumitomo-chemical-company-limited",
+      "company": "Sumitomo Chemical Company Limited",
+      "country": "Germany",
+      "focus": "Sumitomo Chemical is a major chemical manufacturer that produces synthetic fibers and textile materials, making them a competitor rather than a fabric buyer.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "3tech-textil-gmbh",
+      "company": "3tech Textil GmbH",
+      "country": "Germany",
+      "focus": "Exhibitor at Techtextil in workwear segment suggests they manufacture technical textiles rather than being an end-user or converter of fabrics.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "a-monforts-textilmaschinen-gmbh-co-kg",
+      "company": "A. Monforts Textilmaschinen GmbH & Co. KG",
+      "country": "Germany",
+      "focus": "Monforts is a textile machinery manufacturer specializing in finishing equipment for technical textiles, not a fabric producer or end-user of technical fabrics.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "advanced-textile-composites-inc",
+      "company": "Advanced Textile Composites, Inc.",
+      "country": "Germany",
+      "focus": "Company name indicates they manufacture textile composites, making them a direct competitor in technical fabrics rather than a buyer of Kusumgar's materials.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "allertex-of-america-ltd",
+      "company": "Allertex Of America, Ltd.",
+      "country": "Germany",
+      "focus": "Exhibitor at Techtextil in Workwear segment suggests they manufacture technical fabrics for workwear rather than being an end-user or converter of such fabrics.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "american-starlinger-sahm-inc",
+      "company": "American Starlinger-Sahm, Inc.",
+      "country": "Germany",
+      "focus": "American Starlinger-Sahm manufactures technical textile machinery and woven fabrics, making them a competitor in the technical textiles space rather than a fabric buyer.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "apex-advanced-textiles-pvt-ltd",
+      "company": "Apex Advanced Textiles Pvt Ltd",
+      "country": "Germany",
+      "focus": "Exhibitor at Techtextil in workwear segment suggests they manufacture technical textiles rather than consume them as an end-user or converter.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "aratex-llp",
+      "company": "Aratex LLP",
+      "country": "Germany",
+      "focus": "Exhibitor at Techtextil in the Workwear segment suggests they are a fabric manufacturer/supplier rather than a buyer of technical fabrics.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "archroma-us",
+      "company": "Archroma US",
+      "country": "Germany",
+      "focus": "Archroma is a global specialty chemicals company that produces dyes, chemicals, and textile treatments for fabric manufacturers, making them a supplier to the industry rather than a fabric manufacturer or customer.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "aurora-specialty-textiles-group",
+      "company": "Aurora Specialty Textiles Group",
+      "country": "Germany",
+      "focus": "Aurora Specialty Textiles Group is a technical textile manufacturer exhibiting at Techtextil in the workwear segment, directly competing with Kusumgar's FR and aramid fabric offerings.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "aym-syntex-limited",
+      "company": "AYM Syntex Limited",
+      "country": "Germany",
+      "focus": "AYM Syntex is a technical textile manufacturer exhibiting at Techtextil in the workwear segment, indicating they produce fabrics rather than consume them as an end-user or converter.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil"
+    },
+    {
+      "id": "3a-throwing-ames-textile",
+      "company": "3A Throwing - Ames Textile",
+      "country": "United States",
+      "focus": "Ames Textile is a textile manufacturer exhibiting at an industrial technical textiles trade show, indicating they produce rather than consume technical fabrics.",
+      "positioning": "Regional",
+      "segments": [
+        "->"
+      ],
+      "source": "exhibition:techtextil-north-america"
+    }
+  ],
+  "_meta": {
+    "scraped_at": "2026-09-10T06:16:43.775Z",
+    "targets": [
+      "techtextil",
+      "techtextil-north-america"
+    ],
+    "pages_used": 4,
+    "classified": 40,
+    "added_leads": 3,
+    "added_competitors": 12
+  },
+  "_debug": [
+    {
+      "path": "/v1/search",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://techtextil.messefrankfurt.com/frankfurt/en/exhibitor-search.html\",\"title\":\"Exhibitors & products at Techtextil 2026\",\"description\":\"All exhibitors · Sumitomo Chemical Company Limited · 2a S.p.a. · Nan"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip](https://techtextil-north-america.us.messefrankfurt.com/us/en/exhibitorsandproducts/exhibitorlist-25.html#content)\\n\\nClose search\\n\\n## Search\\n\\nOverall search\\n\\nOverall search\\n\\nSearch\\n\\nTechn"
+    },
+    {
+      "path": "/v1/search",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://techtextil-north-america.us.messefrankfurt.com/us/en/exhibitorsandproducts.html\",\"title\":\"Exhibitors & Products - Techtextil North America\",\"description\":\"## Search\\n[![Techtextil North America](https"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 1,
+      "status": 200,
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip](https://techtextil-north-america.us.messefrankfurt.com/us/en/exhibitorsandproducts/exhibitorlist-25.html#content)\\n\\nClose search\\n\\n## Search\\n\\nOverall search\\n\\nOverall search\\n\\nSearch\\n\\nTechn"
+    }
+  ]
+}
