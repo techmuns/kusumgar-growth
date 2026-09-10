@@ -950,12 +950,12 @@ function renderLeadsOverview() {
     </div>`;
 
   // Live source split (grows once the classify engine appends exhibition leads).
-  const research = leads.filter((d) => !String(d.source || '').startsWith('exhibition')).length;
-  const fromEx = total - research;
+  const found = leads.filter((d) => isEngineSource(d.source)).length;
+  const research = total - found;
   const sourceLine = `
     <div class="mb-4 flex flex-wrap items-center gap-2 text-[12px]">
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 shadow-sm ring-1 ring-slate-100"><span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>Research <span class="tnum font-bold text-slate-900">${research}</span></span>
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 shadow-sm ring-1 ring-slate-100"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>From exhibitions <span class="tnum font-bold text-slate-900">${fromEx}</span></span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 shadow-sm ring-1 ring-slate-100"><span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>Starting research <span class="tnum font-bold text-slate-900">${research}</span></span>
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 shadow-sm ring-1 ring-slate-100"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>AI-found <span class="tnum font-bold text-slate-900">${found}</span></span>
     </div>`;
 
   const segItems = [...segCounts.entries()].sort((a, b) => b[1] - a[1])
@@ -1779,9 +1779,12 @@ function renderTabs() {
 
 /* ---- "Show only what we found" — narrow leads/competitors/exhibitions to engine-generated
  * rows (client's seed data hidden, never deleted). Products stay (Kusumgar's own catalog). ---- */
+// Engine-generated rows carry a source of "exhibition:<id>" (show scraper) or
+// "category:<slug>" (category finder); competitors the same. Exhibitions: "discovered".
+const isEngineSource = (s) => { const v = String(s || ''); return v.startsWith('exhibition') || v.startsWith('category'); };
 const FOUND = {
-  leads: (l) => String(l.source || '').startsWith('exhibition'),
-  competitors: (c) => String(c.source || '').includes('exhibition'),
+  leads: (l) => isEngineSource(l.source),
+  competitors: (c) => isEngineSource(c.source),
   exhibitions: (e) => e.source === 'discovered',
 };
 function applyOnlyFound() {
