@@ -8591,18 +8591,33 @@
       "detail": "basic",
       "source": "exhibition:singapore-airshow",
       "type": "potential_customer"
+    },
+    {
+      "id": "4events",
+      "company": "4Events",
+      "segment": "Tool & Equipment Bags",
+      "country": "United Kingdom",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:world-defence-show",
+      "type": "potential_customer"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T08:45:37.158Z",
+    "scraped_at": "2026-09-10T08:49:02.824Z",
     "targets": [
-      "sof-week",
-      "security-policing",
-      "singapore-airshow"
+      "supplier-showcase",
+      "world-defence-show"
     ],
-    "pages_used": 6,
-    "classified": 40,
-    "added_leads": 22,
+    "pages_used": 4,
+    "classified": 12,
+    "added_leads": 1,
     "added_competitors": 0
   },
   "_debug": [
@@ -8610,61 +8625,25 @@
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://sofweek.org/sof-week-floor-plan/\",\"title\":\"SOF Week Floor Plan – Exhibition Halls & Zones\",\"description\":\"# 2026 SOF Week Floor Plan\\n### Tampa Convention Center, Level 3\\n- SOF Warrior\\n- Industry Ho"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://shotshow.org/exhibitors/\",\"title\":\"Exhibitors | NSSF SHOT Show 2027\",\"description\":\"View key information for all exhibitors. Supplier Showcase vendors can easily download approved marketing assets to "
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[![SOF Week 2026 logo](https://sofw26.mapyourshow.com/mys_shared/SOFW26/SOFW26_logo.png?breakcache=68CD8768-9D98-A938-82EAA861330C7EE3)](https://www.sofweek.org/)\\n\\n- May 18- 21\\n\\n- Tampa, FL\\n\\nSearch "
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[**SearchSearch**](https://sofw26.mapyourshow.com/8_0/exhview/index.cfm?hallID=B#0 \\\"Expand Search Options\\\")\\n\\n[![SOF Week 2026 logo](https://sofw26.mapyourshow.com/mys_shared/SOFW26/SOFW26_logo.png)](h"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"#### Exhibitors\\n\\n### Search Exhibitors\\n\\nKeyword\\n\\nSearch\\n\\nBooth NumberContact's First NameContact's Last NameContact's Phone NumberCompany NameCompany Phone NumberCityState/ProvinceCountryCompany D"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.securityandpolicing.co.uk/exhibitors/exhibitors-list-2026/\",\"title\":\"2026 Exhibitors Archive - Security and Policing 2027\",\"description\":\"# 2026 EXHIBITOR LIST\\n#### Refine By\\n###### Stand Northe"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.worlddefenseshow.com/en/exhibitors\",\"title\":\"2026 Exhibitors - World Defense Show\",\"description\":\"2026 Exhibitors «SAHRO DI» LLC Land, Unmanned Aerial Vehicles. Advanced Technologies company Land,"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[![Midwest Security & Police Conference/Expo](https://mspce.com/wp-content/uploads/2020/10/MSPCE_logo.png)](https://mspce.com/)\\n\\n# Exhibitor List\\n\\nIn The Expo Hall\\n\\nThe Expo Hall is a true superstor"
-    },
-    {
-      "path": "/v1/search",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.singaporeairshow.com/exhibit/exhibitor-listing\",\"title\":\"Exhibitor Listing - Singapore Airshow\",\"description\":\"Exhibitor Listing. This is a private page viewable only by selected users. Experia. F"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"|     |     |\\n| --- | --- |\\n|  |  |\\n\\n- [Home](https://www.singaporeairshow.com/)\\n- [The Show](https://www.singaporeairshow.com/the-show) +\\n\\n|     |\\n| --- |\\n| [About Singapore Airshow](https://www"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 403,
-      "sample": "{\"success\":false,\"error\":\"We apologize for the inconvenience but we do not support this site. If you are part of an enterprise and want to have a further conversation about this, please fill out our intake form here: https://fk4bvu0n5qp.typ"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 2,
-      "status": 403,
-      "sample": "{\"success\":false,\"error\":\"We apologize for the inconvenience but we do not support this site. If you are part of an enterprise and want to have a further conversation about this, please fill out our intake form here: https://fk4bvu0n5qp.typ"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![10times](https://im.10times.com/1.png?c=web&s=eventdetail-exhibitors&p=pageview&e=5325094&k=2074e901915f31b54a897e769443a010)\\n\\n[![Event logo](https://img.10times.com/images/event/28845/eventlogo-27-15"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Rectangle 131](https://www.expocaptive.com/wp-content/uploads/2025/09/Rectangle-131.png)\\n\\n- [Home](https://www.expocaptive.com/)\\n- Security & Defense\\n- [World Defense Show 2026](https://www.expocapt"
     }
   ]
 }
