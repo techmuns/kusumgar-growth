@@ -252,56 +252,53 @@
       "positioning": "Premium",
       "segments": [],
       "source": "exhibition:future-forces"
+    },
+    {
+      "id": "cs-composites",
+      "company": "CS COMPOSITES",
+      "country": "Brazil",
+      "focus": "CS Composites manufactures composite materials and technical fabrics for military and defense applications, directly competing with Kusumgar's aramid and ballistic fabric offerings.",
+      "positioning": "Technology / Technical",
+      "segments": [],
+      "source": "exhibition:laad"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T08:15:17.287Z",
+    "scraped_at": "2026-09-10T08:30:34.468Z",
     "targets": [
-      "fidae",
-      "future-forces",
-      "iitsec"
+      "laad",
+      "land-forces",
+      "mspo"
     ],
-    "pages_used": 6,
+    "pages_used": 4,
     "classified": 40,
     "added_leads": 18,
-    "added_competitors": 2
+    "added_competitors": 1
   },
   "_debug": [
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.kallman.com/show/fidae-2026-usa/\",\"title\":\"FIDAE 2026 – Kallman Worldwide, Inc.\",\"description\":\"The show features 400+ exhibitors from 57 different countries. With nearly 1,000 delegations and ove"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://laadexpo.com.br/security/en/list-of-exhibitors/\",\"title\":\"Lista de Expositores 2026 | LAAD Security Milipol Brazil 2028\",\"description\":\"Exhibitors List - LAAD Security Milipol Brazil 2026 ; 4SEC GLOBA"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Rectangle 131](https://www.expocaptive.com/wp-content/uploads/2025/09/Rectangle-131.png)\\n\\n- [Home](https://www.expocaptive.com/)\\n- Logistics & Transportation\\n- [FIDAE 2026](https://www.expocaptive.c"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to content](https://laadexpo.com.br/security/en/list-of-exhibitors/#content)\\n\\n[![Conheça as soluções da Ford Pro™, para veículos especiais.](https://laadexpo.com.br/security/wp-content/uploads/202"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.natoexhibition.com/exhibitors/list?lang=en\",\"title\":\"CURRENT EXHIBITORS - Future Forces 2026 –\",\"description\":\"# CURRENT EXHIBITORS\\n## Czech Republic\\n#### **CAIRO CZ** [![CZE](https://admin.futu"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://exhibitors.landforces.com.au/\",\"title\":\"Exhibitor List - Land Forces\",\"description\":\"No information is available for this page. · Learn why\"},{\"url\":\"https://landforces.com.au/exhibition/expo-toolkit/"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"# CURRENT EXHIBITORS\\n\\n[recent exhibitors](https://www.natoexhibition.com/exhibitors/list/recent/state?lang=en)\\n\\n- [Alphabetical](https://www.natoexhibition.com/exhibitors/list/alpha?lang=en)\\n- [By Co"
-    },
-    {
-      "path": "/v1/search",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://iitsec2025.smallworldlabs.com/exhibitors\",\"title\":\"Exhibitor Directory - 2025 I/ITSEC\",\"description\":\"# Exhibitor Directory\\n[![2025 I/ITSEC](https://static.prod01.ue1.p.pcomm.net/iitsec2025/content/i"
-    },
-    {
-      "path": "/v1/scrape",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to Main Content](https://iitsec2025.smallworldlabs.com/#main)\\n\\n# Exhibitor Directory\\n\\n[![2025 I/ITSEC](https://static.prod01.ue1.p.pcomm.net/iitsec2025/content/images/navigation-content/7753c9c3"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Rectangle 131](https://www.expocaptive.com/wp-content/uploads/2025/09/Rectangle-131.png)\\n\\n- [Home](https://www.expocaptive.com/)\\n- [Security & Defense](https://www.expocaptive.com/security-defense-ev"
     }
   ]
 }
