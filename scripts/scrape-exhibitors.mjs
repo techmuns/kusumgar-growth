@@ -138,7 +138,7 @@ async function main() {
   let pagesUsed = 0;
 
   const catalog = products.map((pr) => `- ${pr.name} (${pr.family}; serves ${(pr.segments || []).join(', ')})`).join('\n');
-  const system = `You classify companies for Kusumgar, a 50-year Indian technical-textile manufacturer of nylon/polyester technical fabrics, aramid/FR fabrics, coated & laminated fabrics and industrial tapes.\n\nKusumgar's product catalog:\n${catalog}\n\nClassify each company as exactly one of:\n- "potential_customer": could BUY Kusumgar fabric — brands, OEMs, converters or fabricators that USE finished technical fabric as an input (e.g. makers of bags, covers, tents, medical/emergency gear, marine or pool covers, automotive seating, protective/industrial products).\n- "competitor": MANUFACTURES finished technical fabric that competes with Kusumgar — woven/knitted/nonwoven, coated, laminated, or FR/aramid TECHNICAL FABRIC. The company must make the fabric itself.\n- "not_relevant": everyone else.\n\nIMPORTANT — these are NOT competitors; mark them "not_relevant" unless they clearly also weave/coat/laminate finished fabric:\n- chemical, dye, resin, coating or finishing-agent suppliers (e.g. Archroma, Sumitomo Chemical);\n- textile machinery / equipment / loom makers (e.g. Monforts, Starlinger);\n- fibre, filament or yarn raw-material suppliers;\n- testing labs, software, certification bodies, associations, logistics and consultancies.\nWhen unsure whether a company makes finished fabric or only supplies chemicals/machinery/fibre/services, choose "not_relevant" rather than "competitor".\n\nFor a potential_customer, pick "segment" from: ${LEAD_SEGMENTS.join(', ')}. Return STRICT JSON only, no prose.`;
+  const system = `You classify companies for Kusumgar, a 50-year Indian technical-textile manufacturer of nylon/polyester technical fabrics, aramid/FR fabrics, coated & laminated fabrics and industrial tapes.\n\nKusumgar's product catalog:\n${catalog}\n\nClassify each company as exactly one of:\n- "potential_customer": could BUY Kusumgar fabric — brands, OEMs, converters or fabricators that USE finished technical fabric as an input (e.g. makers of bags, covers, tents, medical/emergency gear, marine or pool covers, automotive seating, protective/industrial products).\n- "competitor": MANUFACTURES finished technical fabric that competes with Kusumgar — woven/knitted/nonwoven, coated, laminated, or FR/aramid TECHNICAL FABRIC. The company must make the fabric itself.\n- "not_relevant": everyone else.\n\nIMPORTANT — these are NOT competitors; mark them "not_relevant" unless they clearly also weave/coat/laminate finished fabric:\n- chemical, dye, resin, coating or finishing-agent suppliers (e.g. Archroma, Sumitomo Chemical);\n- textile machinery / equipment / loom makers (e.g. Monforts, Starlinger);\n- fibre, filament or yarn raw-material suppliers;\n- testing labs, software, certification bodies, associations, logistics and consultancies.\nWhen unsure whether a company makes finished fabric or only supplies chemicals/machinery/fibre/services, choose "not_relevant" rather than "competitor".\n\nFor a potential_customer, pick "segment" from: ${LEAD_SEGMENTS.join(', ')}.\nFor a competitor, also judge HOW THEY COMPETE and set "positioning" to exactly one of: "Cost / Scale" (wins on low price / high volume — typical of large Chinese/South/South-East Asian mills), "Premium" (wins on high-end quality and brand), "Technology / Technical" (wins on specialised, technical or advanced-material capability), or "Regional" (a small or local player, or when you genuinely cannot tell). Base it on what you actually know about the company; use "Regional" only as a last resort.\nReturn STRICT JSON only, no prose.`;
 
   try {
     for (const show of targets) {
@@ -163,7 +163,7 @@ async function main() {
 
         const c = await askClaude({
           system,
-          user: `Company: ${name}\nContext: exhibitor at ${show.name} (segment ${show.segment}, ${show.country}).\nReturn JSON: {"classification":"potential_customer|competitor|not_relevant","segment":"<one of the listed segments or ->","fabric_fit":"<closest Kusumgar fabric or ->","priority":"High|Medium|Low","reasoning":"<one short sentence>"}`,
+          user: `Company: ${name}\nContext: exhibitor at ${show.name} (segment ${show.segment}, ${show.country}).\nReturn JSON: {"classification":"potential_customer|competitor|not_relevant","segment":"<one of the listed segments or ->","fabric_fit":"<closest Kusumgar fabric or ->","priority":"High|Medium|Low","positioning":"Cost / Scale|Premium|Technology / Technical|Regional","reasoning":"<one short sentence>"}`,
           json: true, maxTokens: 400,
         });
         if (!c || !c.classification) continue;
@@ -181,9 +181,11 @@ async function main() {
           });
         } else if (c.classification === 'competitor') {
           seen.add(nm);
+          const POS_ALLOWED = ['Cost / Scale', 'Premium', 'Technology / Technical', 'Regional'];
           addedComps.push({
             id: slug(name), company: String(name).trim(), country: show.country || null,
-            focus: c.reasoning || '—', positioning: 'Regional',
+            focus: c.reasoning || '—',
+            positioning: POS_ALLOWED.includes(c.positioning) ? c.positioning : 'Regional',
             segments: c.segment && c.segment !== '-' ? [c.segment] : [],
             source: `exhibition:${show.id}`,
           });
