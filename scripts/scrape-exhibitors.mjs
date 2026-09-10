@@ -45,14 +45,17 @@ async function loadArr(path, key) {
   }
 }
 
-// Score a candidate URL by how likely it is to be a real exhibitor list.
+// Score a candidate URL by how likely it is to be a real, readable exhibitor list.
 function urlScore(u) {
   const s = `${u.url || ''} ${u.title || ''}`.toLowerCase();
   let n = 0;
   if (/exhibitor/.test(s)) n += 5;
-  if (/exhibitors|exhibitor-list|exhibitor_list|exhibitor-directory/.test(s)) n += 4;
-  if (/10times\.com|eventseye|expo|tradefair|messe/.test(s)) n += 2;
+  if (/exhibitors|exhibitor-list|exhibitor_list|exhibitorlist|exhibitor-directory/.test(s)) n += 4;
+  // Official organizer / show sites render the full list and don't bot-block scrapers.
+  if (/messefrankfurt|advancedtextiles|jeccomposites|texworld|premierevision|messe|expo|tradefair|fair|show/.test(s)) n += 3;
   if (/list|directory|catalogue|catalog/.test(s)) n += 1;
+  // Aggregators frequently block automated reads (10times returned 403), so prefer them last.
+  if (/10times|eventseye|expolista|visitorslist|tradefairdates/.test(s)) n -= 1;
   if (/login|signin|register|ticket|pdf$/.test(s)) n -= 3;
   return n;
 }
@@ -79,23 +82,28 @@ async function exhibitorText(show, debug) {
   // The search snippets themselves sometimes carry company names.
   text += candidates.map((c) => `${c.title} — ${c.description}`).join('\n');
 
-  // Read the most exhibitor-list-looking pages.
+  // Read the most exhibitor-list-looking pages (accumulate — don't stop on the first big page,
+  // which may be a bot-wall/nav shell rather than the real list).
   const ranked = candidates.sort((a, b) => urlScore(b) - urlScore(a)).slice(0, 3);
+  console.log(`[scrape-exhibitors] ${show.id}: ${candidates.length} candidate page(s); reading top ${ranked.length}: ${ranked.map((c) => c.url).join(' | ') || '(none)'}`);
   for (const c of ranked) {
+    let pageText = '';
     const data = await firecrawlScrape(c.url, { formats: ['markdown'] }, debug);
-    if (data && data.markdown) text += '\n\n' + data.markdown;
-    else if (haveScrapedo()) { const html = await scrapedoGet(c.url); if (html) text += '\n\n' + html.slice(0, 6000); }
-    if (text.length > 9000) break;
+    if (data && data.markdown) pageText = data.markdown;
+    else if (haveScrapedo()) { const html = await scrapedoGet(c.url); if (html) pageText = html.slice(0, 6000); }
+    console.log(`[scrape-exhibitors]   read ${c.url} -> ${pageText.length} chars`);
+    if (pageText) text += '\n\n' + pageText;
+    if (text.length > 12000) break;
   }
 
-  // Fallback: the old direct directory search pages if we still have almost nothing.
+  // Fallback: the old direct directory search page if we still have almost nothing.
   if (text.trim().length < 400) {
-    for (const url of [`https://10times.com/search?kw=${encodeURIComponent(show.name)}`]) {
-      const data = await firecrawlScrape(url, { formats: ['markdown'] }, debug);
-      if (data && data.markdown) text += '\n' + data.markdown;
-    }
+    const url = `https://10times.com/search?kw=${encodeURIComponent(show.name)}`;
+    const data = await firecrawlScrape(url, { formats: ['markdown'] }, debug);
+    if (data && data.markdown) text += '\n' + data.markdown;
   }
-  return text.slice(0, 10000);
+  console.log(`[scrape-exhibitors] ${show.id}: total exhibitor text ${text.length} chars`);
+  return text.slice(0, 12000);
 }
 
 async function main() {
@@ -139,12 +147,12 @@ async function main() {
       pagesUsed += 2;
       if (!text.trim()) { console.log(`[scrape-exhibitors] no exhibitor text for ${show.id}`); continue; }
 
-      const names = await askClaude({
-        system: 'You extract exhibitor/company names from trade-show pages. Return ONLY a JSON array of distinct company-name strings.',
-        user: `Show: ${show.name}\n\nPage text:\n${text}\n\nReturn a JSON array of up to 30 company names.`,
+      const extracted = await askClaude({
+        system: 'You extract exhibitor/company names from trade-show exhibitor-list pages. Ignore navigation, menus, cookie notices and boilerplate. Return STRICT JSON of the form {"companies":["Company One","Company Two"]} and nothing else.',
+        user: `Show: ${show.name}\n\nPage text:\n${text}\n\nReturn up to 30 distinct exhibitor company names as {"companies":[...]}.`,
         json: true, maxTokens: 800,
       });
-      const list = Array.isArray(names) ? names.filter((n) => typeof n === 'string' && n.trim()) : [];
+      const list = Array.isArray(extracted?.companies) ? extracted.companies.filter((n) => typeof n === 'string' && n.trim()) : [];
       console.log(`[scrape-exhibitors] ${show.id}: extracted ${list.length} candidate names`);
 
       for (const name of list) {
