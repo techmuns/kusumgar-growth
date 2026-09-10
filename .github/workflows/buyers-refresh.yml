@@ -1,0 +1,76 @@
+name: Buyers by category
+
+# Category finder: grows leads.json + competitors.json by searching the open web for
+# makers of specific products (e.g. tactical bags, body-armour carriers, tents, parachutes) —
+# for the pure-defence shows that never publish exhibitor lists. Commits only when a file changed.
+on:
+  workflow_dispatch:
+    inputs:
+      categories:
+        description: 'Product categories, "|"-separated (blank = defence-textile defaults)'
+        required: false
+        default: ''
+      max_companies:
+        description: 'Max companies to classify (cost cap)'
+        required: false
+        default: '40'
+  schedule:
+    - cron: '0 8 20 * *' # 08:00 UTC on the 20th of every month
+
+permissions:
+  contents: write
+
+# Share the leads-refresh group so this never runs at the same time as the show scraper
+# (both write the same data files).
+concurrency:
+  group: leads-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Find buyers by category (graceful without keys)
+        env:
+          # Required secrets:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
+          # Optional (both default in code): AWS region + comma-separated model fallback chain.
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
+          SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
+          CATEGORIES: ${{ github.event.inputs.categories }}
+          MAX_COMPANIES: ${{ github.event.inputs.max_companies || '40' }}
+        run: node scripts/find-buyers-by-category.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/leads.json public/data/competitors.json)" ]; then
+            echo "No changes to leads/competitors — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/leads.json public/data/competitors.json
+          git commit -m "chore(data): grow leads & competitors from category search"
+
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1
