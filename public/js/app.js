@@ -2006,13 +2006,16 @@ function loadRelevance(ids) {
 async function boot() {
   wireEvents();
   try {
+    // no-store: always pull the freshest data JSON (the background engines update these
+    // files on every run) so the page never shows stale numbers from a cached copy.
+    const NS = { cache: 'no-store' };
     const [meta, exhibitions, products, leads, competitors, outreach] = await Promise.all([
-      fetch('data/meta.json').then((r) => r.json()),
-      fetch('data/exhibitions.json').then((r) => r.json()),
-      fetch('data/products.json').then((r) => r.json()).catch(() => []),
-      fetch('data/leads.json').then((r) => r.json()).catch(() => []),
-      fetch('data/competitors.json').then((r) => r.json()).catch(() => []),
-      fetch('data/outreach.json').then((r) => r.json()).catch(() => ({})),
+      fetch('data/meta.json', NS).then((r) => r.json()),
+      fetch('data/exhibitions.json', NS).then((r) => r.json()),
+      fetch('data/products.json', NS).then((r) => r.json()).catch(() => []),
+      fetch('data/leads.json', NS).then((r) => r.json()).catch(() => []),
+      fetch('data/competitors.json', NS).then((r) => r.json()).catch(() => []),
+      fetch('data/outreach.json', NS).then((r) => r.json()).catch(() => ({})),
     ]);
     state.meta = meta;
     // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.

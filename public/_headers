@@ -1,0 +1,10 @@
+# Cloudflare Pages headers.
+# Force browsers to revalidate the app shell, its code and its data on every load,
+# so a cached older app.js can never run against freshly-deployed data (which showed
+# up as mislabeled cells). Unchanged files still return a cheap 304, so this is fast.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
