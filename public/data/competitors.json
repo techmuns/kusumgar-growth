@@ -150,32 +150,10 @@
       "source": "research"
     },
     {
-      "id": "sumitomo-chemical-company-limited",
-      "company": "Sumitomo Chemical Company Limited",
-      "country": "Germany",
-      "focus": "Sumitomo Chemical is a major chemical manufacturer that produces synthetic fibers and textile materials, making them a competitor rather than a fabric buyer.",
-      "positioning": "Regional",
-      "segments": [
-        "->"
-      ],
-      "source": "exhibition:techtextil"
-    },
-    {
       "id": "3tech-textil-gmbh",
       "company": "3tech Textil GmbH",
       "country": "Germany",
       "focus": "Exhibitor at Techtextil in workwear segment suggests they manufacture technical textiles rather than being an end-user or converter of fabrics.",
-      "positioning": "Regional",
-      "segments": [
-        "->"
-      ],
-      "source": "exhibition:techtextil"
-    },
-    {
-      "id": "a-monforts-textilmaschinen-gmbh-co-kg",
-      "company": "A. Monforts Textilmaschinen GmbH & Co. KG",
-      "country": "Germany",
-      "focus": "Monforts is a textile machinery manufacturer specializing in finishing equipment for technical textiles, not a fabric producer or end-user of technical fabrics.",
       "positioning": "Regional",
       "segments": [
         "->"
@@ -205,17 +183,6 @@
       "source": "exhibition:techtextil"
     },
     {
-      "id": "american-starlinger-sahm-inc",
-      "company": "American Starlinger-Sahm, Inc.",
-      "country": "Germany",
-      "focus": "American Starlinger-Sahm manufactures technical textile machinery and woven fabrics, making them a competitor in the technical textiles space rather than a fabric buyer.",
-      "positioning": "Regional",
-      "segments": [
-        "->"
-      ],
-      "source": "exhibition:techtextil"
-    },
-    {
       "id": "apex-advanced-textiles-pvt-ltd",
       "company": "Apex Advanced Textiles Pvt Ltd",
       "country": "Germany",
@@ -238,17 +205,6 @@
       "source": "exhibition:techtextil"
     },
     {
-      "id": "archroma-us",
-      "company": "Archroma US",
-      "country": "Germany",
-      "focus": "Archroma is a global specialty chemicals company that produces dyes, chemicals, and textile treatments for fabric manufacturers, making them a supplier to the industry rather than a fabric manufacturer or customer.",
-      "positioning": "Regional",
-      "segments": [
-        "->"
-      ],
-      "source": "exhibition:techtextil"
-    },
-    {
       "id": "aurora-specialty-textiles-group",
       "company": "Aurora Specialty Textiles Group",
       "country": "Germany",
@@ -258,28 +214,6 @@
         "->"
       ],
       "source": "exhibition:techtextil"
-    },
-    {
-      "id": "aym-syntex-limited",
-      "company": "AYM Syntex Limited",
-      "country": "Germany",
-      "focus": "AYM Syntex is a technical textile manufacturer exhibiting at Techtextil in the workwear segment, indicating they produce fabrics rather than consume them as an end-user or converter.",
-      "positioning": "Regional",
-      "segments": [
-        "->"
-      ],
-      "source": "exhibition:techtextil"
-    },
-    {
-      "id": "3a-throwing-ames-textile",
-      "company": "3A Throwing - Ames Textile",
-      "country": "United States",
-      "focus": "Ames Textile is a textile manufacturer exhibiting at an industrial technical textiles trade show, indicating they produce rather than consume technical fabrics.",
-      "positioning": "Regional",
-      "segments": [
-        "->"
-      ],
-      "source": "exhibition:techtextil-north-america"
     }
   ],
   "_meta": {

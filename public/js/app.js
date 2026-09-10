@@ -740,30 +740,25 @@ function filteredProducts() {
   });
 }
 
-function productCard(p) {
+function productRow(p) {
   const coatings = (p.coatings || []).map((c) =>
-    `<span class="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">${escapeHtml(c)}</span>`).join('');
+    `<span class="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">${escapeHtml(c)}</span>`).join(' ') || '<span class="text-slate-300">—</span>';
   const props = (p.properties || []).slice(0, 4).map((pr) =>
-    `<span class="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-100">
-       <span aria-hidden="true">${iconForProperty(pr)}</span>${escapeHtml(pr)}</span>`).join('');
-  const segs = (p.segments || []).map((s) => coloredChip(s, segColor(s))).join(' ');
+    `<span class="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-100"><span aria-hidden="true">${iconForProperty(pr)}</span>${escapeHtml(pr)}</span>`).join(' ') || '<span class="text-slate-300">—</span>';
+  const segs = (p.segments || []).map((s) => coloredChip(s, segColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
   const deniers = p.deniers && p.deniers !== '—' ? ` · ${escapeHtml(p.deniers)}` : '';
   const apps = (p.applications || []).join(', ');
   const srcBadge = p.source && p.source !== 'seed'
     ? `<span class="ml-1 rounded bg-indigo-50 px-1.5 py-0.5 align-middle text-[10px] font-semibold text-indigo-500" title="Found on ${escapeHtml(p.source)}">↗</span>` : '';
   return `
-    <article class="fade-in flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-      <div class="mb-2">
-        <h4 class="font-display text-[15px] font-bold leading-tight text-slate-800">${escapeHtml(p.name)}${srcBadge}</h4>
-        <p class="mt-0.5 text-[12px] text-slate-500">${escapeHtml(p.base || '')}${deniers}</p>
-      </div>
-      ${coatings ? `<div class="mb-2 flex flex-wrap gap-1">${coatings}</div>` : ''}
-      ${props ? `<div class="mb-3 flex flex-wrap gap-1.5">${props}</div>` : ''}
-      <div class="mt-auto">
-        <div class="mb-2 flex flex-wrap gap-1.5">${segs}</div>
-        ${apps ? `<p class="truncate text-[11px] text-slate-400" title="${escapeHtml(apps)}">🧭 ${escapeHtml(apps)}</p>` : ''}
-      </div>
-    </article>`;
+    <tr class="border-t border-slate-100 align-top hover:bg-slate-50/60">
+      <td class="px-3 py-2.5"><div class="font-display text-sm font-bold leading-tight text-slate-800">${escapeHtml(p.name)}${srcBadge}</div></td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-[13px] text-slate-500">${escapeHtml(p.base || '—')}${deniers}</td>
+      <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1">${coatings}</div></td>
+      <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1.5">${props}</div></td>
+      <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1.5">${segs}</div></td>
+      <td class="px-3 py-2.5"><div class="max-w-[240px] truncate text-[12px] text-slate-400" title="${escapeHtml(apps)}">${apps ? escapeHtml(apps) : '—'}</div></td>
+    </tr>`;
 }
 
 function renderCatalogGrid() {
@@ -771,18 +766,22 @@ function renderCatalogGrid() {
   if (!list.length) {
     return `<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No products match these filters.</div>`;
   }
-  return familiesPresent(list).map((fam) => {
+  const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+    <th class="px-3 py-2.5">Product</th>
+    <th class="px-3 py-2.5">Base / deniers</th>
+    <th class="px-3 py-2.5">Coatings</th>
+    <th class="px-3 py-2.5">Key properties</th>
+    <th class="px-3 py-2.5">Industries</th>
+    <th class="px-3 py-2.5">Applications</th>
+  </tr>`;
+  const groups = familiesPresent(list).map((fam) => {
     const items = list.filter((p) => p.family === fam);
-    return `
-      <section class="mb-6 last:mb-0">
-        <div class="mb-3 flex items-center gap-2">
-          <h3 class="font-display text-sm font-bold text-slate-700">${FAMILY_ICONS[fam] || '🧵'} ${escapeHtml(fam)}</h3>
-          <span class="tnum text-[11px] font-semibold text-slate-400">${items.length}</span>
-          <span class="h-px flex-1 bg-slate-100"></span>
-        </div>
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">${items.map(productCard).join('')}</div>
-      </section>`;
+    const header = `<tr class="bg-slate-50/70"><td colspan="6" class="px-3 py-2 text-[12px] font-bold text-slate-600">${FAMILY_ICONS[fam] || '🧵'} ${escapeHtml(fam)}<span class="tnum ml-1.5 font-semibold text-slate-400">${items.length}</span></td></tr>`;
+    return header + items.map(productRow).join('');
   }).join('');
+  return `<div class="fade-in overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+    <table class="w-full min-w-[900px] border-collapse text-left"><thead>${thead}</thead><tbody>${groups}</tbody></table>
+  </div>`;
 }
 
 function refreshCatalog() {
@@ -1217,21 +1216,32 @@ function renderCompetitorsLandscape() {
 }
 
 function renderCompetitorsList() {
-  const cards = state.competitors.map((c) => {
+  const comps = state.competitors;
+  if (!comps.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No competitors loaded.</div>`;
+  }
+  const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+    <th class="px-3 py-2.5">Company</th>
+    <th class="px-3 py-2.5">Country</th>
+    <th class="px-3 py-2.5">Positioning</th>
+    <th class="px-3 py-2.5">Focus</th>
+    <th class="px-3 py-2.5">Segments</th>
+  </tr>`;
+  const rows = comps.map((c) => {
     const b = positionBucket(c.positioning);
-    const segs = (c.segments || []).map((s) => coloredChip(s, anyColor(s))).join(' ');
+    const segs = (c.segments || []).map((s) => coloredChip(s, anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
     return `
-      <article class="fade-in flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-        <div class="mb-1 flex items-start justify-between gap-2">
-          <h4 class="font-display text-[15px] font-bold leading-tight text-slate-800">${escapeHtml(c.company)}</h4>
-          ${coloredChip(c.positioning, b.color)}
-        </div>
-        <p class="mb-2 text-[12px] text-slate-500">${c.country ? (FLAGS[c.country] || '') + ' ' : ''}${escapeHtml(dash(c.country))}</p>
-        <p class="mb-3 text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</p>
-        <div class="mt-auto flex flex-wrap gap-1.5">${segs}</div>
-      </article>`;
+      <tr class="border-t border-slate-100 align-top hover:bg-slate-50/60">
+        <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(c.company)}</td>
+        <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${c.country ? (FLAGS[c.country] || '') + ' ' : ''}${escapeHtml(dash(c.country))}</td>
+        <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(c.positioning, b.color)}</td>
+        <td class="px-3 py-2.5"><div class="max-w-[380px] text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</div></td>
+        <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1.5">${segs}</div></td>
+      </tr>`;
   }).join('');
-  return `<div class="fade-in grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">${cards}</div>`;
+  return `<div class="fade-in overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+    <table class="w-full min-w-[820px] border-collapse text-left"><thead>${thead}</thead><tbody>${rows}</tbody></table>
+  </div>`;
 }
 
 function renderCompetitors() {
