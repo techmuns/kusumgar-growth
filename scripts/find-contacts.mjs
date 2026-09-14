@@ -30,6 +30,9 @@ const PDL = process.env.PDL_API_KEY || '';
 
 const domainOf = (l) => { try { return l.website ? new URL(l.website).hostname.replace(/^www\./, '') : ''; } catch { return ''; } };
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
+// A usable email is a STRING containing "@". PDL's free tier returns work_email / emails as a
+// boolean flag ("exists but hidden"); those must NEVER be stored as the address or marked verified.
+const realEmail = (e) => (typeof e === 'string' && e.includes('@')) ? e.trim() : null;
 
 async function loadOutreach() {
   try { const o = JSON.parse(await readFile(OUTREACH_PATH, 'utf8')); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
@@ -58,8 +61,8 @@ async function pdlPerson(lead) {
     if (!r) return null;
     const name = r.full_name || [r.first_name, r.last_name].filter(Boolean).join(' ');
     const li = r.linkedin_url ? (String(r.linkedin_url).startsWith('http') ? r.linkedin_url : 'https://' + r.linkedin_url) : null;
-    const email = r.work_email || (Array.isArray(r.emails) && r.emails[0] && (r.emails[0].address || r.emails[0])) || null;
-    return name ? { name, title: r.job_title || '', linkedin_url: li, email } : null;
+    const emailRaw = r.work_email || (Array.isArray(r.emails) && r.emails[0] && (r.emails[0].address || r.emails[0])) || null;
+    return name ? { name, title: r.job_title || '', linkedin_url: li, email: realEmail(emailRaw) } : null;
   } catch (e) { console.error(`[find-contacts] PDL failed (ok): ${e.message}`); return null; }
 }
 
@@ -159,25 +162,27 @@ async function main() {
       // EMAIL — Hunter (verified) → PDL work email (verified) → website (published) → guess.
       if (HUNTER && domain) {
         const h = await hunterEmail(l, domain);
-        if (h && h.email) {
-          contact.email = h.email; contact.email_status = 'verified';
+        const he = realEmail(h && h.email);
+        if (he) {
+          contact.email = he; contact.email_status = 'verified';
           if (!contact.name) contact.name = h.name || null;
           if (!contact.title) contact.title = h.title || '';
           contact.source = /pdl|web/.test(contact.source) ? contact.source + '+hunter' : 'hunter';
           contact.confidence = 'high';
         }
       }
-      if (!contact.email && pdlEmail) {
-        contact.email = pdlEmail; contact.email_status = 'verified';
+      const pe = realEmail(pdlEmail);
+      if (!contact.email && pe) {
+        contact.email = pe; contact.email_status = 'verified';
         if (!/pdl/.test(contact.source)) contact.source = contact.source ? contact.source + '+pdl' : 'pdl';
       }
 
       if (!contact.email && (firecrawlKey() || haveScrapedo()) && l.website) {
-        const pub = await websiteEmail(l, debug);
+        const pub = realEmail(await websiteEmail(l, debug));
         if (pub) { contact.email = pub; contact.email_status = 'published'; if (!contact.source) contact.source = 'website'; }
       }
       if (!contact.email && domain && contact.name) {
-        const g = await guessEmail(contact.name, domain);
+        const g = realEmail(await guessEmail(contact.name, domain));
         if (g) { contact.email = g; contact.email_status = 'guessed'; if (!contact.source) contact.source = 'guess'; }
       }
 

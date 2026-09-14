@@ -205,8 +205,8 @@
       "name": "laurie fischer",
       "title": "buyer",
       "linkedin_url": "https://linkedin.com/in/laurie-fischer-a685b9b",
-      "email": true,
-      "email_status": "verified",
+      "email": null,
+      "email_status": null,
       "source": "pdl",
       "confidence": "high"
     }
@@ -511,8 +511,8 @@
       "name": "matt tandy",
       "title": "senior manager, global martech content manager",
       "linkedin_url": "https://linkedin.com/in/matttandy",
-      "email": true,
-      "email_status": "verified",
+      "email": null,
+      "email_status": null,
       "source": "pdl",
       "confidence": "high"
     }
@@ -596,8 +596,8 @@
       "name": "ehsan argand",
       "title": "director, global logistics & customs compliance",
       "linkedin_url": "https://linkedin.com/in/ehsan-argand-80566759",
-      "email": true,
-      "email_status": "verified",
+      "email": null,
+      "email_status": null,
       "source": "pdl",
       "confidence": "high"
     }
