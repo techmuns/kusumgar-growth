@@ -1,7 +1,8 @@
 name: Outreach refresh
 
-# Drafts Nishad-style emails + finds contacts, writing public/data/outreach.json.
-# Manual (with inputs) + monthly cron. Commits only when outreach.json changed.
+# Fills missing lead websites, drafts Nishad-style emails, then finds contacts.
+# Writes public/data/leads.json (websites) + public/data/outreach.json (drafts & contacts).
+# Manual (with inputs) + monthly cron. Commits only when that data changed.
 on:
   workflow_dispatch:
     inputs:
@@ -19,8 +20,10 @@ on:
 permissions:
   contents: write
 
+# Shares the leads-refresh group: this workflow now also writes public/data/leads.json
+# (lead websites), so it must not run alongside the other leads.json writers.
 concurrency:
-  group: outreach-refresh
+  group: leads-refresh
   cancel-in-progress: false
 
 jobs:
@@ -50,6 +53,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Find missing websites (graceful without Firecrawl)
+        run: node scripts/find-websites.mjs
+
       - name: Draft emails (graceful without Bedrock)
         run: node scripts/draft-emails.mjs
 
@@ -58,14 +64,14 @@ jobs:
 
       - name: Commit & push if changed
         run: |
-          if [ -z "$(git status --porcelain public/data/outreach.json)" ]; then
-            echo "No changes to outreach.json — nothing to commit."
+          if [ -z "$(git status --porcelain public/data/leads.json public/data/outreach.json)" ]; then
+            echo "No changes to leads/outreach data — nothing to commit."
             exit 0
           fi
           git config user.name "kgr-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/outreach.json
-          git commit -m "chore(data): refresh outreach drafts & contacts"
+          git add public/data/leads.json public/data/outreach.json
+          git commit -m "chore(data): refresh websites, outreach drafts & contacts"
 
           branch="${GITHUB_REF_NAME}"
           for i in 1 2 3 4; do
