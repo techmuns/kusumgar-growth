@@ -149,7 +149,7 @@ const state = {
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'overview',   // 'overview' | 'list'
-  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', fullOnly: false, needsContact: false },
+  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', needsContact: false },
   leadSort: { key: 'company', dir: 'asc' },
   competitorsSub: 'landscape', // 'landscape' | 'list'
   outreachSub: 'pipeline',     // 'pipeline' | 'tracker'
@@ -939,14 +939,14 @@ function renderLeadsOverview() {
   const total = leads.length;
   const segCounts = countBy(leads, (d) => d.segment);
   const high = leads.filter((d) => d.priority === 'High').length;
-  const fullCount = leads.filter((d) => d.detail === 'full').length;
+  const withSite = leads.filter((d) => d.website).length;
 
   const chips = `
     <div class="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
       ${statChip('🎯', total, 'Total leads', '#6366f1')}
       ${statChip('🧩', segCounts.size, 'Segments', '#0ea5e9')}
       ${statChip('⭐', high, 'High priority', '#10b981')}
-      ${statChip('📇', fullCount, 'Full details', '#f59e0b')}
+      ${statChip('🌐', withSite, 'With website', '#f59e0b')}
     </div>`;
 
   // Live source split (grows once the classify engine appends exhibition leads).
@@ -971,17 +971,20 @@ function renderLeadsOverview() {
   const priLegend = `<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">` + priItems.map((i) =>
     `<div class="hovable flex items-center gap-1.5" data-key="${i.key}" data-tip-title="${escapeHtml(i.label)} priority" data-tip-color="${i.color}" data-tip-sub="${plural(i.value, 'lead')}"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
 
-  const fitCounts = [...countBy(leads, (d) => d.fabric_fit).entries()].filter(([k]) => k).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const maxF = fitCounts[0] ? fitCounts[0][1] : 1, minF = fitCounts.length ? fitCounts[fitCounts.length - 1][1] : 0;
-  const fitShort = (f) => f.replace(/ Polyester| Fabric/g, '').replace(/ \/ /g, '/');
-  const fitItems = fitCounts.map(([f, v]) => ({ label: f, short: fitShort(f), value: v, key: 'fit:' + f, color: lerpColor('#34d399', '#6366f1', maxF === minF ? 0.5 : (v - minF) / (maxF - minF)) }));
-  const fitLegend = `<div class="mt-3 flex items-center gap-2 text-[11px] font-medium text-slate-400"><span>fewer</span><span class="h-2 flex-1 rounded-full" style="background:linear-gradient(to right,#34d399,#6366f1)"></span><span>more leads</span></div>`;
+  // Source-backed outreach progress (replaces the old best-fit-fabric estimate chart).
+  const withEmailN = leads.filter((l) => hasRealEmail(resolvedContact(l.id))).length;
+  const needN = leads.filter((l) => leadNeedsContact(l.id)).length;
+  const statusItems = [
+    { label: 'Website found', value: withSite, key: 'st:site', color: '#6366f1' },
+    { label: 'Real email found', value: withEmailN, key: 'st:email', color: '#10b981' },
+    { label: 'Needs contact', value: needN, key: 'st:need', color: '#f59e0b' },
+  ].filter((i) => i.value > 0);
 
   const grid = `
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
       <div class="space-y-4">
         <div data-chart>${chartCard('🧩', 'Leads by industry', 'what they make', donut)}</div>
-        <div data-chart>${chartCard('🧵', 'Leads by best-fit fabric', 'our closest fabric for them', buildBars(fitItems, { unit: 'lead' }) + fitLegend)}</div>
+        <div data-chart>${chartCard('📇', 'Outreach readiness', 'source-backed progress', buildBars(statusItems, { unit: 'lead' }))}</div>
       </div>
       <div class="space-y-4">
         <div data-chart>${chartCard('🌍', 'Top countries', 'by number of leads', buildBars(countryItems, { unit: 'lead' }) + countryLegend)}</div>
@@ -999,10 +1002,9 @@ function filteredLeads() {
     if (f.segment !== 'all' && l.segment !== f.segment) return false;
     if (f.country !== 'all' && (l.country || 'Unknown') !== f.country) return false;
     if (f.priority !== 'all' && l.priority !== f.priority) return false;
-    if (f.fullOnly && l.detail !== 'full') return false;
     if (f.needsContact && !leadNeedsContact(l.id)) return false;
     if (q) {
-      const hay = `${l.company} ${l.country} ${l.segment} ${l.application || ''} ${l.fabric_fit || ''} ${l.contact_role || ''}`.toLowerCase();
+      const hay = `${l.company} ${l.country} ${l.segment} ${l.application || ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -1019,7 +1021,6 @@ function sortedLeads(list) {
   const { key, dir } = state.leadSort;
   const s = dir === 'asc' ? 1 : -1;
   const val = (l) => {
-    if (key === 'est') return consumptionSortVal(l.est_consumption);
     if (key === 'priority') return l.priority === 'High' ? 0 : 1;
     return String(l[key] ?? '').toLowerCase();
   };
@@ -1034,8 +1035,6 @@ function sortedLeads(list) {
 const LEAD_COLS = [
   { key: 'company', label: 'Company' }, { key: 'segment', label: 'Industry' },
   { key: 'country', label: 'Country' }, { key: 'application', label: 'Used for' },
-  { key: 'fabric_fit', label: 'Best-fit fabric' }, { key: 'est', label: 'Est. yearly use (m²)' },
-  { key: 'sourcing_model', label: 'How they buy' }, { key: 'contact_role', label: 'Who to contact' },
   { key: 'priority', label: 'Priority' },
 ];
 
@@ -1051,12 +1050,8 @@ function leadsTableHtml() {
       <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</td>
       <td class="px-3 py-2.5"><div class="max-w-[210px] truncate text-sm text-slate-600" title="${escapeHtml(l.application || '')}">${escapeHtml(dash(l.application))}</div></td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${escapeHtml(dash(l.fabric_fit))}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500 tnum">${escapeHtml(fmtConsumption(l.est_consumption))}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500">${escapeHtml(dash(l.sourcing_model))}</td>
-      <td class="px-3 py-2.5"><div class="max-w-[190px] truncate text-sm text-slate-500" title="${escapeHtml(l.contact_role || '')}">${escapeHtml(dash(l.contact_role))}</div></td>
       <td class="whitespace-nowrap px-3 py-2.5">${priorityChip(l.priority)}</td>
-    </tr>`).join('') : `<tr><td colspan="9" class="px-4 py-10 text-center text-sm text-slate-400">No leads match these filters.</td></tr>`;
+    </tr>`).join('') : `<tr><td colspan="5" class="px-4 py-10 text-center text-sm text-slate-400">No leads match these filters.</td></tr>`;
   return `<table class="w-full min-w-[980px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
 }
 
@@ -1069,7 +1064,6 @@ function renderLeadsList() {
   const f = state.leadFilters;
   const segs = [...new Set(state.leads.map((l) => l.segment))].sort();
   const countries = [...new Set(state.leads.map((l) => l.country || 'Unknown'))].sort();
-  const toggleCls = f.fullOnly ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
   const needCount = state.leads.filter((l) => leadNeedsContact(l.id)).length;
   const needCls = f.needsContact ? 'bg-amber-500 text-white ring-amber-500' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
   return `
@@ -1083,8 +1077,6 @@ function renderLeadsList() {
         ${selectHtml('l-seg', 'All segments', f.segment, segs)}
         ${selectHtml('l-country', 'All countries', f.country, countries)}
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
-        <button type="button" data-ltoggle aria-pressed="${f.fullOnly}"
-          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${toggleCls}">📇 Full details only</button>
         <button type="button" data-lneed aria-pressed="${f.needsContact}"
           class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${needCls}">📮 Needs contact${needCount ? ` <span class="tnum">${needCount}</span>` : ''}</button>
         <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
@@ -1114,23 +1106,17 @@ function openLeadDrawer(id) {
   if (!l) return;
   const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-slate-100 py-2.5"><span class="shrink-0 text-[12px] font-medium text-slate-400">${escapeHtml(label)}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
   const website = l.website ? `<a href="${escapeHtml(l.website)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${escapeHtml(String(l.website).replace(/^https?:\/\//, ''))}</a>` : '—';
-  const badge = l.detail === 'full'
-    ? '<span class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600">Full details</span>'
-    : '<span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-400">Quick info</span>';
   const body = `
-    <div class="flex flex-wrap items-center gap-2">${coloredChip(l.segment, leadSegColor(l.segment))}${priorityChip(l.priority)}${badge}</div>
+    <div class="flex flex-wrap items-center gap-2">${coloredChip(l.segment, leadSegColor(l.segment))}${priorityChip(l.priority)}</div>
     <div class="mt-4">
       ${row('Country', (l.country ? (FLAGS[l.country] || '') + ' ' : '') + escapeHtml(dash(l.country)))}
       ${row('Website', website)}
       ${row('Used for', escapeHtml(dash(l.application)))}
-      ${row('Best-fit fabric', escapeHtml(dash(l.fabric_fit)))}
-      ${row('Est. yearly use (m²)', escapeHtml(fmtConsumption(l.est_consumption)))}
-      ${row('How they buy', escapeHtml(dash(l.sourcing_model)))}
-      ${row('Who to contact', escapeHtml(dash(l.contact_role)))}
       ${row('Where we found them', escapeHtml(dash(l.source)))}
     </div>`;
   // Layer B — manual contact bridge (Nishad's real ContactOut-extension workflow).
-  const rc = resolvedContact(l.id);
+  // Only a source-backed, relevant contact is shown; a mismatched person is hidden.
+  const rc = displayContact(l.id);
   const rcHas = rc && (rc.name || rc.email);
   const bridge = `
     <div class="mb-3 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
@@ -1140,7 +1126,7 @@ function openLeadDrawer(id) {
       </div>
       ${rcHas
         ? `<div class="text-sm font-bold text-slate-800">${escapeHtml(rc.name || rc.email)}</div>${rc.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(rc.title)}</div>` : ''}${rc.email ? `<div class="mt-0.5 text-[12px]"><a href="mailto:${escapeHtml(rc.email)}" class="text-indigo-600 hover:underline">${escapeHtml(rc.email)}</a></div>` : ''}`
-        : `<div class="text-[13px] text-slate-600">Best person to contact: <span class="font-semibold text-slate-800">${escapeHtml(dash(l.contact_role))}</span></div>`}
+        : `<div class="text-[13px] text-slate-500">No verified contact yet — find one on LinkedIn below.</div>`}
       <div class="mt-2 flex flex-wrap gap-2">
         <a href="${escapeHtml(linkedinSearchUrl(l))}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-lg bg-[#0a66c2] px-2.5 py-1.5 text-[12px] font-semibold text-white hover:opacity-90">🔗 Find contact on LinkedIn ↗</a>
         ${rc && rc.linkedin_url ? `<a href="${escapeHtml(rc.linkedin_url)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-[12px] font-semibold text-[#0a66c2] ring-1 ring-slate-200 hover:bg-slate-50">Open profile ↗</a>` : ''}
@@ -1312,6 +1298,31 @@ function resolvedContact(id) {
     confidence: (a && a.confidence) || 'manual',
   };
 }
+
+// A job title counts as a real buyer/decision-maker worth surfacing as "the contact".
+const RELEVANT_TITLE_RE = /procure|purchas|sourc|buyer|buying|supply\s*chain|\bsupply\b|material|category|commodity|merchand|logistic|\boperations?\b|\bops\b|owner|founder|president|\bceo\b|\bcoo\b|\bcfo\b|chief|managing\s*director|general\s*manager|\bgm\b|principal|partner|\bvp\b|vice\s*president|head\s+of|director\s+of\s+(?:purchas|procure|sourc|supply|operation|material)/i;
+const titleRelevant = (t) => !t || RELEVANT_TITLE_RE.test(String(t));
+// A real, source-backed email (not a legacy guess, not "none").
+const REAL_EMAIL_STATUS = new Set(['verified', 'verified (manual)', 'published']);
+const hasRealEmail = (c) => !!(c && c.email && REAL_EMAIL_STATUS.has(c.email_status));
+// Display gate — only surface a contact that is source-backed AND relevant. Keeps any real email
+// we found, but hides a mismatched person (e.g. a designer when we wanted a buyer) so the card
+// never presents a guessed or off-target person as "the contact".
+function displayContact(id) {
+  const c = resolvedContact(id);
+  if (!c) return null;
+  const realEmail = hasRealEmail(c);
+  const personOk = !!(c.name && titleRelevant(c.title));
+  if (!realEmail && !personOk) return null;
+  return {
+    name: personOk ? c.name : null,
+    title: personOk ? c.title : '',
+    linkedin_url: personOk ? c.linkedin_url : null,
+    email: realEmail ? c.email : null,
+    email_status: realEmail ? c.email_status : null,
+    source: c.source, confidence: c.confidence,
+  };
+}
 // Draft: engine draft (outreach.json) wins; else a manual template draft.
 function resolvedEmail(id) {
   const e = outreachFor(id).email;
@@ -1320,13 +1331,13 @@ function resolvedEmail(id) {
   return (m && m.draft) ? m.draft : null;
 }
 const hasDraftFor = (id) => !!resolvedEmail(id);
-const linkedinSearchUrl = (lead) => `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(`${lead.company} ${lead.contact_role || ''}`.trim())}`;
+const linkedinSearchUrl = (lead) => `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(`${lead.company} procurement purchasing sourcing`.trim())}`;
 
 // Client-side Nishad-style template fill (Layer B — no LLM needed).
 function draftFromTemplate(lead) {
   const industry = lead.segment || 'technical textiles';
   const application = lead.application || lead.segment || 'your products';
-  const fit = lead.fabric_fit || 'coated & laminated technical fabrics';
+  const fit = 'coated & laminated technical fabrics';
   const subject = `Technical Textiles for ${lead.segment || application} / Kusumgar`;
   const body = `My name is Nishad Kusumgar, and I represent Kusumgar Private Limited (www.kusumgar.com), a leading technical textile manufacturer based in India, with over 50 years of expertise in producing synthetic technical textiles. Our state-of-the-art production facility includes weaving, dyeing, finishing, coating, and calendaring, enabling us to offer end-to-end solutions. Our fabrics are widely used across industries such as Military, Industrial, Outdoor, Medical, Automotive, Aeronautical, and Workwear.\n\nCoated and laminated fabrics are a core focus of our business, and we specialize in providing customized solutions for various sectors. We believe our capabilities and infrastructure align well with the requirements of the ${industry} industry, particularly for ${application}. Here are some of the solutions we can offer:\n- ${fit} tailored for ${application}\n- Custom coatings and finishes (PU, PVC, silicone, FR) engineered for durability\n- Colour-matched, made-to-spec rolls with consistent, repeatable quality\nThese fabrics can be tailored with various colour options, finishes, and coatings to meet your exact specifications.\n\nI would greatly appreciate the opportunity to arrange a conference call with you and your team in the coming weeks to discuss how Kusumgar can support your fabric requirements.\n\nThank you for your time and consideration. I look forward to your response.`;
   return { subject, body, drafted_at: new Date().toISOString(), model: 'manual' };
@@ -1365,7 +1376,7 @@ function setPipeline(id, patch) {
 const pipelinedLeads = () => state.leads.filter((l) => validStage(state.pipeline[l.id]?.stage));
 
 function contactBlock(lead) {
-  const c = resolvedContact(lead.id);
+  const c = displayContact(lead.id);
   if (c && (c.name || c.email)) {
     const li = c.linkedin_url ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">LinkedIn ↗</a>` : '';
     const em = c.email ? `<a href="mailto:${escapeHtml(c.email)}" class="text-indigo-600 hover:underline">${escapeHtml(c.email)}</a>` : '';
@@ -1379,7 +1390,7 @@ function contactBlock(lead) {
   }
   return `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
     <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
-    <div class="mt-1 text-[13px] text-slate-600">Best role to target: <span class="font-semibold text-slate-800">${escapeHtml(dash(lead.contact_role))}</span></div>
+    <div class="mt-1 text-[13px] text-slate-500">No verified contact yet.</div>
     <div class="mt-1 text-[11px] text-slate-400">Use “🔗 Find contact on LinkedIn” in the lead panel, or run the Outreach refresh.</div>
   </div>`;
 }
@@ -1521,10 +1532,10 @@ function trackerTableHtml() {
   };
   const body = rows.map((l) => {
     const pl = state.pipeline[l.id];
-    const c = resolvedContact(l.id);
+    const c = displayContact(l.id);
     const contact = c && (c.name || c.email)
       ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name || c.email)}${emailStatusBadge(c.email_status, true)}</span>`
-      : `<span class="text-slate-400">→ ${escapeHtml(dash(l.contact_role))}</span>`;
+      : `<span class="text-slate-400">→ find contact</span>`;
     const hasDraft = hasDraftFor(l.id) ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
     return `<tr class="border-t border-slate-100 hover:bg-slate-50/60">
       <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
@@ -1597,7 +1608,7 @@ function renderToday() {
         ${hasDraft ? '<span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">✉️ draft ready</span>' : '<span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-400">draft</span>'}
       </div>
       <div class="mb-2 flex flex-wrap gap-1.5">${coloredChip(l.segment, leadSegColor(l.segment))}</div>
-      <p class="mt-auto truncate text-[12px] text-slate-500">${escapeHtml(dash(l.application || l.fabric_fit))}</p>
+      <p class="mt-auto truncate text-[12px] text-slate-500">${escapeHtml(dash(l.application))}</p>
     </button>`;
   }).join('') + `</div>`
     : `<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No high-priority leads yet.</div>`;
@@ -1704,23 +1715,20 @@ function buildLeadsSheet(wb) {
     { header: 'Segment', key: 'segment', width: 26 },
     { header: 'Country', key: 'country', width: 14 },
     { header: 'Application', key: 'application', width: 30 },
-    { header: 'Fabric fit', key: 'fabric_fit', width: 26 },
-    { header: 'Est. use (m²/yr)', key: 'est', width: 16 },
-    { header: 'Sourcing', key: 'sourcing', width: 22 },
-    { header: 'Contact role', key: 'role', width: 26 },
     { header: 'Priority', key: 'priority', width: 10 },
+    { header: 'Website', key: 'website', width: 30 },
     { header: 'Contact name', key: 'cname', width: 22 },
+    { header: 'Contact title', key: 'ctitle', width: 24 },
     { header: 'Contact email', key: 'cemail', width: 28 },
     { header: 'Email status', key: 'estatus', width: 14 },
     { header: 'Has draft', key: 'draft', width: 10 },
   ];
   sortedLeads(filteredLeads()).forEach((l) => {
-    const c = resolvedContact(l.id) || {};
+    const c = displayContact(l.id) || {};
     ws.addRow({
       company: l.company, segment: l.segment, country: l.country || '', application: l.application || '',
-      fabric_fit: l.fabric_fit || '', est: l.est_consumption || '', sourcing: l.sourcing_model || '',
-      role: l.contact_role || '', priority: l.priority || '', cname: c.name || '', cemail: c.email || '',
-      estatus: c.email_status || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
+      priority: l.priority || '', website: l.website || '', cname: c.name || '', ctitle: c.title || '',
+      cemail: c.email || '', estatus: c.email_status || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
     });
   });
   styleHeader(ws);
@@ -1740,10 +1748,10 @@ function buildOutreachSheet(wb) {
   ];
   pipelinedLeads().forEach((l) => {
     const pl = state.pipeline[l.id];
-    const c = resolvedContact(l.id) || {};
+    const c = displayContact(l.id) || {};
     ws.addRow({
       company: l.company, segment: l.segment, stage: pl.stage, deal: pl.dealType || 'current',
-      mfg: pl.mfg || 'own', contact: c.name || c.email || l.contact_role || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
+      mfg: pl.mfg || 'own', contact: c.name || c.email || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
     });
   });
   styleHeader(ws);
@@ -1916,9 +1924,6 @@ function wireEvents() {
 
     const toggle = e.target.closest('[data-toggle]');
     if (toggle) { state.filters.relevantOnly = !state.filters.relevantOnly; render(); return; }
-
-    const ltoggle = e.target.closest('[data-ltoggle]');
-    if (ltoggle) { state.leadFilters.fullOnly = !state.leadFilters.fullOnly; render(); return; }
 
     const lneed = e.target.closest('[data-lneed]');
     if (lneed) { state.leadFilters.needsContact = !state.leadFilters.needsContact; render(); return; }
