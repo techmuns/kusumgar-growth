@@ -3,9 +3,11 @@
 // Layer A (automated), best-first with graceful fallback (no logins, no Playwright):
 //   PERSON: PDL_API_KEY → People Data Labs person search (accurate); else Firecrawl (+ Scrape.do)
 //           public web-search "<company> <role> site:linkedin.com/in" → askClaude picks best.
-//   EMAIL:  HUNTER_API_KEY → Hunter verified; else PDL work email (verified); else Firecrawl the
-//           company contact/about/team page (published); else askClaude infers from name+domain
-//           (guessed).
+//   EMAIL (stop at first REAL, VERIFIED address): HUNTER → Hunter verified; else PROSPEO → Prospeo
+//           Email Finder (LinkedIn URL or name+domain → verified); else PDL work email IF it is a
+//           real "@" address; else Firecrawl the company page (published); else guess common
+//           patterns and keep only one REOON marks "safe" (verified). Never store an unverified guess.
+//           No verified email → email_status "none". PDL free returns email as a boolean flag → ignored.
 // The UI (Layer B) keeps any MANUAL contact in localStorage that WINS over this auto contact, so
 // this script never effectively overwrites a manual entry.
 //
@@ -27,12 +29,24 @@ const MAX = Math.max(1, parseInt(process.env.MAX || '25', 10) || 25);
 const PRIORITY_ONLY = /^(1|true|yes)$/i.test(process.env.PRIORITY_ONLY || '');
 const HUNTER = process.env.HUNTER_API_KEY || '';
 const PDL = process.env.PDL_API_KEY || '';
+const PROSPEO = process.env.PROSPEO_API_KEY || '';   // email finder (LinkedIn URL → email, or name+domain → email)
+const REOON = process.env.REOON_API_KEY || '';       // email verifier (used to verify guessed addresses)
 
 const domainOf = (l) => { try { return l.website ? new URL(l.website).hostname.replace(/^www\./, '') : ''; } catch { return ''; } };
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
 // A usable email is a STRING containing "@". PDL's free tier returns work_email / emails as a
 // boolean flag ("exists but hidden"); those must NEVER be stored as the address or marked verified.
 const realEmail = (e) => (typeof e === 'string' && e.includes('@')) ? e.trim() : null;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Split a display name into first/last (drops middle names / initials).
+function splitName(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter((w) => /[a-z]/i.test(w));
+  return parts.length >= 2 ? { first: parts[0], last: parts[parts.length - 1] } : null;
+}
+// Prospeo free tier ≈ 1 request/second and ~50/day — space calls out and stop after ~45 per run.
+let prospeoCalls = 0;
+const PROSPEO_CAP = 45;
 
 async function loadOutreach() {
   try { const o = JSON.parse(await readFile(OUTREACH_PATH, 'utf8')); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
@@ -116,14 +130,59 @@ async function websiteEmail(lead, debug) {
   return null;
 }
 
-// Step 3b — infer likely address from name + domain.
-async function guessEmail(name, domain) {
-  const g = await askClaude({
-    system: 'Infer the single most likely corporate work email for this person using common patterns (first.last@, flast@, first@). Return STRICT JSON {"email":"..."} only.',
-    user: `Name: ${name}\nDomain: ${domain}`,
-    json: true, maxTokens: 120,
-  });
-  return (g && g.email && EMAIL_RE.test(g.email)) ? g.email : null;
+// Step 2 — Prospeo Email Finder (returns verified work emails). https://prospeo.io/api
+// Shared caller: POST https://api.prospeo.io/<path> with the X-KEY header; body varies by path.
+// Response is { error, response: { email, email_status, ... } }. Respects the free-tier rate cap.
+async function prospeo(path, body) {
+  if (!PROSPEO) return null;
+  if (prospeoCalls >= PROSPEO_CAP) { console.log('[find-contacts] Prospeo daily cap reached — skipping.'); return null; }
+  prospeoCalls++;
+  await sleep(1100); // ~1 request/second
+  try {
+    const res = await fetch(`https://api.prospeo.io/${path}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'X-KEY': PROSPEO },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!res.ok) { console.error(`[find-contacts] Prospeo ${path} ${res.status}`); return null; }
+    const data = await res.json();
+    if (data && data.error) return null;
+    const r = (data && data.response) || data || {};
+    return realEmail(r.email);
+  } catch (e) { console.error(`[find-contacts] Prospeo ${path} failed (ok): ${e.message}`); return null; }
+}
+const prospeoFromLinkedin = (url) => (url ? prospeo('social-url-enrichment', { url }) : Promise.resolve(null));
+async function prospeoFromName(name, domain) {
+  const n = splitName(name);
+  return (n && domain) ? prospeo('email-finder', { first_name: n.first, last_name: n.last, company: domain }) : null;
+}
+
+// Step 4 — verified GUESS. Generate common patterns and verify each with Reoon; keep the FIRST
+// address Reoon marks "safe". Never keep an unverified guess (needs a REOON key).
+async function reoonSafe(email) {
+  if (!REOON || !realEmail(email)) return false;
+  try {
+    const url = `https://emailverifier.reoon.com/api/v1/verify?email=${encodeURIComponent(email)}&key=${encodeURIComponent(REOON)}&mode=power`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(30_000) });
+    if (!res.ok) { console.error(`[find-contacts] Reoon ${res.status}`); return false; }
+    const data = await res.json();
+    return String((data && data.status) || '').toLowerCase() === 'safe';
+  } catch (e) { console.error(`[find-contacts] Reoon failed (ok): ${e.message}`); return false; }
+}
+function emailPatterns(name, domain) {
+  const n = splitName(name); if (!n || !domain) return [];
+  const f = n.first.toLowerCase().replace(/[^a-z]/g, '');
+  const l = n.last.toLowerCase().replace(/[^a-z]/g, '');
+  if (!f || !l) return [];
+  return [`${f}.${l}@${domain}`, `${f[0]}${l}@${domain}`, `${f}@${domain}`, `${f[0]}.${l}@${domain}`, `${f}${l}@${domain}`];
+}
+async function guessAndVerify(name, domain) {
+  if (!REOON) return null; // verification is mandatory — without it we never keep a guess
+  for (const e of emailPatterns(name, domain)) {
+    if (await reoonSafe(e)) return e;
+  }
+  return null;
 }
 
 async function main() {
@@ -159,7 +218,9 @@ async function main() {
         if (person) { contact.name = person.name; contact.title = person.title; contact.linkedin_url = person.linkedin_url; if (!contact.source) contact.source = 'web'; if (contact.confidence === 'low') contact.confidence = 'medium'; }
       }
 
-      // EMAIL — Hunter (verified) → PDL work email (verified) → website (published) → guess.
+      // EMAIL — stop at the FIRST real, VERIFIED address:
+      //   Hunter → Prospeo → PDL work email → website (published) → guess-then-Reoon-verify.
+      // 1) Hunter (verified)
       if (HUNTER && domain) {
         const h = await hunterEmail(l, domain);
         const he = realEmail(h && h.email);
@@ -171,20 +232,33 @@ async function main() {
           contact.confidence = 'high';
         }
       }
+      // 2) Prospeo Email Finder (verified): LinkedIn URL → email, else name + domain → email.
+      if (!contact.email && PROSPEO) {
+        const pp = (await prospeoFromLinkedin(contact.linkedin_url)) || (contact.name ? await prospeoFromName(contact.name, domain) : null);
+        if (pp) {
+          contact.email = pp; contact.email_status = 'verified';
+          contact.source = contact.source ? contact.source + '+prospeo' : 'prospeo';
+          contact.confidence = 'high';
+        }
+      }
+      // PDL work email (verified) — only when it is a real "@" address (free tier returns a flag → ignored).
       const pe = realEmail(pdlEmail);
       if (!contact.email && pe) {
         contact.email = pe; contact.email_status = 'verified';
         if (!/pdl/.test(contact.source)) contact.source = contact.source ? contact.source + '+pdl' : 'pdl';
       }
-
+      // 3) Published email on the company website.
       if (!contact.email && (firecrawlKey() || haveScrapedo()) && l.website) {
         const pub = realEmail(await websiteEmail(l, debug));
         if (pub) { contact.email = pub; contact.email_status = 'published'; if (!contact.source) contact.source = 'website'; }
       }
+      // 4) Guess common patterns, keep only one Reoon marks "safe" (verified). Never keep an unverified guess.
       if (!contact.email && domain && contact.name) {
-        const g = realEmail(await guessEmail(contact.name, domain));
-        if (g) { contact.email = g; contact.email_status = 'guessed'; if (!contact.source) contact.source = 'guess'; }
+        const g = await guessAndVerify(contact.name, domain);
+        if (g) { contact.email = g; contact.email_status = 'verified'; contact.source = contact.source ? contact.source + '+guess' : 'guess'; }
       }
+      // Nothing verified → explicit "none" (grey badge); the person (if any) is still saved.
+      if (!contact.email) contact.email_status = 'none';
 
       if (!contact.name && !contact.email) continue;
       outreach[l.id] = { ...(outreach[l.id] || {}), contact };

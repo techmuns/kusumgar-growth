@@ -1283,7 +1283,8 @@ const EMAIL_STATUS = {
   'verified': ['#10b981', 'Verified'],
   'verified (manual)': ['#10b981', 'Verified ✋'],
   'published': ['#3b82f6', 'Published'],
-  'guessed': ['#f59e0b', 'Guessed'],
+  'guessed': ['#f59e0b', 'Guessed'],   // legacy — the engine now Reoon-verifies guesses instead
+  'none': ['#94a3b8', 'No email'],     // person found, no verified email
 };
 function emailStatusBadge(status, showNone = false) {
   const m = EMAIL_STATUS[status];
