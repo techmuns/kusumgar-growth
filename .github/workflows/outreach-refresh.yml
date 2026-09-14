@@ -37,6 +37,8 @@ jobs:
       PDL_API_KEY: ${{ secrets.PDL_API_KEY }}
       HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
       SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
+      PROSPEO_API_KEY: ${{ secrets.PROSPEO_API_KEY }}
+      REOON_API_KEY: ${{ secrets.REOON_API_KEY }}
       MAX: ${{ github.event.inputs.max || '25' }}
       PRIORITY_ONLY: ${{ github.event.inputs.priority_only || 'false' }}
     steps:
