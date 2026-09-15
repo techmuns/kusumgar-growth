@@ -18,29 +18,48 @@ const OUTREACH_PATH = p('KGR_OUTREACH_PATH', '../public/data/outreach.json');
 
 const MAX = Math.max(1, parseInt(process.env.MAX || '25', 10) || 25);
 const PRIORITY_ONLY = /^(1|true|yes)$/i.test(process.env.PRIORITY_ONLY || '');
-const SENDER = process.env.SENDER_NAME || 'Nishad Kusumgar';
+// Bump when the email voice/template changes — drafts below this version get re-written.
+const VOICE = 2;
+const SENDER = process.env.SENDER_NAME || 'Nishad Ansari';
+const SENDER_TITLE = process.env.SENDER_TITLE || 'DGM – Sales & Marketing';
 const MODEL_LABEL = (process.env.BEDROCK_MODEL_IDS || '').split(',')[0].trim() || 'bedrock-converse';
 
-const SYSTEM = `You are ${SENDER}, writing B2B cold emails for Kusumgar Private Limited, a 50-year Indian technical-textile manufacturer (weaving, dyeing, finishing, coating, calendaring).
+// Voice + structure are lifted from Nishad's REAL cold emails; the bullets may use ONLY the
+// capabilities in the brief below (never invented specs, prices, or certifications).
+const SYSTEM = `You are ${SENDER} (${SENDER_TITLE}) writing a B2B COLD email for Kusumgar Limited, a 50-year Indian technical-textile manufacturer. Voice: warm, respectful, concise, professional; short paragraphs; always close by inviting a next step (a brief call, or sending samples). NEVER invent specifications, prices, certifications, or claims — use ONLY the capabilities brief below.
 
-Write the email in EXACTLY this structure and warm, concise, professional voice — only the <bracketed> parts change per lead:
+KUSUMGAR CAPABILITIES BRIEF (all real — build the bullets only from here):
+- Vertically integrated: weaving, dyeing, finishing, coating, lamination, calendaring, cut-and-sew.
+- Fibres: Nylon 6, Nylon 66, Polyester, Aramids (meta & para), Polypropylene; 20D–3000D multifilament woven fabrics.
+- Finishes/coatings: PU, PVC, silicone; FR (fire-retardant), water-repellent (DWR), antimicrobial; PFAS-free options; custom surface treatments for rubber adhesion.
+- Sectors: Military, Industrial, Automotive, Aeronautical/Aerospace, Medical, Outdoor lifestyle, Workwear.
+- Proof points (use AT MOST one, and ONLY if it truly fits the lead's industry): meta/para-aramid reinforcement fabrics for railway mobility gangways (HL2/HL3), approved with major global railway players; ripstop nylon for parachute/paragliding; reinforcement fabrics for rubber diaphragms, bellows, hoses and beltings; coated-laminated FR + antimicrobial fabrics for institutional/medical mattresses.
 
-Subject: "Technical Textiles for <their product/industry> / Kusumgar"
+Write EXACTLY this structure — only the <bracketed> parts change per lead:
+
+Subject: Technical Textiles for <their industry/product> / Kusumgar
 
 Body:
-"My name is ${SENDER}, and I represent Kusumgar Private Limited (www.kusumgar.com), a leading technical textile manufacturer based in India, with over 50 years of expertise in producing synthetic technical textiles. Our state-of-the-art production facility includes weaving, dyeing, finishing, coating, and calendaring, enabling us to offer end-to-end solutions. Our fabrics are widely used across industries such as Military, Industrial, Outdoor, Medical, Automotive, Aeronautical, and Workwear.
+<greeting>
 
-Coated and laminated fabrics are a core focus of our business, and we specialize in providing customized solutions for various sectors. We believe our capabilities and infrastructure align well with the requirements of the <their industry> industry, particularly for <their application>. Here are some of the solutions we can offer:
-- <solution 1 tailored to their product, built around the lead's fabric_fit>
-- <solution 2>
-- <solution 3>
-These fabrics can be tailored with various colour options, finishes, and coatings to meet your exact specifications.
+Let me take this opportunity to briefly introduce Kusumgar Limited (www.kusumgar.com), one of India's leading manufacturers of high-performance technical textiles, with over 50 years of expertise. We operate a fully vertically integrated setup — weaving, dyeing, finishing, coating, lamination and cut-and-sew — producing synthetic multifilament fabrics in Nylon, Polyester and Aramids from 20D to 3000D, with in-house finishes and performance coatings.
 
-I would greatly appreciate the opportunity to arrange a conference call with you and your team in the coming weeks to discuss how Kusumgar can support your fabric requirements.
+We believe our capabilities align well with the <their industry> industry. Some of the solutions we can offer:
+- <real, industry-fit solution 1 from the brief>
+- <real solution 2>
+- <real solution 3>
+These fabrics can be tailored with various colour, finish and coating options to meet your exact specifications.
 
-Thank you for your time and consideration. I look forward to your response."
+We would be keen to support your fabric sourcing requirements, and I would welcome the opportunity to arrange a brief call — or share samples for your evaluation.
 
-Return STRICT JSON only: {"subject": "...", "body": "..."} — no markdown, no commentary. The body must keep the exact paragraph structure above with three tailored bullet lines.`;
+Look forward to hearing from you.
+
+Best Regards,
+${SENDER}
+${SENDER_TITLE}
+Kusumgar Limited | www.kusumgar.com
+
+Rules: <greeting> is "Dear <ContactName>," when a contact name is given, else "Dear Sir/Madam,". The three bullets MUST be real capabilities from the brief tailored to the lead's industry — never invented. Return STRICT JSON only: {"subject":"...","body":"..."} — no markdown, no commentary.`;
 
 async function loadOutreach() {
   try { const o = JSON.parse(await readFile(OUTREACH_PATH, 'utf8')); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
@@ -59,7 +78,8 @@ async function main() {
   const leads = await loadLeads();
   const outreach = await loadOutreach();
 
-  let queue = leads.filter((l) => !outreach[l.id]?.email);
+  // Draft leads with no email yet, and re-draft any whose email is from an older voice version.
+  let queue = leads.filter((l) => outreach[l.id]?.email?.voice !== VOICE);
   if (PRIORITY_ONLY) queue = queue.filter((l) => l.priority === 'High');
   queue.sort((a, b) => rank(a) - rank(b) || a.company.localeCompare(b.company));
   queue = queue.slice(0, MAX);
@@ -67,16 +87,17 @@ async function main() {
 
   let drafted = 0;
   for (const l of queue) {
+    const contactName = outreach[l.id]?.contact?.name || '';
     const user = `Lead company: ${l.company}
-Segment: ${l.segment}
+Their industry / segment: ${l.segment || 'technical textiles'}
 Country: ${l.country || 'n/a'}
-Their application: ${l.application || l.segment}
-Kusumgar fabric that fits them (fabric_fit): ${l.fabric_fit || 'coated technical fabric'}
+Their application (if known): ${l.application || 'unknown'}
+Contact name (if known, for the greeting): ${contactName || 'unknown'}
 
-Draft the email for this lead now.`;
+Write the cold email now.`;
     const res = await askClaude({ system: SYSTEM, user, json: true, maxTokens: 1200 });
     if (res && res.subject && res.body) {
-      outreach[l.id] = { ...(outreach[l.id] || {}), email: { subject: String(res.subject), body: String(res.body), drafted_at: new Date().toISOString(), model: MODEL_LABEL } };
+      outreach[l.id] = { ...(outreach[l.id] || {}), email: { subject: String(res.subject), body: String(res.body), drafted_at: new Date().toISOString(), model: MODEL_LABEL, voice: VOICE } };
       drafted++;
     } else {
       console.error(`[draft-emails] no draft returned for ${l.id}`);
