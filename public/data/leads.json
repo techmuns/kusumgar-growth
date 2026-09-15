@@ -9247,18 +9247,194 @@
       "detail": "basic",
       "source": "category:military-tent-and-shelter-system-manufacturers",
       "type": "potential_customer"
+    },
+    {
+      "id": "nt-service-uab",
+      "company": "NT Service UAB",
+      "segment": "Tool & Equipment Bags",
+      "country": "Lithuania",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:dsei",
+      "type": "potential_customer"
+    },
+    {
+      "id": "2t-security",
+      "company": "2T Security",
+      "segment": "Tool & Equipment Bags",
+      "country": "United Kingdom",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:dsei",
+      "type": "potential_customer"
+    },
+    {
+      "id": "baltic-viper",
+      "company": "Baltic Viper",
+      "segment": "Tool & Equipment Bags",
+      "country": "Estonia",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:dsei",
+      "type": "potential_customer"
+    },
+    {
+      "id": "defendtex",
+      "company": "DefendTex",
+      "segment": "Tool & Equipment Bags",
+      "country": "Australia",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:dsei",
+      "type": "potential_customer"
+    },
+    {
+      "id": "faraday-defense",
+      "company": "Faraday Defense",
+      "segment": "Tool & Equipment Bags",
+      "country": "United Kingdom",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester, Aramid Defence Substrate, High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:dsei",
+      "type": "potential_customer"
+    },
+    {
+      "id": "2t-security-ltd",
+      "company": "2T Security Ltd",
+      "segment": "Tool & Equipment Bags",
+      "country": "United Kingdom",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:dsei",
+      "type": "potential_customer"
+    },
+    {
+      "id": "101-tech-usa-inc",
+      "company": "101 Tech USA Inc",
+      "segment": "Tool & Equipment Bags",
+      "country": "USA",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:enforce-tac",
+      "type": "potential_customer"
+    },
+    {
+      "id": "4ig-space-defence-technologies",
+      "company": "4iG Space & Defence Technologies",
+      "segment": "Tool & Equipment Bags",
+      "country": "Hungary",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:enforce-tac",
+      "type": "potential_customer"
+    },
+    {
+      "id": "armorsource",
+      "company": "ArmorSource",
+      "segment": "Tool & Equipment Bags",
+      "country": "United States",
+      "website": null,
+      "application": null,
+      "fabric_fit": "Aramid Defence Substrate",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:enforce-tac",
+      "type": "potential_customer"
+    },
+    {
+      "id": "astute-gmbh",
+      "company": "Astute GmbH",
+      "segment": "Tool & Equipment Bags",
+      "country": "Germany",
+      "website": null,
+      "application": null,
+      "fabric_fit": "High-Tenacity Tactical Nylon",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "Medium",
+      "detail": "basic",
+      "source": "exhibition:enforce-tac",
+      "type": "potential_customer"
+    },
+    {
+      "id": "b-w-international",
+      "company": "B&W International",
+      "segment": "Tool & Equipment Bags",
+      "country": "Germany",
+      "website": null,
+      "application": null,
+      "fabric_fit": "1680D Ballistic Polyester",
+      "est_consumption": null,
+      "sourcing_model": null,
+      "contact_role": null,
+      "priority": "High",
+      "detail": "basic",
+      "source": "exhibition:enforce-tac",
+      "type": "potential_customer"
     }
   ],
   "_meta": {
-    "scraped_at": "2026-09-10T08:57:59.772Z",
-    "categories": [
-      "military tactical bag and pack manufacturers",
-      "ballistic vest and body armour plate carrier manufacturers",
-      "military tent and shelter system manufacturers",
-      "parachute and aerial delivery equipment manufacturers"
+    "scraped_at": "2026-09-15T12:31:11.889Z",
+    "targets": [
+      "dsa",
+      "dsei",
+      "enforce-tac"
     ],
-    "classified": 40,
-    "added_leads": 40,
+    "pages_used": 6,
+    "classified": 20,
+    "added_leads": 11,
     "added_competitors": 0
   },
   "_debug": [
@@ -9266,55 +9442,42 @@
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://condoroutdoor.com/collections/backpacks?srsltid=AfmBOoq9sl56enuLFriOgTEEe-oWmjExxEgYNC2WToUEUNK1l5sZO5Fc\",\"title\":\"Tactical Backpacks & Sling Bags | Military & EDC Packs\",\"description\":\"Free delivery "
-    },
-    {
-      "path": "/v1/search",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://armorguard.com/top-tactical-backpack-manufacturers/\",\"title\":\"Top 16 Tactical Backpack Manufacturers For Serious Buyers\",\"description\":\"Looking for good tactical backpack manufacturers? This in-depth "
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.dsaexhibition.com/exhibitor-list\",\"title\":\"Exhibitor List - DSA Exhibition\",\"description\":\"Exhibitor List · Exhibitor List · How to Exhibit · Book A Space · Branding & Sponsorship · Exhibitors Pro"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Pre-loader](https://condoroutdoor.com/cdn/shop/t/79/assets/theme-preloader.svg?v=134562038640271236701784837122)\\n\\n# TACTICAL BACKPACKS\\n\\nDurable tactical backpacks, equipped with specialized features"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"![Rectangle 131](https://www.expocaptive.com/wp-content/uploads/2025/09/Rectangle-131.png)\\n\\n- [Home](https://www.expocaptive.com/)\\n- [Security & Defense](https://www.expocaptive.com/security-defense-ev"
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.ar500armor.com/?srsltid=AfmBOopby6zNz8Ff2pA_MODidsqLwHr8a4BR49X9EUTZhLdkOgjGafeK\",\"title\":\"Body Armor, Plate Carriers & Kits | Armored Republic\",\"description\":\"Proven & reliable American made body"
-    },
-    {
-      "path": "/v1/search",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.armorexpress.com/\",\"title\":\"Armor Express - Home\",\"description\":\"BALLISTIC SHIELDS\\n\\nTRAVERSE OUTER CARRIER\\n\\n## BETTER. FASTER.\\nWith advanced manufacturing in Eden, NC, a dedicated Ballistics "
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.dsei.co.uk/visit/exhibiting-companies\",\"title\":\"2025 Exhibiting Companies - DSEI UK 2027\",\"description\":\"2025 Exhibiting Companies · \\\"NT Service\\\" UAB. Stand: N9-205 · 1MILLIKELVIN PTY LTD. Stand"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[Skip to navigation](https://www.ar500armor.com/#menu-desktop) [Skip to main content](https://www.ar500armor.com/#main-content)\\n\\n## AR500 Armor Steel Ceramic Body Armor Plates Level III IIIA Bulletproof"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[How We Work](https://exhibitorsdata.com/how-we-work/) [Add Event](https://exhibitorsdata.com/add-event/) [Partner with us](https://exhibitorsdata.com/partners/) [FAQs](https://exhibitorsdata.com/faqs/) ["
     },
     {
       "path": "/v1/search",
       "attempt": 1,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://alaskadefense.com/\",\"title\":\"Military Shelter Systems | Alaska Defense®\",\"description\":\"Alaska Defense® manufactures the world's most popular military shelter systems, military camps, and turnkey base"
-    },
-    {
-      "path": "/v1/search",
-      "attempt": 1,
-      "status": 200,
-      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.dla.mil/Troop-Support/Clothing-and-Textiles/Tents/?udt_98983_param_page=46\",\"title\":\"Tents, Shelters, and Base Camp Components\",\"description\":\"Tent and Shelter Component Search. DLA Troop Support'"
+      "sample": "{\"success\":true,\"data\":[{\"url\":\"https://www.enforcetac.com/en/exhibitors-products/find-exhibitors\",\"title\":\"Find exhibitors | Enforce Tac\",\"description\":\"# Exhibitor Search 2027\\n- [Weapons (38)](https://www.enforcetac.com/en/exhibitors-pro"
     },
     {
       "path": "/v1/scrape",
       "attempt": 1,
+      "error": "timeout after 45000ms"
+    },
+    {
+      "path": "/v1/scrape",
+      "attempt": 2,
       "status": 200,
-      "sample": "{\"success\":true,\"data\":{\"markdown\":\"# Capability. Integration. Execution.\\n\\n## Vertically Integrated Manufacturer\\n\\n_In-house engineering, testing, and manufacturing under one roof._\\n\\n![Vertically integrated manufacturer prototyping](ht"
+      "sample": "{\"success\":true,\"data\":{\"markdown\":\"[How We Work](https://exhibitorsdata.com/how-we-work/) [Add Event](https://exhibitorsdata.com/add-event/) [Partner with us](https://exhibitorsdata.com/partners/) [FAQs](https://exhibitorsdata.com/faqs/) ["
     }
   ]
 }
