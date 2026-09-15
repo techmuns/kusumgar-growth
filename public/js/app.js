@@ -107,7 +107,7 @@ const STATUS_ORDER = ['Exhibited', 'Visited', 'Attended', 'Not yet'];
 const ENGAGED = new Set(['Exhibited', 'Visited', 'Attended']);
 
 const TABS = [
-  { id: 'today', label: 'Today', icon: '🏠', live: true },
+  { id: 'today', label: 'Home', icon: '🏠', live: true },
   { id: 'exhibitions', label: 'Exhibitions', icon: '🎪', live: true },
   { id: 'products', label: 'Products', icon: '🧵', live: true },
   { id: 'leads', label: 'Leads', icon: '🎯', live: true },
@@ -1022,6 +1022,7 @@ function sortedLeads(list) {
   const s = dir === 'asc' ? 1 : -1;
   const val = (l) => {
     if (key === 'priority') return l.priority === 'High' ? 0 : 1;
+    if (key === 'contact') { const c = displayContact(l.id); return ((c && (c.name || c.email)) || '~').toLowerCase(); }
     return String(l[key] ?? '').toLowerCase();
   };
   return [...list].sort((a, b) => {
@@ -1034,9 +1035,18 @@ function sortedLeads(list) {
 
 const LEAD_COLS = [
   { key: 'company', label: 'Company' }, { key: 'segment', label: 'Industry' },
-  { key: 'country', label: 'Country' }, { key: 'application', label: 'Used for' },
+  { key: 'country', label: 'Country' }, { key: 'contact', label: 'Contact' },
   { key: 'priority', label: 'Priority' },
 ];
+
+// Table cell for a lead's found contact: real name + real role, or "—" (not found / not processed).
+function leadContactCell(l) {
+  const c = displayContact(l.id);
+  const who = c && (c.name || c.email);
+  if (!who) return '<span class="text-sm text-slate-300">—</span>';
+  const role = c.title ? `<div class="truncate text-[11px] text-slate-400" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : '';
+  return `<div class="max-w-[230px]"><div class="flex items-center gap-1.5 truncate text-sm text-slate-700" title="${escapeHtml(who)}">${escapeHtml(who)}${emailStatusBadge(c.email_status)}</div>${role}</div>`;
+}
 
 function leadsTableHtml() {
   const { key: sk, dir } = state.leadSort;
@@ -1049,7 +1059,7 @@ function leadsTableHtml() {
       <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</td>
-      <td class="px-3 py-2.5"><div class="max-w-[210px] truncate text-sm text-slate-600" title="${escapeHtml(l.application || '')}">${escapeHtml(dash(l.application))}</div></td>
+      <td class="px-3 py-2.5">${leadContactCell(l)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${priorityChip(l.priority)}</td>
     </tr>`).join('') : `<tr><td colspan="5" class="px-4 py-10 text-center text-sm text-slate-400">No leads match these filters.</td></tr>`;
   return `<table class="w-full min-w-[980px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
@@ -1299,25 +1309,21 @@ function resolvedContact(id) {
   };
 }
 
-// A job title counts as a real buyer/decision-maker worth surfacing as "the contact".
-const RELEVANT_TITLE_RE = /procure|purchas|sourc|buyer|buying|supply\s*chain|\bsupply\b|material|category|commodity|merchand|logistic|\boperations?\b|\bops\b|owner|founder|president|\bceo\b|\bcoo\b|\bcfo\b|chief|managing\s*director|general\s*manager|\bgm\b|principal|partner|\bvp\b|vice\s*president|head\s+of|director\s+of\s+(?:purchas|procure|sourc|supply|operation|material)/i;
-const titleRelevant = (t) => !t || RELEVANT_TITLE_RE.test(String(t));
-// A real, source-backed email (not a legacy guess, not "none").
+// A real, source-backed email (verified / published / manual) — not a legacy guess, not "none".
 const REAL_EMAIL_STATUS = new Set(['verified', 'verified (manual)', 'published']);
 const hasRealEmail = (c) => !!(c && c.email && REAL_EMAIL_STATUS.has(c.email_status));
-// Display gate — only surface a contact that is source-backed AND relevant. Keeps any real email
-// we found, but hides a mismatched person (e.g. a designer when we wanted a buyer) so the card
-// never presents a guessed or off-target person as "the contact".
+// Show any REAL contact we actually found: the person's real name, real title and LinkedIn, plus a
+// real email when we have one. It never invents a role — it only surfaces what was sourced (so an
+// unprocessed lead, or one with nothing found, shows nothing rather than a guess).
 function displayContact(id) {
   const c = resolvedContact(id);
   if (!c) return null;
   const realEmail = hasRealEmail(c);
-  const personOk = !!(c.name && titleRelevant(c.title));
-  if (!realEmail && !personOk) return null;
+  if (!c.name && !realEmail) return null;
   return {
-    name: personOk ? c.name : null,
-    title: personOk ? c.title : '',
-    linkedin_url: personOk ? c.linkedin_url : null,
+    name: c.name || null,
+    title: c.title || '',
+    linkedin_url: c.linkedin_url || null,
     email: realEmail ? c.email : null,
     email_status: realEmail ? c.email_status : null,
     source: c.source, confidence: c.confidence,
@@ -1608,7 +1614,7 @@ function renderToday() {
         ${hasDraft ? '<span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">✉️ draft ready</span>' : '<span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-400">draft</span>'}
       </div>
       <div class="mb-2 flex flex-wrap gap-1.5">${coloredChip(l.segment, leadSegColor(l.segment))}</div>
-      <p class="mt-auto truncate text-[12px] text-slate-500">${escapeHtml(dash(l.application))}</p>
+      <p class="mt-auto truncate text-[12px] text-slate-500">${l.country ? (FLAGS[l.country] || '') + ' ' + escapeHtml(l.country) : ''}</p>
     </button>`;
   }).join('') + `</div>`
     : `<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No high-priority leads yet.</div>`;
