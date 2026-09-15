@@ -686,9 +686,65 @@ function renderExhibitions() {
     const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
     return `<button type="button" data-sub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
   };
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('overview', '📊 Overview')}${subBtn('list', '📋 List')}</div>`;
-  const body = state.sub === 'overview' ? renderOverview() : renderList();
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('overview', '📊 Overview')}${subBtn('list', '📋 List')}${subBtn('byshow', '🌳 By show')}</div>`;
+  const body = state.sub === 'overview' ? renderOverview() : state.sub === 'byshow' ? renderExhibitionTree() : renderList();
   return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+// "By show" drill-down: each exhibition → its product category, its leads, its competitors.
+// Everything is grouped by the real `exhibition:<id>` source tag the engines write (no guessing).
+function renderExhibitionTree() {
+  const TAG = 'exhibition:';
+  const leadsBy = {}, compsBy = {};
+  for (const l of state.leads) { const s = String(l.source || ''); if (s.startsWith(TAG)) (leadsBy[s.slice(TAG.length)] ||= []).push(l); }
+  for (const c of state.competitors) { const s = String(c.source || ''); if (s.startsWith(TAG)) (compsBy[s.slice(TAG.length)] ||= []).push(c); }
+  const rows = state.exhibitions
+    .map((e) => ({ e, leads: leadsBy[e.id] || [], comps: compsBy[e.id] || [] }))
+    .sort((a, b) => (b.leads.length + b.comps.length) - (a.leads.length + a.comps.length) || a.e.name.localeCompare(b.e.name));
+  const linked = rows.filter((r) => r.leads.length || r.comps.length);
+  const empty = rows.length - linked.length;
+  const totalLeads = linked.reduce((n, r) => n + r.leads.length, 0);
+  const totalComps = linked.reduce((n, r) => n + r.comps.length, 0);
+  const intro = `<div class="mb-3 flex flex-wrap items-center gap-2 text-[12px] text-slate-500">
+    <span>Click a show to open its leads &amp; competitors.</span>
+    <span class="rounded-full bg-white px-2.5 py-1 font-medium shadow-sm ring-1 ring-slate-100"><span class="tnum font-bold text-slate-900">${linked.length}</span> shows with data</span>
+    <span class="rounded-full bg-white px-2.5 py-1 font-medium shadow-sm ring-1 ring-slate-100">🎯 <span class="tnum font-bold text-slate-900">${totalLeads}</span> leads</span>
+    <span class="rounded-full bg-white px-2.5 py-1 font-medium shadow-sm ring-1 ring-slate-100">🛡️ <span class="tnum font-bold text-slate-900">${totalComps}</span> competitors</span>
+    ${empty ? `<span class="text-slate-400">· ${empty} more shows have none yet</span>` : ''}
+  </div>`;
+  const cards = linked.map(exhibitionTreeCard).join('');
+  return `<div class="fade-in">${intro}<div class="space-y-2.5">${cards || '<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No shows are linked to leads yet — run a leads refresh.</div>'}</div></div>`;
+}
+
+function exhibitionTreeCard({ e, leads, comps }) {
+  const chip = coloredChip(e.segment, segColor(e.segment));
+  const meta = `${e.country ? (FLAGS[e.country] || '') + ' ' + escapeHtml(e.country) : ''}${e.dates ? ' · ' + escapeHtml(e.dates) : ''}`;
+  const leadChips = leads.slice().sort((a, b) => (a.priority === 'High' ? 0 : 1) - (b.priority === 'High' ? 0 : 1) || a.company.localeCompare(b.company))
+    .map((l) => `<button type="button" data-lead-id="${escapeHtml(l.id)}" class="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2 py-1 text-[12px] font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-700">${l.priority === 'High' ? '⭐ ' : ''}${escapeHtml(l.company)}</button>`).join('');
+  const compChips = comps.map((c) => `<span class="inline-flex items-center rounded-lg bg-rose-50 px-2 py-1 text-[12px] font-medium text-rose-600" title="${escapeHtml(c.focus || c.positioning || '')}">${escapeHtml(c.company)}</span>`).join('');
+  const section = (label, chipsHtml, emptyMsg) => `<div>
+    <div class="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">${label}</div>
+    <div class="flex flex-wrap gap-1.5">${chipsHtml || `<span class="text-[12px] text-slate-400">${emptyMsg}</span>`}</div>
+  </div>`;
+  return `<details class="group rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+    <summary class="flex cursor-pointer list-none items-center gap-3 p-4 hover:bg-slate-50/60">
+      <span class="text-lg">🎪</span>
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-2"><span class="truncate font-semibold text-slate-800">${escapeHtml(e.name)}</span>${chip}</div>
+        ${meta ? `<div class="mt-0.5 text-[12px] text-slate-500">${meta}</div>` : ''}
+      </div>
+      <div class="flex shrink-0 items-center gap-1.5 text-[12px] font-semibold">
+        <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-indigo-600">🎯 ${leads.length}</span>
+        <span class="rounded-full bg-rose-50 px-2 py-0.5 text-rose-600">🛡️ ${comps.length}</span>
+        <span class="text-slate-300 transition-transform group-open:rotate-180">▾</span>
+      </div>
+    </summary>
+    <div class="space-y-3 border-t border-slate-100 p-4 pt-3">
+      ${section('Product category', chip, '—')}
+      ${section(`🎯 Leads (${leads.length})`, leadChips, 'none yet')}
+      ${section(`🛡️ Competitors (${comps.length})`, compChips, 'none found')}
+    </div>
+  </details>`;
 }
 
 function renderPlaceholder(tab) {
