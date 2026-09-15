@@ -88,6 +88,8 @@ const OUTREACH_STAGES = [
   { key: 'No reply', color: '#f59e0b' },         // amber
   { key: 'Meeting set', color: '#8b5cf6' },      // violet
   { key: 'Sample requested', color: '#14b8a6' }, // teal
+  { key: 'Quoted', color: '#0891b2' },           // cyan
+  { key: 'Negotiating', color: '#d946ef' },      // fuchsia
   { key: 'Won', color: '#10b981' },              // emerald
   { key: 'Lost', color: '#f43f5e' },             // rose
 ];
@@ -1423,19 +1425,37 @@ function loadPipeline(ids) {
     } catch { /* storage unavailable — ignore */ }
   });
 }
+// Follow-up date helpers (kept alongside the pipeline record, saved per lead in localStorage).
+const isoToday = () => new Date().toISOString().slice(0, 10);
+const addDays = (iso, n) => { const d = new Date((iso || isoToday()) + 'T00:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const daysUntil = (iso) => Math.round((new Date(iso + 'T00:00:00') - new Date(isoToday() + 'T00:00:00')) / 86400000);
+const dueLabel = (iso) => { const d = daysUntil(iso); return d < 0 ? `${-d}d overdue` : d === 0 ? 'due today' : d === 1 ? 'due tomorrow' : `in ${d} days`; };
+const dueColor = (iso) => { const d = daysUntil(iso); return d < 0 ? '#f43f5e' : d === 0 ? '#f59e0b' : '#64748b'; };
+const stageClosed = (s) => s === 'Won' || s === 'Lost';
+
 function setPipeline(id, patch) {
-  const next = { ...(state.pipeline[id] || {}), ...patch };
-  if (patch.stage && !next.dealType) next.dealType = 'current';
-  if (patch.stage && !next.mfg) next.mfg = 'own';
+  const rec = { ...(state.pipeline[id] || {}), ...patch };
+  if (patch.stage && !rec.dealType) rec.dealType = 'current';
+  if (patch.stage && !rec.mfg) rec.mfg = 'own';
+  if (patch.stage) {                                       // stage moved: manage the follow-up date
+    if (stageClosed(patch.stage)) rec.next = null;         // closed deal — no follow-up needed
+    else if (!rec.next) rec.next = addDays(isoToday(), 7); // open deal — default reminder in a week
+  }
   const removed = ('stage' in patch) && !patch.stage;
   try {
     if (removed) localStorage.removeItem(PIPE_KEY(id));
-    else localStorage.setItem(PIPE_KEY(id), JSON.stringify(next));
+    else localStorage.setItem(PIPE_KEY(id), JSON.stringify(rec));
   } catch { /* storage unavailable — in-memory only */ }
   if (removed) delete state.pipeline[id];
-  else state.pipeline[id] = next;
+  else state.pipeline[id] = rec;
 }
 const pipelinedLeads = () => state.leads.filter((l) => validStage(state.pipeline[l.id]?.stage));
+// Open pipeline leads that carry a follow-up date, oldest (most overdue) first.
+const followupLeads = () => state.leads
+  .filter((l) => { const pl = state.pipeline[l.id]; return pl && validStage(pl.stage) && !stageClosed(pl.stage) && pl.next; })
+  .sort((a, b) => String(state.pipeline[a.id].next).localeCompare(String(state.pipeline[b.id].next)));
+const markFollowedUp = (id) => setPipeline(id, { last: isoToday(), next: addDays(isoToday(), 7) });
+const snoozeFollowup = (id, n) => setPipeline(id, { next: addDays(state.pipeline[id]?.next || isoToday(), n) });
 
 function contactBlock(lead) {
   const c = displayContact(lead.id);
@@ -1603,6 +1623,7 @@ function trackerTableHtml() {
       <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'stage', STAGE_KEYS, pl.stage, true)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${stageClosed(pl.stage) ? '<span class="text-[12px] text-slate-300">—</span>' : `<input type="date" data-pl-followup="${escapeHtml(l.id)}" value="${escapeHtml(pl.next || '')}" class="rounded-lg border-0 bg-white px-2 py-1 text-[12px] font-semibold ring-1 ring-slate-200 focus:outline-none" style="color:${pl.next ? dueColor(pl.next) : '#94a3b8'}" />`}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'deal', DEAL_TYPES, pl.dealType || 'current', false)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'mfg', MFG_TYPES, pl.mfg || 'own', false)}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${contact}</td>
@@ -1612,7 +1633,7 @@ function trackerTableHtml() {
   }).join('');
   const head = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
     <th class="px-3 py-2.5 font-semibold">Company</th><th class="px-3 py-2.5 font-semibold">Segment</th>
-    <th class="px-3 py-2.5 font-semibold">Stage</th><th class="px-3 py-2.5 font-semibold">Deal</th>
+    <th class="px-3 py-2.5 font-semibold">Stage</th><th class="px-3 py-2.5 font-semibold">Follow-up</th><th class="px-3 py-2.5 font-semibold">Deal</th>
     <th class="px-3 py-2.5 font-semibold">Mfg</th><th class="px-3 py-2.5 font-semibold">Contact</th>
     <th class="px-3 py-2.5 text-center font-semibold">Draft</th><th class="px-3 py-2.5 font-semibold"></th></tr>`;
   return `<table class="w-full min-w-[820px] border-collapse text-left"><thead>${head}</thead><tbody>${body}</tbody></table>`;
@@ -1642,14 +1663,63 @@ function renderTracker() {
   </div>`;
 }
 
+// "Follow-ups" — who to chase, so nothing slips through months of back-and-forth.
+function renderFollowups() {
+  const rows = followupLeads();
+  const chip = (s) => coloredChip(s, STAGE_COLOR[s] || '#64748b');
+  const dueCount = rows.filter((l) => daysUntil(state.pipeline[l.id].next) <= 0).length;
+  if (!rows.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-100">
+      <div class="mb-2 text-4xl">⏰</div>
+      <div class="font-display text-lg font-bold text-slate-800">No follow-ups scheduled yet</div>
+      <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">Add leads to your pipeline in the <span class="font-semibold">Tracker</span> (set a stage) — each gets a follow-up date automatically. Overdue ones show up here so you always know who to chase.</p>
+      <button type="button" data-osub="tracker" class="mt-5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Go to Tracker</button>
+    </div>`;
+  }
+  const rowHtml = (l) => {
+    const pl = state.pipeline[l.id];
+    const c = displayContact(l.id);
+    const who = c && (c.name || c.email);
+    return `<div class="flex flex-wrap items-center gap-2 border-t border-slate-100 px-3 py-2.5 first:border-t-0">
+      <div class="min-w-[150px] flex-1">
+        <div class="text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</div>
+        <div class="mt-0.5 flex flex-wrap items-center gap-1.5">${chip(pl.stage)}<span class="text-[11px] font-bold" style="color:${dueColor(pl.next)}">${dueLabel(pl.next)}</span>${who ? `<span class="truncate text-[11px] text-slate-400">· ${escapeHtml(who)}</span>` : ''}</div>
+      </div>
+      <input data-fu-note="${escapeHtml(l.id)}" value="${escapeHtml(pl.note || '')}" placeholder="note — e.g. sample sent, chase" class="min-w-[130px] flex-1 rounded-lg border-0 bg-slate-50 px-2.5 py-1.5 text-[12px] text-slate-700 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+      <input type="date" data-fu-date="${escapeHtml(l.id)}" value="${escapeHtml(pl.next || '')}" class="rounded-lg border-0 bg-white px-2 py-1.5 text-[12px] text-slate-600 ring-1 ring-slate-200 focus:outline-none" />
+      <button type="button" data-fu-done="${escapeHtml(l.id)}" title="Followed up — remind me again in a week" class="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-[12px] font-semibold text-white hover:bg-emerald-700">✓ Done</button>
+      <button type="button" data-fu-snooze="${escapeHtml(l.id)}" title="Snooze 3 days" class="rounded-lg bg-slate-100 px-2.5 py-1.5 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">+3d</button>
+      <button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" title="Open email" class="rounded-lg bg-slate-100 px-2 py-1.5 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">✉️</button>
+    </div>`;
+  };
+  const group = (title, emoji, color, items) => items.length ? `<div class="mb-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+    <div class="flex items-center gap-2 border-b border-slate-100 px-3 py-2.5"><span>${emoji}</span><span class="text-sm font-bold text-slate-700">${title}</span><span class="rounded-full px-2 py-0.5 text-[11px] font-bold" style="background:${color}1f;color:${color}">${items.length}</span></div>
+    ${items.map(rowHtml).join('')}
+  </div>` : '';
+  const overdue = rows.filter((l) => daysUntil(state.pipeline[l.id].next) < 0);
+  const today = rows.filter((l) => daysUntil(state.pipeline[l.id].next) === 0);
+  const upcoming = rows.filter((l) => daysUntil(state.pipeline[l.id].next) > 0);
+  return `<div class="fade-in">
+    <div class="mb-3 flex flex-wrap items-center gap-2 text-[12px] text-slate-500">
+      <span>Who to chase, oldest first. Set a date, jot a note, hit <span class="font-semibold text-emerald-600">✓ Done</span> once you've followed up (bumps the reminder a week).</span>
+      ${dueCount ? `<span class="rounded-full bg-rose-50 px-2.5 py-1 font-bold text-rose-600">${dueCount} due now</span>` : ''}
+    </div>
+    ${group('Overdue', '🔴', '#f43f5e', overdue)}
+    ${group('Due today', '🟠', '#f59e0b', today)}
+    ${group('Upcoming', '📅', '#6366f1', upcoming)}
+  </div>`;
+}
+
 function renderOutreach() {
   const subBtn = (id, label) => {
     const active = state.outreachSub === id;
     const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
     return `<button type="button" data-osub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
   };
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('pipeline', '🔀 Pipeline')}${subBtn('tracker', '📋 Tracker')}</div>`;
-  const body = state.outreachSub === 'pipeline' ? renderPipeline() : renderTracker();
+  const dueCount = followupLeads().filter((l) => daysUntil(state.pipeline[l.id].next) <= 0).length;
+  const fuBadge = dueCount ? ` <span class="ml-0.5 rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">${dueCount}</span>` : '';
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('pipeline', '🔀 Pipeline')}${subBtn('tracker', '📋 Tracker')}${subBtn('followups', `⏰ Follow-ups${fuBadge}`)}</div>`;
+  const body = state.outreachSub === 'pipeline' ? renderPipeline() : state.outreachSub === 'followups' ? renderFollowups() : renderTracker();
   return `<div class="mb-4">${toggle}</div>${body}`;
 }
 
@@ -1704,7 +1774,14 @@ function renderToday() {
     snap = chartCard('📊', 'Pipeline snapshot', `${inPipe.length} in play`, buildBars(stageItems, { unit: 'lead' }) + `<div class="mt-3 border-t border-slate-100 pt-3">${buildStackedBar(dealItems, { unit: 'lead' })}${dealLegend}</div>`);
   }
 
-  return `<div class="fade-in space-y-5">
+  const dueNow = followupLeads().filter((l) => daysUntil(state.pipeline[l.id].next) <= 0);
+  const followCard = dueNow.length ? `<section>
+    <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-rose-50 to-amber-50 p-4 ring-1 ring-rose-100">
+      <div class="min-w-0"><div class="font-display text-base font-bold text-slate-800">⏰ ${dueNow.length} follow-up${dueNow.length > 1 ? 's' : ''} to chase</div><div class="mt-0.5 truncate text-[12px] text-slate-500">${dueNow.slice(0, 4).map((l) => escapeHtml(l.company)).join(' · ')}${dueNow.length > 4 ? ' …' : ''}</div></div>
+      <button type="button" data-gofollow class="shrink-0 rounded-xl bg-rose-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-rose-700">Chase now →</button>
+    </div>
+  </section>` : '';
+  return `<div class="fade-in space-y-5">${followCard}
     <section>
       <h3 class="mb-3 font-display text-sm font-bold text-slate-700">🔥 Hot leads</h3>
       ${hotCards}
@@ -1977,6 +2054,13 @@ function wireEvents() {
     const osub = e.target.closest('[data-osub]');
     if (osub) { state.outreachSub = osub.getAttribute('data-osub'); render(); return; }
 
+    const goFollow = e.target.closest('[data-gofollow]');
+    if (goFollow) { state.tab = 'outreach'; state.outreachSub = 'followups'; render(); return; }
+    const fuDone = e.target.closest('[data-fu-done]');
+    if (fuDone) { markFollowedUp(fuDone.getAttribute('data-fu-done')); render(); return; }
+    const fuSnooze = e.target.closest('[data-fu-snooze]');
+    if (fuSnooze) { snoozeFollowup(fuSnooze.getAttribute('data-fu-snooze'), 3); render(); return; }
+
     const goto = e.target.closest('[data-goto]');
     if (goto) {
       state.tab = goto.getAttribute('data-goto');
@@ -2044,6 +2128,9 @@ function wireEvents() {
       if (stageId) { setPipeline(stageId, { stage: e.target.value }); refreshTrackerTable(); }
       else if (dealId) { setPipeline(dealId, { dealType: e.target.value }); refreshTrackerTable(); }
       else if (mfgId) { setPipeline(mfgId, { mfg: e.target.value }); refreshTrackerTable(); }
+      else if (e.target.hasAttribute('data-pl-followup')) { setPipeline(e.target.getAttribute('data-pl-followup'), { next: e.target.value || null }); refreshTrackerTable(); }
+      else if (e.target.hasAttribute('data-fu-date')) { setPipeline(e.target.getAttribute('data-fu-date'), { next: e.target.value || null }); render(); }
+      else if (e.target.hasAttribute('data-fu-note')) { setPipeline(e.target.getAttribute('data-fu-note'), { note: e.target.value }); }
     }
   });
 
