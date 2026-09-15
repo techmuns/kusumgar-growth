@@ -38,11 +38,6 @@ const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
 // boolean flag ("exists but hidden"); those must NEVER be stored as the address or marked verified.
 const realEmail = (e) => (typeof e === 'string' && e.includes('@')) ? e.trim() : null;
 
-// A found person is only worth keeping if their title reads as a buyer/decision-maker (or is
-// unknown). Stops us surfacing a mismatched person (e.g. a designer) as "the contact".
-const RELEVANT_TITLE_RE = /procure|purchas|sourc|buyer|buying|supply\s*chain|\bsupply\b|material|category|commodity|merchand|logistic|\boperations?\b|\bops\b|owner|founder|president|\bceo\b|\bcoo\b|\bcfo\b|chief|managing\s*director|general\s*manager|\bgm\b|principal|partner|\bvp\b|vice\s*president|head\s+of|director\s+of\s+(?:purchas|procure|sourc|supply|operation|material)/i;
-const titleRelevant = (t) => !t || RELEVANT_TITLE_RE.test(String(t));
-
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Split a display name into first/last (drops middle names / initials).
 function splitName(name) {
@@ -264,14 +259,6 @@ async function main() {
       }
       // Nothing verified → explicit "none" (grey badge); the person (if any) is still saved.
       if (!contact.email) contact.email_status = 'none';
-
-      // Keep only a source-backed, RELEVANT contact: a real email is always worth keeping, but a
-      // person whose title clearly isn't a buyer/decision-maker is dropped (no misleading contact).
-      const realMail = realEmail(contact.email);
-      if (contact.name && contact.title && !titleRelevant(contact.title)) {
-        if (!realMail) continue;                                                  // off-target person, no email → skip
-        contact.name = null; contact.title = null; contact.linkedin_url = null;   // keep the email only
-      }
 
       if (!contact.name && !contact.email) continue;
       outreach[l.id] = { ...(outreach[l.id] || {}), contact };
