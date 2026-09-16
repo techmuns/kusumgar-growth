@@ -6198,6 +6198,15 @@
       "drafted_at": "2026-09-15T17:06:38.575Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Raynier Picard",
+      "title": "Consultor",
+      "linkedin_url": "https://mx.linkedin.com/in/raynier-picard-4a15a071",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "advance-yacht-systems": {
@@ -6549,6 +6558,15 @@
       "drafted_at": "2026-09-15T17:14:10.496Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Kejia Li",
+      "title": "Overseas Market Business Development and Software Consultant",
+      "linkedin_url": "https://www.linkedin.com/in/likejia30/zh-cn",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "ares-defense-systems-inc": {
@@ -7827,6 +7845,15 @@
       "drafted_at": "2026-09-15T18:11:55.766Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Stefano Favaro",
+      "title": "General Manager at Lowa R&D",
+      "linkedin_url": "https://it.linkedin.com/in/stefano-favaro-2ab79924",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "glenair": {
@@ -7836,6 +7863,15 @@
       "drafted_at": "2026-09-15T18:12:02.451Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Stewart Harrison MCIPS",
+      "title": "Procurement Manager at Glenair UK Ltd",
+      "linkedin_url": "https://uk.linkedin.com/in/stewart-harrison-mcips-bb460823",
+      "email": "sales@glenair.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "gli-pool-products": {
@@ -7845,6 +7881,15 @@
       "drafted_at": "2026-09-15T18:12:08.742Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Corey Rauschenbach",
+      "title": "Purchasing Manager",
+      "linkedin_url": "https://www.linkedin.com/in/corey-rauschenbach-6a35a2109",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "harod-associates": {
@@ -7854,6 +7899,15 @@
       "drafted_at": "2026-09-15T18:12:15.695Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Steve Downes",
+      "title": "Senior Intelligence Analyst/Investigator",
+      "linkedin_url": "https://uk.linkedin.com/in/steve-downes-30293647",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "healthy-work-company": {
@@ -7863,6 +7917,15 @@
       "drafted_at": "2026-09-15T18:12:22.202Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/martha-morales-a269128a",
+      "email": "heather@healthy-working.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "heavy-duty-tarps": {
@@ -7881,6 +7944,15 @@
       "drafted_at": "2026-09-15T18:12:35.494Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "John Barajas",
+      "title": "Commercial Heavy Glass & Aluminum Storefronts",
+      "linkedin_url": "https://www.linkedin.com/in/john-barajas-3b57a872",
+      "email": "customercare@herculite.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "hifraser": {
@@ -7890,6 +7962,15 @@
       "drafted_at": "2026-09-15T18:12:41.848Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Clive Smith",
+      "title": "Procurement Manager R&O East",
+      "linkedin_url": "https://au.linkedin.com/in/clive-smith-3005642b",
+      "email": "sales@hifraser.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "hpi-pool-products": {
@@ -7908,6 +7989,15 @@
       "drafted_at": "2026-09-15T18:12:54.252Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Jean-François Evrard",
+      "title": "Lead Buyer at Icarus",
+      "linkedin_url": "https://be.linkedin.com/in/jean-fran%C3%A7ois-evrard-31400653",
+      "email": "support@rocketwerkz.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "igman-d-d-konjic": {
@@ -7953,6 +8043,15 @@
       "drafted_at": "2026-09-15T18:13:25.703Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://ug.linkedin.com/in/regan-abenaitwe-621396104",
+      "email": "sales@shadeports.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "jensen-outdoor-covers": {
@@ -7962,6 +8061,15 @@
       "drafted_at": "2026-09-15T18:13:31.851Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Phillip Crowe",
+      "title": "Marketing Director at KSB US",
+      "linkedin_url": "https://www.linkedin.com/in/phillipacrowe",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "jyro": {
@@ -7971,6 +8079,15 @@
       "drafted_at": "2026-09-15T18:13:39.191Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Joseph William",
+      "title": "Brand Designer",
+      "linkedin_url": "https://ng.linkedin.com/in/joseph-william-650324304",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "khomo-gear": {
