@@ -4992,6 +4992,15 @@
       "drafted_at": "2026-09-15T12:53:05.632Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Andy Galaviz",
+      "title": "Vice President | Global Supply Chain",
+      "linkedin_url": "https://www.linkedin.com/in/andy-galaviz-89035556",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "101-tech-usa-inc": {
@@ -7107,6 +7116,15 @@
       "drafted_at": "2026-09-15T18:06:42.619Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/craig-cover-8461a5155",
+      "email": "info@coveritcanada.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "cover-pools": {
@@ -7422,6 +7440,15 @@
       "drafted_at": "2026-09-15T18:08:58.973Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://au.linkedin.com/in/andrew-chalmers-0a735394",
+      "email": "info@defendtex.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "detail-kommander": {
@@ -7494,6 +7521,15 @@
       "drafted_at": "2026-09-15T18:09:30.847Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Victor Chevenski",
+      "title": "Purchasing Director",
+      "linkedin_url": "https://www.linkedin.com/in/victor-chevenski-58ba8772",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "dongwon-parts-co-ltd": {
@@ -7503,6 +7539,15 @@
       "drafted_at": "2026-09-15T18:09:37.619Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/michael-amosu-09854259",
+      "email": "support@dwparts.net",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "dtr-fabricators": {
@@ -7521,6 +7566,15 @@
       "drafted_at": "2026-09-15T18:09:50.152Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/jonathan-frandsen-63306653",
+      "email": "contact@duc-helices.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "dune-rider": {
@@ -7530,6 +7584,15 @@
       "drafted_at": "2026-09-15T18:09:58.152Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/blake-f-gill",
+      "email": "info@dune-rider.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "durabilt-covers": {
@@ -7539,6 +7602,15 @@
       "drafted_at": "2026-09-15T18:10:04.634Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://ca.linkedin.com/in/don-clement-6a082587",
+      "email": "info@durabiltusa.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "ecos-systems-inc": {
@@ -7548,6 +7620,15 @@
       "drafted_at": "2026-09-15T18:10:13.379Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/lissette-san-juan-b0323a26",
+      "email": "info@ecos-systems.de",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "eemann-tech": {
@@ -7557,6 +7638,15 @@
       "drafted_at": "2026-09-15T18:10:20.254Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://de.linkedin.com/in/timo-b-015a20153",
+      "email": "export@eemann.tech",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "eevelle": {
@@ -7584,6 +7674,15 @@
       "drafted_at": "2026-09-15T18:10:40.543Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Firat AKINCI",
+      "title": "Regional Manager",
+      "linkedin_url": "https://it.linkedin.com/in/firatakinci",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "extra-duty-solutions": {
@@ -7602,6 +7701,15 @@
       "drafted_at": "2026-09-15T18:10:53.146Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Davitt Cunningham",
+      "title": "Experienced Global Business Development Manager",
+      "linkedin_url": "https://www.linkedin.com/in/davitt-cunningham-70869861",
+      "email": "sales@fabritech.net",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "fabric-structures-usa": {
@@ -7611,6 +7719,15 @@
       "drafted_at": "2026-09-15T18:10:59.339Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Claude Montane, MBA",
+      "title": "Materials Manager",
+      "linkedin_url": "https://www.linkedin.com/in/claude-montane-mba-4906346",
+      "email": "info@fabricstructures-usa.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "fabtex": {
@@ -7620,6 +7737,15 @@
       "drafted_at": "2026-09-15T18:11:05.805Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Rhonda Cohen",
+      "title": "Customer Service/Purchasing Manager",
+      "linkedin_url": "https://www.linkedin.com/in/rhonda-cohen-68766a49",
+      "email": "sales@threadwell.co",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "federal-signal": {
@@ -7629,6 +7755,15 @@
       "drafted_at": "2026-09-15T18:11:23.782Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Ryan VanDommelen, CPSM",
+      "title": "Director of Purchasing",
+      "linkedin_url": "https://www.linkedin.com/in/ryan-vandommelen-cpsm-a71ab124",
+      "email": "IHudson@federalsignal.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "flight-1": {
@@ -7656,6 +7791,15 @@
       "drafted_at": "2026-09-15T18:11:42.715Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Matt McClanahan",
+      "title": "Purchasing Manager",
+      "linkedin_url": "https://www.linkedin.com/in/matt-mcclanahan-b7802612",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "galt-aerospace": {
@@ -7665,6 +7809,15 @@
       "drafted_at": "2026-09-15T18:11:48.661Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Shirley Kesisyan",
+      "title": "Supply Chain Buyer, Purchasing Agent",
+      "linkedin_url": "https://www.linkedin.com/in/shirleykesisyan",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "garsport": {
