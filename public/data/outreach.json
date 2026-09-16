@@ -3138,6 +3138,15 @@
       "drafted_at": "2026-09-15T15:00:57.211Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Joe Klein",
+      "title": "Store Supervisor at The North Face",
+      "linkedin_url": "https://nl.linkedin.com/in/joe-klein-260624220",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "pax-bags": {
@@ -8106,6 +8115,15 @@
       "drafted_at": "2026-09-15T18:13:53.911Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/amelia-knight-69b4a9270",
+      "email": "info@knightshieldguard.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "machine-covers-usa": {
@@ -8142,6 +8160,15 @@
       "drafted_at": "2026-09-15T18:14:20.673Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Allan Bass",
+      "title": "Purchasing Manager",
+      "linkedin_url": "https://www.linkedin.com/in/allan-bass-189ba5a7",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "mytee-products": {
@@ -8151,6 +8178,15 @@
       "drafted_at": "2026-09-15T18:14:26.785Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Mark Delos Angeles",
+      "title": "Purchasing Manager",
+      "linkedin_url": "https://www.linkedin.com/in/mark-delos-angeles-8aa44b133",
+      "email": "customerservice@myteeproducts.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "national-covers": {
@@ -8160,6 +8196,15 @@
       "drafted_at": "2026-09-15T18:14:32.929Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/craig-cover-8461a5155",
+      "email": "service@nationalcovers.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "national-patio-covers": {
@@ -8187,6 +8232,15 @@
       "drafted_at": "2026-09-15T18:14:51.780Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/jackie-s-ba20aa235",
+      "email": "info@neros.tech",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "newcon-optik": {
@@ -8196,6 +8250,15 @@
       "drafted_at": "2026-09-15T18:14:57.854Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": null,
+      "title": null,
+      "linkedin_url": "https://www.linkedin.com/in/camille-miller-52174116",
+      "email": "newconsales@newcon-optik.com",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "nt-service-uab": {
@@ -8205,6 +8268,15 @@
       "drafted_at": "2026-09-15T18:15:04.108Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Irena Čichalina",
+      "title": "Office Administrator",
+      "linkedin_url": "https://lt.linkedin.com/in/irena-%C4%8Dichalina-1b8646138",
+      "email": "info@rtp.lt",
+      "email_status": "published",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "nvts-night-vision-technology-solutions-inc": {
