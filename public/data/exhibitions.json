@@ -86,20 +86,22 @@
   "segment": "Military & Tactical",
   "name": "DIMDEX 2026",
   "country": "Qatar",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Doha",
+  "dates": "27–30 Mar 2028",
+  "start": "2028-03-27",
+  "status": "Not yet",
+  "end": "2028-03-30"
  },
  {
   "id": "dsa",
   "segment": "Military & Tactical",
   "name": "DSA",
   "country": "Malaysia",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Kuala Lumpur",
+  "dates": "17–20 Apr 2028",
+  "start": "2028-04-17",
+  "status": "Exhibited",
+  "end": "2028-04-20"
  },
  {
   "id": "dsei",
@@ -183,20 +185,22 @@
   "segment": "Military & Tactical",
   "name": "Eurosatory",
   "country": "France",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Paris",
+  "dates": "19–23 Jun 2028",
+  "start": "2028-06-19",
+  "status": "Exhibited",
+  "end": "2028-06-23"
  },
  {
   "id": "fidae",
   "segment": "Military & Tactical",
   "name": "FIDAE",
   "country": "Chile",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Santiago",
+  "dates": "4–9 Apr 2028",
+  "start": "2028-04-04",
+  "status": "Not yet",
+  "end": "2028-04-09"
  },
  {
   "id": "future-forces",
@@ -443,10 +447,11 @@
   "segment": "Workwear",
   "name": "NSC Safety Congress & Expo",
   "country": "USA",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Indianapolis",
+  "dates": "11–17 Sep 2026",
+  "start": "2026-09-11",
+  "status": "Not yet",
+  "end": "2026-09-17"
  },
  {
   "id": "safety-health-expo",
