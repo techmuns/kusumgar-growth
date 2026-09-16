@@ -64,20 +64,22 @@
   "segment": "Military & Tactical",
   "name": "AUSA Annual Meeting",
   "country": "USA",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Washington, D.C.",
+  "dates": "12–14 Oct 2026",
+  "start": "2026-10-12",
+  "status": "Not yet",
+  "end": "2026-10-14"
  },
  {
   "id": "cansec",
   "segment": "Military & Tactical",
   "name": "CANSEC",
   "country": "Canada",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Ottawa",
+  "dates": "2–3 Jun 2027",
+  "start": "2027-06-02",
+  "status": "Not yet",
+  "end": "2027-06-03"
  },
  {
   "id": "dimdex",
@@ -104,70 +106,77 @@
   "segment": "Military & Tactical",
   "name": "DSEI",
   "country": "UK",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "London",
+  "dates": "7–10 Sep 2027",
+  "start": "2027-09-07",
+  "status": "Exhibited",
+  "end": "2027-09-10"
  },
  {
   "id": "dvd",
   "segment": "Military & Tactical",
   "name": "DVD (MoD/Army)",
   "country": "UK",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Millbrook",
+  "dates": "16–17 Sep 2026",
+  "start": "2026-09-16",
+  "status": "Not yet",
+  "end": "2026-09-17"
  },
  {
   "id": "dx-korea",
   "segment": "Military & Tactical",
   "name": "DX Korea",
   "country": "South Korea",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Goyang",
+  "dates": "16–19 Sep 2026",
+  "start": "2026-09-16",
+  "status": "Not yet",
+  "end": "2026-09-19"
  },
  {
   "id": "defence-tech-expo",
   "segment": "Military & Tactical",
   "name": "Defence.Tech Expo",
   "country": "Israel",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Tel Aviv",
+  "dates": "6–7 Apr 2027",
+  "start": "2027-04-06",
+  "status": "Not yet",
+  "end": "2027-04-07"
  },
  {
   "id": "drone-world-expo",
   "segment": "Military & Tactical",
   "name": "Drone World Expo",
   "country": "Poland",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Nadarzyn",
+  "dates": "23–25 Mar 2027",
+  "start": "2027-03-23",
+  "status": "Not yet",
+  "end": "2027-03-25"
  },
  {
   "id": "edex",
   "segment": "Military & Tactical",
   "name": "EDEX",
   "country": "Egypt",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Cairo",
+  "dates": "6–9 Dec 2027",
+  "start": "2027-12-06",
+  "status": "Not yet",
+  "end": "2027-12-09"
  },
  {
   "id": "enforce-tac",
   "segment": "Military & Tactical",
   "name": "Enforce Tac",
   "country": "Germany",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Nuremberg",
+  "dates": "1–3 Mar 2027",
+  "start": "2027-03-01",
+  "status": "Exhibited",
+  "end": "2027-03-03"
  },
  {
   "id": "eurosatory",
@@ -194,20 +203,22 @@
   "segment": "Military & Tactical",
   "name": "Future Forces Forum",
   "country": "Czechia",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Prague",
+  "dates": "21–23 Oct 2026",
+  "start": "2026-10-21",
+  "status": "Exhibited",
+  "end": "2026-10-23"
  },
  {
   "id": "iitsec",
   "segment": "Military & Tactical",
   "name": "I/ITSEC",
   "country": "USA",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Orlando",
+  "dates": "30 Nov–3 Dec 2026",
+  "start": "2026-11-30",
+  "status": "Not yet",
+  "end": "2026-12-03"
  },
  {
   "id": "idex",
@@ -215,69 +226,76 @@
   "name": "IDEX",
   "country": "UAE",
   "place": "Abu Dhabi",
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "dates": "25–29 Jan 2027",
+  "start": "2027-01-25",
+  "status": "Exhibited",
+  "end": "2027-01-29"
  },
  {
   "id": "iwa",
   "segment": "Military & Tactical",
   "name": "IWA OutdoorClassics",
   "country": "Germany",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Nuremberg",
+  "dates": "4–7 Mar 2027",
+  "start": "2027-03-04",
+  "status": "Not yet",
+  "end": "2027-03-07"
  },
  {
   "id": "iodsc",
   "segment": "Military & Tactical",
   "name": "Indian Ocean Defence & Security Conference",
   "country": "Australia",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Perth",
+  "dates": "30 May–1 Jun 2028",
+  "start": "2028-05-30",
+  "status": "Not yet",
+  "end": "2028-06-01"
  },
  {
   "id": "indo-defence",
   "segment": "Military & Tactical",
   "name": "Indo Defence",
   "country": "Indonesia",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Tangerang",
+  "dates": "12–15 May 2027",
+  "start": "2027-05-12",
+  "status": "Exhibited",
+  "end": "2027-05-15"
  },
  {
   "id": "iav",
   "segment": "Military & Tactical",
   "name": "Intl. Armoured Vehicles",
   "country": "UK",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Farnborough",
+  "dates": "19–21 Jan 2027",
+  "start": "2027-01-19",
+  "status": "Not yet",
+  "end": "2027-01-21"
  },
  {
   "id": "laad",
   "segment": "Military & Tactical",
   "name": "LAAD",
   "country": "Brazil",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Rio de Janeiro",
+  "dates": "13–16 Apr 2027",
+  "start": "2027-04-13",
+  "status": "Not yet",
+  "end": "2027-04-16"
  },
  {
   "id": "land-forces",
   "segment": "Military & Tactical",
   "name": "LAND FORCES",
   "country": "Australia",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Perth",
+  "dates": "6–8 Oct 2026",
+  "start": "2026-10-06",
+  "status": "Exhibited",
+  "end": "2026-10-08"
  },
  {
   "id": "mspo",
@@ -294,70 +312,77 @@
   "segment": "Military & Tactical",
   "name": "Milipol Paris",
   "country": "France",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Exhibited"
+  "place": "Paris",
+  "dates": "16–19 Nov 2027",
+  "start": "2027-11-16",
+  "status": "Exhibited",
+  "end": "2027-11-19"
  },
  {
   "id": "milipol-qatar",
   "segment": "Military & Tactical",
   "name": "Milipol Qatar",
   "country": "Qatar",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Attended"
+  "place": "Doha",
+  "dates": "20–22 Oct 2026",
+  "start": "2026-10-20",
+  "status": "Attended",
+  "end": "2026-10-22"
  },
  {
   "id": "modern-day-marine",
   "segment": "Military & Tactical",
   "name": "Modern Day Marine",
   "country": "USA",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Washington D.C.",
+  "dates": "13–15 Apr 2027",
+  "start": "2027-04-13",
+  "status": "Not yet",
+  "end": "2027-04-15"
  },
  {
   "id": "shot-show",
   "segment": "Military & Tactical",
   "name": "SHOT Show",
   "country": "USA",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Visited"
+  "place": "Las Vegas",
+  "dates": "19–22 Jan 2027",
+  "start": "2027-01-19",
+  "status": "Visited",
+  "end": "2027-01-22"
  },
  {
   "id": "sof-week",
   "segment": "Military & Tactical",
   "name": "SOF Week",
   "country": "USA",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Tampa",
+  "dates": "3–6 May 2027",
+  "start": "2027-05-03",
+  "status": "Not yet",
+  "end": "2027-05-06"
  },
  {
   "id": "security-policing",
   "segment": "Military & Tactical",
   "name": "Security & Policing",
   "country": "UK",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Farnborough",
+  "dates": "16–18 Mar 2027",
+  "start": "2027-03-16",
+  "status": "Not yet",
+  "end": "2027-03-18"
  },
  {
   "id": "singapore-airshow",
   "segment": "Military & Tactical",
   "name": "Singapore Airshow",
   "country": "Singapore",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Visited"
+  "place": "Singapore",
+  "dates": "15–20 Feb 2028",
+  "start": "2028-02-15",
+  "status": "Visited",
+  "end": "2028-02-20"
  },
  {
   "id": "supplier-showcase",
@@ -374,40 +399,44 @@
   "segment": "Military & Tactical",
   "name": "World Defence Show",
   "country": "Saudi Arabia",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Visited"
+  "place": "Riyadh",
+  "dates": "16–20 Jan 2028",
+  "start": "2028-01-16",
+  "status": "Visited",
+  "end": "2028-01-20"
  },
  {
   "id": "aplusa",
   "segment": "Workwear",
   "name": "A+A",
   "country": "Germany",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Visited"
+  "place": "Düsseldorf",
+  "dates": "19–22 Oct 2027",
+  "start": "2027-10-19",
+  "status": "Visited",
+  "end": "2027-10-22"
  },
  {
   "id": "expoprotection",
   "segment": "Workwear",
   "name": "ExpoProtection",
   "country": "France",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Paris",
+  "dates": "3–5 Nov 2026",
+  "start": "2026-11-03",
+  "status": "Not yet",
+  "end": "2026-11-05"
  },
  {
   "id": "intersec",
   "segment": "Workwear",
   "name": "Intersec",
   "country": "UAE",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Dubai",
+  "dates": "12–14 Jan 2027",
+  "start": "2027-01-12",
+  "status": "Not yet",
+  "end": "2027-01-14"
  },
  {
   "id": "nsc",
@@ -424,10 +453,11 @@
   "segment": "Workwear",
   "name": "Safety & Health Expo",
   "country": "UK",
-  "place": null,
-  "dates": null,
-  "start": null,
-  "status": "Not yet"
+  "place": "Birmingham",
+  "dates": "27–29 Apr 2027",
+  "start": "2027-04-27",
+  "status": "Not yet",
+  "end": "2027-04-29"
  },
  {
   "id": "techtextil",
@@ -444,77 +474,111 @@
   "segment": "Industrial",
   "name": "Techtextil North America",
   "country": "United States",
-  "place": null,
-  "dates": null,
-  "start": null,
+  "place": "Atlanta",
+  "dates": "11–13 May 2027",
+  "start": "2027-05-11",
   "status": "Not yet",
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
-  "relevance_reason": "Dedicated tradeshow for Technical Textiles and Nonwovens, directly relevant to Kusumgar's technical textile manufacturing capabilities across multiple fabric types"
+  "relevance_reason": "Dedicated tradeshow for Technical Textiles and Nonwovens, directly relevant to Kusumgar's technical textile manufacturing capabilities across multiple fabric types",
+  "end": "2027-05-13"
  },
  {
   "id": "pacific-marine-expo",
   "segment": "Marine",
   "name": "Pacific Marine Expo",
   "country": "United States",
-  "place": null,
-  "dates": null,
-  "start": null,
+  "place": "Seattle",
+  "dates": "19–21 Nov 2026",
+  "start": "2026-11-19",
   "status": "Not yet",
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
-  "relevance_reason": "Premier marine industry event where Kusumgar's marine-grade fabrics (PU-coated, PVC-coated polyester) would be relevant for boat and marine applications"
+  "relevance_reason": "Premier marine industry event where Kusumgar's marine-grade fabrics (PU-coated, PVC-coated polyester) would be relevant for boat and marine applications",
+  "end": "2026-11-21"
  },
  {
   "id": "southampton-boat-show",
   "segment": "Marine",
   "name": "Southampton Boat Show",
   "country": "United Kingdom",
-  "place": null,
-  "dates": null,
-  "start": null,
+  "place": "Southampton",
+  "dates": "18–27 Sep 2026",
+  "start": "2026-09-18",
   "status": "Not yet",
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
-  "relevance_reason": "Major boat show where marine fabrics and technical textiles for maritime applications would be showcased and sourced"
+  "relevance_reason": "Major boat show where marine fabrics and technical textiles for maritime applications would be showcased and sourced",
+  "end": "2026-09-27"
  },
  {
   "id": "boat-technica",
   "segment": "Marine",
   "name": "Boat Technica",
   "country": "Poland",
-  "place": null,
-  "dates": null,
-  "start": null,
+  "place": "Warsaw",
+  "dates": "8–11 Oct 2026",
+  "start": "2026-10-08",
   "status": "Not yet",
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
-  "relevance_reason": "Premier boat industry event bringing together marine professionals who would require technical fabrics for boat manufacturing and marine equipment"
+  "relevance_reason": "Premier boat industry event bringing together marine professionals who would require technical fabrics for boat manufacturing and marine equipment",
+  "end": "2026-10-11"
  },
  {
   "id": "euronaval",
   "segment": "Military & Tactical",
   "name": "EURONAVAL",
   "country": "France",
-  "place": null,
-  "dates": null,
-  "start": null,
+  "place": "Paris",
+  "dates": "3–6 Nov 2026",
+  "start": "2026-11-03",
   "status": "Not yet",
   "source": "discovered",
   "discovered_at": "2026-09-10T11:03:32.653Z",
-  "relevance_reason": "International Naval Defence & Maritime Exhibition focusing on high technology for naval defence and maritime security - relevant for military-grade technical textiles like tactical nylon and high-tenacity fabrics used in naval/maritime defense applications"
+  "relevance_reason": "International Naval Defence & Maritime Exhibition focusing on high technology for naval defence and maritime security - relevant for military-grade technical textiles like tactical nylon and high-tenacity fabrics used in naval/maritime defense applications",
+  "end": "2026-11-06"
  },
  {
   "id": "sidec",
   "segment": "Military & Tactical",
   "name": "SIDEC",
   "country": "Slovenia",
-  "place": null,
-  "dates": null,
-  "start": null,
+  "place": "Celje",
+  "dates": "10–12 Nov 2026",
+  "start": "2026-11-10",
   "status": "Not yet",
   "source": "discovered",
   "discovered_at": "2026-09-10T11:03:32.653Z",
-  "relevance_reason": "Slovenian International Defence Industry Exhibition showcasing innovations for the defence industry - relevant for military and tactical textile applications including parachute fabrics, tactical nylon, and ballistic polyester"
+  "relevance_reason": "Slovenian International Defence Industry Exhibition showcasing innovations for the defence industry - relevant for military and tactical textile applications including parachute fabrics, tactical nylon, and ballistic polyester",
+  "end": "2026-11-12"
+ },
+ {
+  "id": "osh-india",
+  "segment": "Workwear",
+  "name": "OSH India",
+  "country": "India",
+  "place": "Mumbai",
+  "dates": "7–9 Oct 2026",
+  "start": "2026-10-07",
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-16T11:41:00.954Z",
+  "relevance_reason": "Occupational Safety & Health exhibition focusing on workwear and PPE, directly relevant for technical fabrics used in protective workwear applications",
+  "end": "2026-10-09"
+ },
+ {
+  "id": "textile-prom",
+  "segment": "Industrial",
+  "name": "Textile Prom",
+  "country": "Russia",
+  "place": "Moscow",
+  "dates": "15–17 Sep 2026",
+  "start": "2026-09-15",
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-16T11:41:00.955Z",
+  "relevance_reason": "International Exhibition of Textile and Light Industry, relevant for technical textile manufacturers to showcase industrial fabric applications",
+  "end": "2026-09-17"
  }
 ]
