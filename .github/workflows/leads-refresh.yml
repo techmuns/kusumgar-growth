@@ -56,7 +56,8 @@ jobs:
 
           git config user.name "kgr-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/leads.json public/data/competitors.json
+          node scripts/update-meta.mjs
+          git add public/data/leads.json public/data/competitors.json public/data/meta.json
           git commit -m "chore(data): grow leads & competitors from exhibitor lists"
 
           branch="${GITHUB_REF_NAME}"

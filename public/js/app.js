@@ -151,7 +151,7 @@ const state = {
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'overview',   // 'overview' | 'list'
-  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', needsContact: false },
+  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', emailClass: 'all' },
   leadSort: { key: 'company', dir: 'asc' },
   competitorsSub: 'landscape', // 'landscape' | 'list'
   outreachSub: 'pipeline',     // 'pipeline' | 'tracker'
@@ -1030,12 +1030,13 @@ function renderLeadsOverview() {
     `<div class="hovable flex items-center gap-1.5" data-key="${i.key}" data-tip-title="${escapeHtml(i.label)} priority" data-tip-color="${i.color}" data-tip-sub="${plural(i.value, 'lead')}"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
 
   // Source-backed outreach progress (replaces the old best-fit-fabric estimate chart).
-  const withEmailN = leads.filter((l) => hasRealEmail(resolvedContact(l.id))).length;
-  const needN = leads.filter((l) => leadNeedsContact(l.id)).length;
+  const ec = { good: 0, company: 0, need: 0 };
+  leads.forEach((l) => { ec[leadEmailClass(l.id)]++; });
   const statusItems = [
     { label: 'Website found', value: withSite, key: 'st:site', color: '#6366f1' },
-    { label: 'Real email found', value: withEmailN, key: 'st:email', color: '#10b981' },
-    { label: 'Needs contact', value: needN, key: 'st:need', color: '#f59e0b' },
+    { label: 'Personal / verified email', value: ec.good, key: 'st:good', color: '#10b981' },
+    { label: 'Company inbox only', value: ec.company, key: 'st:company', color: '#f59e0b' },
+    { label: 'Need contact', value: ec.need, key: 'st:need', color: '#94a3b8' },
   ].filter((i) => i.value > 0);
 
   const grid = `
@@ -1060,7 +1061,7 @@ function filteredLeads() {
     if (f.segment !== 'all' && l.segment !== f.segment) return false;
     if (f.country !== 'all' && (l.country || 'Unknown') !== f.country) return false;
     if (f.priority !== 'all' && l.priority !== f.priority) return false;
-    if (f.needsContact && !leadNeedsContact(l.id)) return false;
+    if (f.emailClass !== 'all' && leadEmailClass(l.id) !== f.emailClass) return false;
     if (q) {
       const hay = `${l.company} ${l.country} ${l.segment} ${l.application || ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -1068,12 +1069,12 @@ function filteredLeads() {
     return true;
   });
 }
-// A lead "needs contact" if it has no verified/published/manual email (i.e. guessed or none).
-const leadNeedsContact = (id) => {
-  const c = resolvedContact(id);
-  const st = c && c.email_status;
-  return !(st === 'verified' || st === 'verified (manual)' || st === 'published');
-};
+// Email bucket for a lead, for the Leads summary + filter:
+//   'good' = personal or verified · 'company' = generic/role inbox · 'need' = no email yet.
+function leadEmailClass(id) {
+  const cls = classifyEmail(displayContact(id));
+  return (cls === 'verified' || cls === 'personal') ? 'good' : cls === 'company' ? 'company' : 'need';
+}
 
 function sortedLeads(list) {
   const { key, dir } = state.leadSort;
@@ -1103,7 +1104,7 @@ function leadContactCell(l) {
   const who = c && (c.name || c.email);
   if (!who) return '<span class="text-sm text-slate-300">—</span>';
   const role = c.title ? `<div class="truncate text-[11px] text-slate-400" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : '';
-  return `<div class="max-w-[230px]"><div class="flex items-center gap-1.5 truncate text-sm text-slate-700" title="${escapeHtml(who)}">${escapeHtml(who)}${emailStatusBadge(c.email_status)}</div>${role}</div>`;
+  return `<div class="max-w-[230px]"><div class="flex items-center gap-1.5 truncate text-sm text-slate-700" title="${escapeHtml(who)}">${escapeHtml(who)}${emailClassBadge(c)}</div>${role}</div>`;
 }
 
 function leadsTableHtml() {
@@ -1132,8 +1133,15 @@ function renderLeadsList() {
   const f = state.leadFilters;
   const segs = [...new Set(state.leads.map((l) => l.segment))].sort();
   const countries = [...new Set(state.leads.map((l) => l.country || 'Unknown'))].sort();
-  const needCount = state.leads.filter((l) => leadNeedsContact(l.id)).length;
-  const needCls = f.needsContact ? 'bg-amber-500 text-white ring-amber-500' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50';
+  // Live email-class split across ALL leads (not just the current filtered view).
+  const ec = { good: 0, company: 0, need: 0 };
+  state.leads.forEach((l) => { ec[leadEmailClass(l.id)]++; });
+  const classChip = (key, label, color, n) => {
+    const on = f.emailClass === key;
+    return `<button type="button" data-lclass="${key}" aria-pressed="${on}"
+      class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${on ? 'text-white ring-transparent' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}"
+      style="${on ? `background:${color}` : ''}">${label} <span class="tnum">${n}</span></button>`;
+  };
   return `
     <div class="fade-in">
       <div class="mb-3 flex flex-wrap items-center gap-2">
@@ -1145,11 +1153,16 @@ function renderLeadsList() {
         ${selectHtml('l-seg', 'All segments', f.segment, segs)}
         ${selectHtml('l-country', 'All countries', f.country, countries)}
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
-        <button type="button" data-lneed aria-pressed="${f.needsContact}"
-          class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${needCls}">📮 Needs contact${needCount ? ` <span class="tnum">${needCount}</span>` : ''}</button>
         <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
       </div>
-      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> leads · <span class="text-slate-400">click a row for the full profile</span></div>
+      <div class="mb-3 flex flex-wrap items-center gap-2">
+        <span class="text-[12px] font-medium text-slate-400">Email:</span>
+        ${classChip('good', '✅ Personal / verified', '#10b981', ec.good)}
+        ${classChip('company', '🏢 Company inbox', '#f59e0b', ec.company)}
+        ${classChip('need', '📮 Need contact', '#64748b', ec.need)}
+        ${f.emailClass !== 'all' ? `<button type="button" data-lclass="${f.emailClass}" class="text-[12px] font-semibold text-indigo-600 hover:underline">clear filter</button>` : ''}
+      </div>
+      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · <span class="font-semibold text-emerald-600">${ec.good}</span> personal/verified · <span class="font-semibold text-amber-600">${ec.company}</span> company-inbox · <span class="font-semibold text-slate-500">${ec.need}</span> need contact</div>
       <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="leadsTableWrap">${leadsTableHtml()}</div></div>
     </div>`;
 }
@@ -1190,7 +1203,7 @@ function openLeadDrawer(id) {
     <div class="mb-3 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
       <div class="mb-1.5 flex items-center justify-between gap-2">
         <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</span>
-        ${emailStatusBadge(rc && rc.email_status, true)}
+        ${emailClassBadge(rc, true)}
       </div>
       ${rcHas
         ? `<div class="text-sm font-bold text-slate-800">${escapeHtml(rc.name || rc.email)}</div>${rc.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(rc.title)}</div>` : ''}${rc.email ? `<div class="mt-0.5 text-[12px]"><a href="mailto:${escapeHtml(rc.email)}" class="text-indigo-600 hover:underline">${escapeHtml(rc.email)}</a></div>` : ''}`
@@ -1332,18 +1345,53 @@ function renderCompetitors() {
 const outreachFor = (id) => state.outreach[id] || {};
 const validStage = (s) => STAGE_KEYS.includes(s);
 
-// Colored email-status badge: verified & verified(manual)=green, published=blue, guessed=amber, none=grey.
-const EMAIL_STATUS = {
-  'verified': ['#10b981', 'Verified'],
-  'verified (manual)': ['#10b981', 'Verified ✋'],
-  'published': ['#3b82f6', 'Published'],
-  'guessed': ['#f59e0b', 'Guessed'],   // legacy — the engine now Reoon-verifies guesses instead
-  'none': ['#94a3b8', 'No email'],     // person found, no verified email
+/* ---- Email classification (LABELING ONLY — never changes how the finders work) ----
+ * Every found email is one of four honest buckets so Nishad sees who he can actually reach:
+ *   verified — confirmed deliverable by Prospeo/Reoon (and tied to a person, not a role inbox)
+ *   personal — address tied to a person's name (first.last@, flast@, name appears in the handle)
+ *   company  — a generic/role inbox (info@, sales@, dealers@ …): real & usable, but NOT the buyer
+ *   none     — no email yet (still needs the manual step)
+ * A company/role inbox is NEVER shown as "verified" even if a provider confirmed it. */
+const GENERIC_INBOX = new Set(['info', 'sales', 'contact', 'support', 'service', 'admin', 'hello', 'enquiries', 'enquiry', 'dealers', 'orders', 'marketing', 'pr', 'help', 'team', 'office', 'mail', 'careers']);
+const emailLocal = (email) => String(email || '').toLowerCase().trim().split('@')[0] || '';
+function isCompanyInbox(email) {
+  const lp = emailLocal(email); if (!lp) return false;
+  const base = lp.replace(/[._+-].*$/, '').replace(/\d+$/, ''); // token before a separator, minus trailing digits
+  return GENERIC_INBOX.has(lp) || GENERIC_INBOX.has(base);
+}
+function looksPersonal(email, name) {
+  const lp = emailLocal(email); if (!lp) return false;
+  if (/^[a-z]+[._-][a-z]{2,}/.test(lp)) return true;              // first.last / first_last / first-last
+  if (name) {
+    const toks = String(name).toLowerCase().match(/[a-z]{2,}/g) || [];
+    const bare = lp.replace(/[^a-z]/g, '');
+    if (toks.some((t) => t.length >= 3 && bare.includes(t))) return true;                          // a real name token appears
+    if (toks.length >= 2 && bare.startsWith(toks[0][0]) && bare.includes(toks[toks.length - 1])) return true; // first-initial + surname
+  }
+  return false;
+}
+// Returns 'verified' | 'personal' | 'company' | 'none' for a resolved/display contact.
+function classifyEmail(c) {
+  const email = c && c.email;
+  if (!email || !String(email).includes('@')) return 'none';
+  if (isCompanyInbox(email)) return 'company';                    // role inbox — never "verified"
+  const st = c.email_status;
+  if (st === 'verified' || st === 'verified (manual)') return 'verified';
+  if (looksPersonal(email, c.name)) return 'personal';
+  return 'company';                                               // real, but neither verified nor clearly a person
+}
+const EMAIL_CLASS = {
+  verified: ['#10b981', 'Verified'],
+  personal: ['#10b981', 'Personal'],
+  company: ['#f59e0b', 'Company inbox'],
+  none: ['#94a3b8', 'No email'],
 };
-function emailStatusBadge(status, showNone = false) {
-  const m = EMAIL_STATUS[status];
-  if (!m) return showNone ? `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:#94a3b81f;color:#64748b">✉ No email</span>` : '';
-  return `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:${m[0]}1f;color:${darken(m[0], 0.3)}">✉ ${m[1]}</span>`;
+// Colored email badge for a contact. In compact cells (big=false) a "No email" contact shows nothing.
+function emailClassBadge(c, big = false) {
+  const cls = classifyEmail(c);
+  if (cls === 'none' && !big) return '';
+  const [color, label] = EMAIL_CLASS[cls];
+  return `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:${color}1f;color:${darken(color, 0.3)}">✉ ${label}</span>`;
 }
 
 /* ---- Two-layer contacts: manual (localStorage, Layer B) wins over auto (outreach.json, Layer A) ---- */
@@ -1466,7 +1514,7 @@ function contactBlock(lead) {
       <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
       <div class="mt-1 text-sm font-bold text-slate-800">${escapeHtml(c.name || '—')}</div>
       ${c.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(c.title)}</div>` : ''}
-      <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">${li}${em}${emailStatusBadge(c.email_status, true)}</div>
+      <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">${li}${em}${emailClassBadge(c, true)}</div>
       ${c.source ? `<div class="mt-1 text-[11px] text-slate-400">via ${escapeHtml(c.source)}${c.confidence ? ` · ${escapeHtml(String(c.confidence))} confidence` : ''}</div>` : ''}
     </div>`;
   }
@@ -1616,7 +1664,7 @@ function trackerTableHtml() {
     const pl = state.pipeline[l.id];
     const c = displayContact(l.id);
     const contact = c && (c.name || c.email)
-      ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name || c.email)}${emailStatusBadge(c.email_status, true)}</span>`
+      ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name || c.email)}${emailClassBadge(c, true)}</span>`
       : `<span class="text-slate-400">→ find contact</span>`;
     const hasDraft = hasDraftFor(l.id) ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
     return `<tr class="border-t border-slate-100 hover:bg-slate-50/60">
@@ -1847,6 +1895,13 @@ function styleHeader(ws) {
   row.height = 20;
 }
 
+// Tint an "Email type" cell to match the on-screen badge (verified/personal green, company amber, none grey).
+const XLSX_EMAIL_ARGB = { verified: 'FF10B981', personal: 'FF10B981', company: 'FFF59E0B', none: 'FFE2E8F0' };
+function paintEmailType(cell, klass) {
+  cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XLSX_EMAIL_ARGB[klass] || 'FFE2E8F0' } };
+  cell.font = { bold: true, color: { argb: klass === 'none' ? 'FF475569' : 'FFFFFFFF' } };
+}
+
 function buildLeadsSheet(wb) {
   const ws = wb.addWorksheet('Leads');
   ws.columns = [
@@ -1860,15 +1915,18 @@ function buildLeadsSheet(wb) {
     { header: 'Contact title', key: 'ctitle', width: 24 },
     { header: 'Contact email', key: 'cemail', width: 28 },
     { header: 'Email status', key: 'estatus', width: 14 },
+    { header: 'Email type', key: 'etype', width: 15 },
     { header: 'Has draft', key: 'draft', width: 10 },
   ];
   sortedLeads(filteredLeads()).forEach((l) => {
     const c = displayContact(l.id) || {};
-    ws.addRow({
+    const klass = classifyEmail(c);
+    const r = ws.addRow({
       company: l.company, segment: l.segment, country: l.country || '', application: l.application || '',
       priority: l.priority || '', website: l.website || '', cname: c.name || '', ctitle: c.title || '',
-      cemail: c.email || '', estatus: c.email_status || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
+      cemail: c.email || '', estatus: c.email_status || '', etype: EMAIL_CLASS[klass][1], draft: hasDraftFor(l.id) ? 'Yes' : '',
     });
+    paintEmailType(r.getCell('etype'), klass);
   });
   styleHeader(ws);
   ws.views = [{ state: 'frozen', ySplit: 1 }];
@@ -1883,15 +1941,18 @@ function buildOutreachSheet(wb) {
     { header: 'Current/Potential', key: 'deal', width: 18 },
     { header: 'Own/Jobwork/Agency', key: 'mfg', width: 20 },
     { header: 'Contact', key: 'contact', width: 24 },
+    { header: 'Email type', key: 'etype', width: 15 },
     { header: 'Has draft', key: 'draft', width: 10 },
   ];
   pipelinedLeads().forEach((l) => {
     const pl = state.pipeline[l.id];
     const c = displayContact(l.id) || {};
-    ws.addRow({
+    const klass = classifyEmail(c);
+    const r = ws.addRow({
       company: l.company, segment: l.segment, stage: pl.stage, deal: pl.dealType || 'current',
-      mfg: pl.mfg || 'own', contact: c.name || c.email || '', draft: hasDraftFor(l.id) ? 'Yes' : '',
+      mfg: pl.mfg || 'own', contact: c.name || c.email || '', etype: EMAIL_CLASS[klass][1], draft: hasDraftFor(l.id) ? 'Yes' : '',
     });
+    paintEmailType(r.getCell('etype'), klass);
   });
   styleHeader(ws);
   ws.views = [{ state: 'frozen', ySplit: 1 }];
@@ -2071,8 +2132,8 @@ function wireEvents() {
     const toggle = e.target.closest('[data-toggle]');
     if (toggle) { state.filters.relevantOnly = !state.filters.relevantOnly; render(); return; }
 
-    const lneed = e.target.closest('[data-lneed]');
-    if (lneed) { state.leadFilters.needsContact = !state.leadFilters.needsContact; render(); return; }
+    const lclass = e.target.closest('[data-lclass]');
+    if (lclass) { const k = lclass.getAttribute('data-lclass'); state.leadFilters.emailClass = (state.leadFilters.emailClass === k ? 'all' : k); render(); return; }
 
     const distoggle = e.target.closest('[data-distoggle]');
     if (distoggle) { state.filters.discoveredOnly = !state.filters.discoveredOnly; render(); return; }
@@ -2241,8 +2302,19 @@ async function boot() {
     state.master = { leads: state.leads, competitors: state.competitors, exhibitions: state.exhibitions };
     applyOnlyFound();
 
-    const updated = meta.updated_at
-      ? new Date(meta.updated_at + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+    // "Updated" reflects the freshest REAL refresh — the newest _meta.scraped_at across the data
+    // files, falling back to meta.updated_at — so it can never show a stale hardcoded date.
+    const stamps = [meta && meta.updated_at];
+    [exhibitions, products, leads, competitors, outreach].forEach((raw) => {
+      const t = raw && !Array.isArray(raw) && raw._meta && raw._meta.scraped_at;
+      if (t) stamps.push(t);
+    });
+    const freshest = stamps
+      .map((t) => (t ? new Date(/^\d{4}-\d{2}-\d{2}$/.test(t) ? t + 'T00:00:00Z' : t) : null))
+      .filter((d) => d && !isNaN(d.getTime()))
+      .sort((a, b) => b - a)[0] || null;
+    const updated = freshest
+      ? freshest.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
       : '—';
     const ut = $('#updatedText'); if (ut) ut.textContent = `Updated ${updated}`;
     const ff = $('#footerFreshness'); if (ff) ff.textContent = `Kusumgar Growth Engine · data updated ${updated}`;
