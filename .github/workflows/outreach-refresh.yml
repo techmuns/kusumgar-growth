@@ -70,7 +70,8 @@ jobs:
           fi
           git config user.name "kgr-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/leads.json public/data/outreach.json
+          node scripts/update-meta.mjs
+          git add public/data/leads.json public/data/outreach.json public/data/meta.json
           git commit -m "chore(data): refresh websites, outreach drafts & contacts"
 
           branch="${GITHUB_REF_NAME}"
