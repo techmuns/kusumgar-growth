@@ -472,12 +472,29 @@ function countBy(arr, keyFn) {
   return m;
 }
 
+// A show's END date, so an in-progress multi-day show still counts as "upcoming" until it finishes.
+// Exhibitions carry only `start` (ISO) + a display range like "15–20 Sep 2026" — parse the end day
+// from that range; fall back to `start` when there's no range.
+function showEndDate(d) {
+  const m = String(d && d.dates || '').match(/^\s*\d{1,2}\s*[–—-]\s*(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);
+  if (m) { const t = Date.parse(`${m[1]} ${m[2]} ${m[3]}`); if (!isNaN(t)) return new Date(t); }
+  if (d && d.start) { const t = Date.parse(d.start); if (!isNaN(t)) return new Date(t); }
+  return null;
+}
+// True when a dated show hasn't finished yet (end date is today or later).
+function showUpcoming(d) {
+  const e = showEndDate(d);
+  if (!e) return false;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return e >= today;
+}
+
 function renderOverview() {
   const data = state.exhibitions;
   const total = data.length;
   const segCounts = countBy(data, (d) => d.segment);
   const engaged = data.filter((d) => ENGAGED.has(d.status)).length;
-  const upcoming = data.filter((d) => d.start).length;
+  const upcoming = data.filter(showUpcoming).length;
   const segments = [...segCounts.keys()].length;
 
   // 1) Segment donut
@@ -516,7 +533,7 @@ function renderOverview() {
     </div>`).join('') + `</div>`;
 
   // 4) Upcoming timeline + its segment legend
-  const upcomingShows = data.filter((d) => d.start);
+  const upcomingShows = data.filter(showUpcoming);
   const tlSegs = [...new Set(upcomingShows.map((d) => d.segment))];
   const tlLegend = `<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">` + tlSegs.map((seg) =>
     `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${segColor(seg)}"></span>
@@ -1793,8 +1810,8 @@ function renderToday() {
   }).join('') + `</div>`
     : `<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No high-priority leads yet.</div>`;
 
-  // Coming up: next dated exhibitions.
-  const upcoming = state.exhibitions.filter((d) => d.start).sort((a, b) => a.start.localeCompare(b.start)).slice(0, 6);
+  // Coming up: shows that haven't finished yet, soonest first (in-progress shows stay until they end).
+  const upcoming = state.exhibitions.filter(showUpcoming).sort((a, b) => a.start.localeCompare(b.start)).slice(0, 6);
   const comingList = upcoming.length ? upcoming.map((d) => {
     const col = segColor(d.segment);
     const isNew = d.source === 'discovered' ? ' <span class="rounded-full bg-fuchsia-100 px-1.5 py-0.5 text-[10px] font-bold text-fuchsia-600">✨</span>' : '';
