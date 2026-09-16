@@ -2,7 +2,7 @@ name: Outreach refresh
 
 # Fills missing lead websites, drafts Nishad-style emails, then finds contacts.
 # Writes public/data/leads.json (websites) + public/data/outreach.json (drafts & contacts).
-# Manual (with inputs) + monthly cron. Commits only when that data changed.
+# Manual (with inputs) + weekly cron (Thursdays). Commits only when that data changed.
 on:
   workflow_dispatch:
     inputs:
@@ -15,7 +15,7 @@ on:
         required: false
         default: 'false'
   schedule:
-    - cron: '0 8 20 * *' # 08:00 UTC on the 20th of every month
+    - cron: '0 8 * * 4' # 08:00 UTC every Thursday
 
 permissions:
   contents: write

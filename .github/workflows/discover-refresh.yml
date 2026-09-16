@@ -1,7 +1,7 @@
 name: Discover exhibitions
 
 # Auto-discovers NEW relevant exhibitions from event directories into exhibitions.json.
-# Manual (with input) + monthly cron. Commits only when exhibitions.json changed.
+# Manual (with input) + weekly cron (Mondays). Commits only when exhibitions.json changed.
 on:
   workflow_dispatch:
     inputs:
@@ -10,7 +10,7 @@ on:
         required: false
         default: '3'
   schedule:
-    - cron: '0 6 10 * *' # 06:00 UTC on the 10th of every month
+    - cron: '0 6 * * 1' # 06:00 UTC every Monday
 
 permissions:
   contents: write

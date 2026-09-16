@@ -1,11 +1,11 @@
 name: Products refresh
 
 # Refreshes public/data/products.json from kusumgar.com via Firecrawl.
-# Manual (workflow_dispatch) + monthly cron. Commits only when the catalog changed.
+# Manual (workflow_dispatch) + weekly cron (Sundays). Commits only when the catalog changed.
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 1 * *' # 06:00 UTC on the 1st of every month
+    - cron: '0 6 * * 0' # 06:00 UTC every Sunday
 
 permissions:
   contents: write

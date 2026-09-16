@@ -1,7 +1,7 @@
 name: Leads refresh
 
 # Classify engine: grows leads.json + competitors.json from exhibition exhibitor lists.
-# Manual (with inputs) + monthly cron. Commits only when a file changed.
+# Manual (with inputs) + weekly cron (Tuesdays). Commits only when a file changed.
 on:
   workflow_dispatch:
     inputs:
@@ -14,7 +14,7 @@ on:
         required: false
         default: '40'
   schedule:
-    - cron: '0 7 15 * *' # 07:00 UTC on the 15th of every month
+    - cron: '0 7 * * 2' # 07:00 UTC every Tuesday
 
 permissions:
   contents: write
