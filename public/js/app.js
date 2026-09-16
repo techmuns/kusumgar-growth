@@ -476,9 +476,14 @@ function countBy(arr, keyFn) {
 // Exhibitions carry only `start` (ISO) + a display range like "15–20 Sep 2026" — parse the end day
 // from that range; fall back to `start` when there's no range.
 function showEndDate(d) {
+  const iso = (s) => { const t = Date.parse(String(s).length === 10 ? s + 'T00:00:00' : s); return isNaN(t) ? null : new Date(t); };
+  // Prefer a real ISO end date when the date-finder captured one.
+  if (d && /^\d{4}-\d{2}-\d{2}$/.test(String(d.end || ''))) { const e = iso(d.end); if (e) return e; }
+  // Else parse the end day out of the "D–D Mon YYYY" display range.
   const m = String(d && d.dates || '').match(/^\s*\d{1,2}\s*[–—-]\s*(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);
   if (m) { const t = Date.parse(`${m[1]} ${m[2]} ${m[3]}`); if (!isNaN(t)) return new Date(t); }
-  if (d && d.start) { const t = Date.parse(d.start); if (!isNaN(t)) return new Date(t); }
+  // Else fall back to the start date.
+  if (d && d.start) { const e = iso(d.start); if (e) return e; }
   return null;
 }
 // True when a dated show hasn't finished yet (end date is today or later).
