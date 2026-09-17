@@ -7,7 +7,8 @@
   "place": "St Hilaire",
   "dates": "15–20 Sep 2026",
   "start": "2026-09-15",
-  "status": "Not yet"
+  "status": "Not yet",
+  "website": "https://www.coupe-icare.org/en"
  },
  {
   "id": "euro-skydiving",
@@ -27,7 +28,8 @@
   "place": "Orlando, FL",
   "dates": "01–03 Nov 2026",
   "start": "2026-11-01",
-  "status": "Not yet"
+  "status": "Not yet",
+  "website": "https://advancedtextilesexpo.com"
  },
  {
   "id": "global-tape-forum",
@@ -37,7 +39,8 @@
   "place": "Tokyo",
   "dates": "17–19 Nov 2026",
   "start": "2026-11-17",
-  "status": "Not yet"
+  "status": "Not yet",
+  "website": "https://www.c-linkage.co.jp/gtf2026"
  },
  {
   "id": "iree",
@@ -47,7 +50,8 @@
   "place": "Delhi",
   "dates": "15–17 Oct 2026",
   "start": "2026-10-15",
-  "status": "Not yet"
+  "status": "Not yet",
+  "website": "https://www.ireeindia.com"
  },
  {
   "id": "innotrans",
@@ -57,7 +61,8 @@
   "place": "Berlin",
   "dates": "22–25 Sep 2026",
   "start": "2026-09-22",
-  "status": "Not yet"
+  "status": "Not yet",
+  "website": "https://www.innotrans.de/en"
  },
  {
   "id": "ausa",
@@ -68,7 +73,8 @@
   "dates": "12–14 Oct 2026",
   "start": "2026-10-12",
   "status": "Not yet",
-  "end": "2026-10-14"
+  "end": "2026-10-14",
+  "website": "https://meetings.ausa.org/annual/2026/index.cfm"
  },
  {
   "id": "cansec",
@@ -79,7 +85,8 @@
   "dates": "2–3 Jun 2027",
   "start": "2027-06-02",
   "status": "Not yet",
-  "end": "2027-06-03"
+  "end": "2027-06-03",
+  "website": "https://cansec.defenceandsecurity.ca"
  },
  {
   "id": "dimdex",
@@ -90,7 +97,9 @@
   "dates": "27–30 Mar 2028",
   "start": "2028-03-27",
   "status": "Not yet",
-  "end": "2028-03-30"
+  "end": "2028-03-30",
+  "website": "https://dimdex.com",
+  "registration": "https://dimdex.com/visitor"
  },
  {
   "id": "dsa",
@@ -101,7 +110,8 @@
   "dates": "17–20 Apr 2028",
   "start": "2028-04-17",
   "status": "Exhibited",
-  "end": "2028-04-20"
+  "end": "2028-04-20",
+  "website": "https://www.dsaexhibition.com"
  },
  {
   "id": "dsei",
@@ -112,7 +122,8 @@
   "dates": "7–10 Sep 2027",
   "start": "2027-09-07",
   "status": "Exhibited",
-  "end": "2027-09-10"
+  "end": "2027-09-10",
+  "website": "https://www.dsei.co.uk"
  },
  {
   "id": "dvd",
@@ -123,7 +134,8 @@
   "dates": "16–17 Sep 2026",
   "start": "2026-09-16",
   "status": "Not yet",
-  "end": "2026-09-17"
+  "end": "2026-09-17",
+  "website": "https://theevent.co.uk"
  },
  {
   "id": "dx-korea",
@@ -134,7 +146,8 @@
   "dates": "16–19 Sep 2026",
   "start": "2026-09-16",
   "status": "Not yet",
-  "end": "2026-09-19"
+  "end": "2026-09-19",
+  "website": "http://www.dxkorea.org"
  },
  {
   "id": "defence-tech-expo",
@@ -145,7 +158,8 @@
   "dates": "6–7 Apr 2027",
   "start": "2027-04-06",
   "status": "Not yet",
-  "end": "2027-04-07"
+  "end": "2027-04-07",
+  "website": "https://defensetech-expo.com"
  },
  {
   "id": "drone-world-expo",
@@ -156,7 +170,8 @@
   "dates": "23–25 Mar 2027",
   "start": "2027-03-23",
   "status": "Not yet",
-  "end": "2027-03-25"
+  "end": "2027-03-25",
+  "website": "https://warsawexpo.eu/en/fair-calendar/drone-world-expo"
  },
  {
   "id": "edex",
@@ -167,7 +182,8 @@
   "dates": "6–9 Dec 2027",
   "start": "2027-12-06",
   "status": "Not yet",
-  "end": "2027-12-09"
+  "end": "2027-12-09",
+  "website": "https://www.egyptdefenceexpo.com"
  },
  {
   "id": "enforce-tac",
@@ -178,7 +194,8 @@
   "dates": "1–3 Mar 2027",
   "start": "2027-03-01",
   "status": "Exhibited",
-  "end": "2027-03-03"
+  "end": "2027-03-03",
+  "website": "https://www.enforcetac.com/en"
  },
  {
   "id": "eurosatory",
@@ -189,7 +206,8 @@
   "dates": "19–23 Jun 2028",
   "start": "2028-06-19",
   "status": "Exhibited",
-  "end": "2028-06-23"
+  "end": "2028-06-23",
+  "website": "https://www.eurosatory.com/en"
  },
  {
   "id": "fidae",
@@ -211,7 +229,8 @@
   "dates": "21–23 Oct 2026",
   "start": "2026-10-21",
   "status": "Exhibited",
-  "end": "2026-10-23"
+  "end": "2026-10-23",
+  "website": "https://www.future-forces-forum.org"
  },
  {
   "id": "iitsec",
@@ -222,7 +241,8 @@
   "dates": "30 Nov–3 Dec 2026",
   "start": "2026-11-30",
   "status": "Not yet",
-  "end": "2026-12-03"
+  "end": "2026-12-03",
+  "website": "https://www.iitsec.org"
  },
  {
   "id": "idex",
@@ -233,7 +253,8 @@
   "dates": "25–29 Jan 2027",
   "start": "2027-01-25",
   "status": "Exhibited",
-  "end": "2027-01-29"
+  "end": "2027-01-29",
+  "website": "https://www.idexuae.ae"
  },
  {
   "id": "iwa",
@@ -244,7 +265,8 @@
   "dates": "4–7 Mar 2027",
   "start": "2027-03-04",
   "status": "Not yet",
-  "end": "2027-03-07"
+  "end": "2027-03-07",
+  "website": "https://www.iwa.info/en"
  },
  {
   "id": "iodsc",
@@ -255,7 +277,8 @@
   "dates": "30 May–1 Jun 2028",
   "start": "2028-05-30",
   "status": "Not yet",
-  "end": "2028-06-01"
+  "end": "2028-06-01",
+  "website": "https://iods.com.au"
  },
  {
   "id": "indo-defence",
@@ -266,7 +289,8 @@
   "dates": "12–15 May 2027",
   "start": "2027-05-12",
   "status": "Exhibited",
-  "end": "2027-05-15"
+  "end": "2027-05-15",
+  "website": "https://indodefence.com"
  },
  {
   "id": "iav",
@@ -277,7 +301,8 @@
   "dates": "19–21 Jan 2027",
   "start": "2027-01-19",
   "status": "Not yet",
-  "end": "2027-01-21"
+  "end": "2027-01-21",
+  "website": "https://www.defenceiq.com/events-internationalarmouredvehicles"
  },
  {
   "id": "laad",
@@ -288,7 +313,8 @@
   "dates": "13–16 Apr 2027",
   "start": "2027-04-13",
   "status": "Not yet",
-  "end": "2027-04-16"
+  "end": "2027-04-16",
+  "website": "https://laadexpo.com.br/defence/en"
  },
  {
   "id": "land-forces",
@@ -299,17 +325,19 @@
   "dates": "6–8 Oct 2026",
   "start": "2026-10-06",
   "status": "Exhibited",
-  "end": "2026-10-08"
+  "end": "2026-10-08",
+  "website": "https://landforces.com.au"
  },
  {
   "id": "mspo",
   "segment": "Military & Tactical",
   "name": "MSPO",
   "country": "Poland",
-  "place": null,
+  "place": "Kielce",
   "dates": null,
   "start": null,
-  "status": "Visited"
+  "status": "Visited",
+  "website": "https://www.targikielce.pl/en/mspo"
  },
  {
   "id": "milipol-france",
@@ -320,7 +348,9 @@
   "dates": "16–19 Nov 2027",
   "start": "2027-11-16",
   "status": "Exhibited",
-  "end": "2027-11-19"
+  "end": "2027-11-19",
+  "website": "https://www.milipol.com/en",
+  "registration": "https://bit.ly/4pQuALH"
  },
  {
   "id": "milipol-qatar",
@@ -331,7 +361,8 @@
   "dates": "20–22 Oct 2026",
   "start": "2026-10-20",
   "status": "Attended",
-  "end": "2026-10-22"
+  "end": "2026-10-22",
+  "website": "https://www.milipolqatar.com/en"
  },
  {
   "id": "modern-day-marine",
@@ -342,7 +373,9 @@
   "dates": "13–15 Apr 2027",
   "start": "2027-04-13",
   "status": "Not yet",
-  "end": "2027-04-15"
+  "end": "2027-04-15",
+  "website": "https://marinemilitaryexpos.com",
+  "registration": "https://marinemilitaryexpos.com/registration-inquiry"
  },
  {
   "id": "shot-show",
@@ -353,7 +386,8 @@
   "dates": "19–22 Jan 2027",
   "start": "2027-01-19",
   "status": "Visited",
-  "end": "2027-01-22"
+  "end": "2027-01-22",
+  "website": "https://shotshow.org"
  },
  {
   "id": "sof-week",
@@ -364,7 +398,8 @@
   "dates": "3–6 May 2027",
   "start": "2027-05-03",
   "status": "Not yet",
-  "end": "2027-05-06"
+  "end": "2027-05-06",
+  "website": "https://sofweek.org"
  },
  {
   "id": "security-policing",
@@ -375,7 +410,9 @@
   "dates": "16–18 Mar 2027",
   "start": "2027-03-16",
   "status": "Not yet",
-  "end": "2027-03-18"
+  "end": "2027-03-18",
+  "website": "https://www.securityandpolicing.co.uk",
+  "registration": "https://www.securityandpolicing.co.uk/visit/apply-to-attend"
  },
  {
   "id": "singapore-airshow",
@@ -386,7 +423,8 @@
   "dates": "15–20 Feb 2028",
   "start": "2028-02-15",
   "status": "Visited",
-  "end": "2028-02-20"
+  "end": "2028-02-20",
+  "website": "https://www.singaporeairshow.com"
  },
  {
   "id": "supplier-showcase",
@@ -407,7 +445,8 @@
   "dates": "16–20 Jan 2028",
   "start": "2028-01-16",
   "status": "Visited",
-  "end": "2028-01-20"
+  "end": "2028-01-20",
+  "website": "https://www.worlddefenseshow.com/en"
  },
  {
   "id": "aplusa",
@@ -418,7 +457,8 @@
   "dates": "19–22 Oct 2027",
   "start": "2027-10-19",
   "status": "Visited",
-  "end": "2027-10-22"
+  "end": "2027-10-22",
+  "website": "https://www.aplusa-online.com"
  },
  {
   "id": "expoprotection",
@@ -429,7 +469,8 @@
   "dates": "3–5 Nov 2026",
   "start": "2026-11-03",
   "status": "Not yet",
-  "end": "2026-11-05"
+  "end": "2026-11-05",
+  "website": "https://www.expoprotection.com/en-gb.html"
  },
  {
   "id": "intersec",
@@ -440,7 +481,8 @@
   "dates": "12–14 Jan 2027",
   "start": "2027-01-12",
   "status": "Not yet",
-  "end": "2027-01-14"
+  "end": "2027-01-14",
+  "website": "https://intersecglobal.ae.messefrankfurt.com/dubai/en.html"
  },
  {
   "id": "nsc",
@@ -451,7 +493,8 @@
   "dates": "11–17 Sep 2026",
   "start": "2026-09-11",
   "status": "Not yet",
-  "end": "2026-09-17"
+  "end": "2026-09-17",
+  "website": "https://2026congress.nsc.org"
  },
  {
   "id": "safety-health-expo",
@@ -462,7 +505,8 @@
   "dates": "27–29 Apr 2027",
   "start": "2027-04-27",
   "status": "Not yet",
-  "end": "2027-04-29"
+  "end": "2027-04-29",
+  "website": "https://www.healthandsafetyevent.com"
  },
  {
   "id": "techtextil",
@@ -472,7 +516,8 @@
   "place": "Frankfurt",
   "dates": "21–24 Apr 2026",
   "start": "2026-04-21",
-  "status": "Exhibited"
+  "status": "Exhibited",
+  "website": "https://techtextil.messefrankfurt.com/frankfurt/en.html"
  },
  {
   "id": "techtextil-north-america",
@@ -486,7 +531,8 @@
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
   "relevance_reason": "Dedicated tradeshow for Technical Textiles and Nonwovens, directly relevant to Kusumgar's technical textile manufacturing capabilities across multiple fabric types",
-  "end": "2027-05-13"
+  "end": "2027-05-13",
+  "website": "https://techtextil-north-america.us.messefrankfurt.com/us/en.html"
  },
  {
   "id": "pacific-marine-expo",
@@ -500,7 +546,8 @@
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
   "relevance_reason": "Premier marine industry event where Kusumgar's marine-grade fabrics (PU-coated, PVC-coated polyester) would be relevant for boat and marine applications",
-  "end": "2026-11-21"
+  "end": "2026-11-21",
+  "website": "https://www.pacificmarineexpo.com"
  },
  {
   "id": "southampton-boat-show",
@@ -514,7 +561,9 @@
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
   "relevance_reason": "Major boat show where marine fabrics and technical textiles for maritime applications would be showcased and sourced",
-  "end": "2026-09-27"
+  "end": "2026-09-27",
+  "website": "https://www.southamptonboatshow.com",
+  "registration": "https://southamptonboatshow.seetickets.com/event/southampton-international-boat-show/mayflower-park/3561430"
  },
  {
   "id": "boat-technica",
@@ -528,7 +577,8 @@
   "source": "discovered",
   "discovered_at": "2026-09-09T14:16:21.664Z",
   "relevance_reason": "Premier boat industry event bringing together marine professionals who would require technical fabrics for boat manufacturing and marine equipment",
-  "end": "2026-10-11"
+  "end": "2026-10-11",
+  "website": "https://boattechnica.com"
  },
  {
   "id": "euronaval",
@@ -542,7 +592,8 @@
   "source": "discovered",
   "discovered_at": "2026-09-10T11:03:32.653Z",
   "relevance_reason": "International Naval Defence & Maritime Exhibition focusing on high technology for naval defence and maritime security - relevant for military-grade technical textiles like tactical nylon and high-tenacity fabrics used in naval/maritime defense applications",
-  "end": "2026-11-06"
+  "end": "2026-11-06",
+  "website": "https://www.euronaval.com"
  },
  {
   "id": "sidec",
@@ -556,7 +607,8 @@
   "source": "discovered",
   "discovered_at": "2026-09-10T11:03:32.653Z",
   "relevance_reason": "Slovenian International Defence Industry Exhibition showcasing innovations for the defence industry - relevant for military and tactical textile applications including parachute fabrics, tactical nylon, and ballistic polyester",
-  "end": "2026-11-12"
+  "end": "2026-11-12",
+  "website": "https://www.sidec.si/en"
  },
  {
   "id": "osh-india",
@@ -570,7 +622,8 @@
   "source": "discovered",
   "discovered_at": "2026-09-16T11:41:00.954Z",
   "relevance_reason": "Occupational Safety & Health exhibition focusing on workwear and PPE, directly relevant for technical fabrics used in protective workwear applications",
-  "end": "2026-10-09"
+  "end": "2026-10-09",
+  "website": "https://www.oshindia.com/mumbai"
  },
  {
   "id": "textile-prom",
@@ -584,6 +637,70 @@
   "source": "discovered",
   "discovered_at": "2026-09-16T11:41:00.955Z",
   "relevance_reason": "International Exhibition of Textile and Light Industry, relevant for technical textile manufacturers to showcase industrial fabric applications",
-  "end": "2026-09-17"
+  "end": "2026-09-17",
+  "website": "https://textilexpo.ru/en"
+ },
+ {
+  "id": "china-marine-economy-expo",
+  "segment": "Marine",
+  "name": "China Marine Economy Expo",
+  "country": "China",
+  "place": "Shenzhen",
+  "dates": "24 Oct 2026",
+  "start": "2026-10-24",
+  "website": null,
+  "registration": null,
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-17T12:19:18.585Z",
+  "relevance_reason": "Marine-focused expo relevant for Kusumgar's marine fabric applications"
+ },
+ {
+  "id": "textile-asia-faisalabad",
+  "segment": "Industrial",
+  "name": "TEXTILE ASIA - FAISALABAD",
+  "country": "Pakistan",
+  "place": "Faisalabad",
+  "dates": "11–13 Dec 2026",
+  "start": "2026-12-11",
+  "website": "https://www.textileasia.com.pk",
+  "registration": null,
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-17T12:19:26.922Z",
+  "relevance_reason": "Pakistan International Textiles and Textile Machinery Exhibition - one of South Asia's largest textile industry events, relevant for technical textile manufacturing",
+  "end": "2026-12-13"
+ },
+ {
+  "id": "textile-asia",
+  "segment": "Industrial",
+  "name": "TEXTILE ASIA",
+  "country": "Pakistan",
+  "place": "Lahore",
+  "dates": "5–7 Dec 2026",
+  "start": "2026-12-05",
+  "website": "https://www.textileasia.com.pk/home.php?id=lahore",
+  "registration": null,
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-17T12:19:26.922Z",
+  "relevance_reason": "South Asia's largest Textile Industry Exhibition & Conference, relevant for technical textile manufacturing and machinery",
+  "end": "2026-12-07"
+ },
+ {
+  "id": "igt-indo-garment-textile-expo",
+  "segment": "Industrial",
+  "name": "IGT - INDO GARMENT & TEXTILE EXPO",
+  "country": "Indonesia",
+  "place": "Jakarta",
+  "dates": "4–6 Aug 2027",
+  "start": "2027-08-04",
+  "website": "https://indogartexexpo.com",
+  "registration": null,
+  "status": "Not yet",
+  "source": "discovered",
+  "discovered_at": "2026-09-17T12:19:26.922Z",
+  "relevance_reason": "International Exhibition on Garments and Textiles Machinery, Manufacturing Technology, Materials - relevant for technical textile manufacturing",
+  "end": "2027-08-06"
  }
 ]
