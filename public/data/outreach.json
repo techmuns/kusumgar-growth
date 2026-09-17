@@ -1284,6 +1284,15 @@
       "drafted_at": "2026-09-15T12:48:37.564Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Gabriele Ravelli",
+      "title": "Senior Purchasing Manager",
+      "linkedin_url": "https://it.linkedin.com/in/gabrieleravelli",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "blauer-mfg": {
@@ -1482,6 +1491,15 @@
       "drafted_at": "2026-09-15T12:49:48.913Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Michael C.W. Bruner",
+      "title": "Purchasing Agent at Travis County",
+      "linkedin_url": "https://www.linkedin.com/in/michael-c-w-bruner-802113183",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "centurion": {
@@ -1824,6 +1842,15 @@
       "drafted_at": "2026-09-15T12:52:13.259Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Sean Wilson-Harmon",
+      "title": "Purchasing Performer",
+      "linkedin_url": "https://www.linkedin.com/in/sean-wilson-harmon-5ab44290",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "elite-bags": {
@@ -2175,6 +2202,15 @@
       "drafted_at": "2026-09-15T12:54:47.799Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Matt Manahan",
+      "title": "Production Planner at ATI Industrial Automation",
+      "linkedin_url": "https://www.linkedin.com/in/mattmanahannc",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "great-lakes-boat-top": {
@@ -2625,6 +2661,15 @@
       "drafted_at": "2026-09-15T14:57:46.216Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Darren Scarpa",
+      "title": "Senior Buyer III at Leonardo DRS",
+      "linkedin_url": "https://www.linkedin.com/in/procurement-pro",
+      "email": null,
+      "email_status": "none",
+      "source": "web",
+      "confidence": "medium"
     }
   },
   "liebherr-transportation-systems-mannheim-gmbh": {
