@@ -114,7 +114,7 @@ const TABS = [
   { id: 'leads', label: 'Exhibitors', icon: '🏢', live: true },   // companies exhibiting at the shows
   { id: 'competitors', label: 'Competitors', icon: '🛡️', live: true },
   { id: 'outreach', label: 'Outreach', icon: '📮', live: true },
-  { id: 'products', label: 'Products', icon: '🧵', live: true },   // reference catalog — last
+  // Products live behind a header button (reference catalog), not a primary tab.
 ];
 
 const FLAGS = {
@@ -127,6 +127,28 @@ const FLAGS = {
   'Ireland': '🇮🇪', 'Liechtenstein': '🇱🇮', 'China': '🇨🇳', 'Austria': '🇦🇹', 'Sweden': '🇸🇪',
   'Switzerland': '🇨🇭', 'Belgium': '🇧🇪', 'Vietnam': '🇻🇳',
 };
+
+// Country → ISO-2, so flags render as real images everywhere (emoji flags show as "AU"/"FR"
+// letters on Windows). Covers every country in the data, incl. name variants (UK/United Kingdom).
+const COUNTRY_ISO = {
+  'Australia': 'au', 'Austria': 'at', 'Belgium': 'be', 'Bosnia and Herzegovina': 'ba', 'Brazil': 'br',
+  'Bulgaria': 'bg', 'Canada': 'ca', 'Chile': 'cl', 'China': 'cn', 'Czech Republic': 'cz', 'Czechia': 'cz',
+  'Denmark': 'dk', 'Egypt': 'eg', 'Estonia': 'ee', 'France': 'fr', 'Germany': 'de', 'Hungary': 'hu',
+  'India': 'in', 'Indonesia': 'id', 'Ireland': 'ie', 'Israel': 'il', 'Italy': 'it', 'Japan': 'jp',
+  'Liechtenstein': 'li', 'Lithuania': 'lt', 'Malaysia': 'my', 'Netherlands': 'nl', 'Norway': 'no',
+  'Pakistan': 'pk', 'Poland': 'pl', 'Qatar': 'qa', 'Russia': 'ru', 'Saudi Arabia': 'sa', 'Singapore': 'sg',
+  'Slovenia': 'si', 'South Africa': 'za', 'South Korea': 'kr', 'Spain': 'es', 'Sweden': 'se',
+  'Switzerland': 'ch', 'Taiwan': 'tw', 'Thailand': 'th', 'Turkey': 'tr', 'UAE': 'ae', 'UK': 'gb',
+  'USA': 'us', 'United Kingdom': 'gb', 'United States': 'us', 'Vietnam': 'vn',
+};
+// Small flag image for a country (graceful: renders nothing if the country is unknown or the CDN is blocked).
+function flagImg(country) {
+  const iso = COUNTRY_ISO[country];
+  if (!iso) return '';
+  return `<img src="https://flagcdn.com/32x24/${iso}.png" srcset="https://flagcdn.com/64x48/${iso}.png 2x" width="20" height="15" alt="" loading="lazy" class="mr-1.5 inline-block h-3.5 w-auto rounded-[2px] align-[-2px] ring-1 ring-slate-200/70" />`;
+}
+// Flag + country name for a table/detail cell.
+const countryCell = (country) => `${flagImg(country)}${escapeHtml(dash(country))}`;
 
 const MONTHS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -147,7 +169,7 @@ const state = {
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
   onlyFound: (() => { try { return localStorage.getItem('kgr.onlyfound') === '1'; } catch { return false; } })(),
   master: null,           // full unfiltered {leads,competitors,exhibitions} — for the "only found" toggle
-  filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false },
+  filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false, timing: 'all', from: '', to: '' },
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'list',       // exhibitors are one comprehensive table now
@@ -159,6 +181,7 @@ const state = {
   trackerFilters: { search: '', stage: 'all' },
   composeId: null,             // lead currently open in the Pipeline compose panel
   pipeSearch: '',              // search box in the Pipeline "My leads" column
+  prodModalSearch: '',         // search box in the Products catalog modal
 };
 
 const PIPE_KEY = (id) => `kgr.outreach.${id}`;
@@ -195,25 +218,29 @@ function exhibitionsByDate(list) {
     return ba === 0 ? sa - sb : sb - sa;   // upcoming ascending, past most-recent-first
   });
 }
-// Kusumgar fabric hint per segment — used to explain a lead's priority in plain terms.
-const FABRIC_HINT = {
-  'Military & Tactical': 'our high-tenacity coated Nylon 66 / Cordura-type fabrics',
-  'Industrial': 'our 600D–1680D PU/PVC-coated polyester & nylon',
-  'Tool & Equipment Bags': 'our 600D–1680D PU-coated polyester',
-  'Medical & Emergency': 'our coated FR & antimicrobial fabrics',
-  'Outdoor': 'our ripstop nylon & DWR-finished fabrics',
-  'Automotive': 'our coated technical fabrics',
-  'Marine': 'our PU/PVC-coated marine fabrics',
-  'Aeronautical': 'our ripstop nylon (parachute / canopy) fabrics',
-  'Workwear': 'our FR & DWR workwear fabrics',
+// Plain-English fabric per segment — used to explain a lead's priority without jargon.
+const PLAIN_FABRIC = {
+  'Military & Tactical': 'strong coated nylon for gear, vests and packs',
+  'Industrial': 'tough coated polyester and nylon for covers and protective gear',
+  'Tool & Equipment Bags': 'strong coated polyester for tool bags and cases',
+  'Medical & Emergency': 'coated, easy-to-clean fabrics for medical bags and covers',
+  'Outdoor': 'lightweight, water-repellent nylon for outdoor gear',
+  'Automotive': 'coated technical fabrics for interiors and covers',
+  'Marine': 'coated marine fabrics for boat covers and canvas',
+  'Aeronautical': 'ripstop nylon for parachutes and canopies',
+  'Workwear': 'flame-retardant, water-repellent workwear fabrics',
 };
-const fabricHint = (seg) => FABRIC_HINT[seg] || 'our coated technical fabrics';
-// Short WHY for a lead's priority, computed from fabric_fit + application + segment (every lead gets one).
+const plainFabric = (seg) => PLAIN_FABRIC[seg] || 'our coated technical fabrics';
+// A plain, source-backed reason for a lead's priority (based on what the company makes + our fabric fit).
+// Every lead gets one; jargon-free so anyone can read it at a glance.
 function priorityReason(l) {
   const seg = l.segment || 'technical textiles';
-  const fab = l.fabric_fit ? `our ${l.fabric_fit}` : fabricHint(seg);
-  const use = l.application ? ` for their ${String(l.application).toLowerCase()}` : ` in the ${seg} space`;
-  return `${fab} fits${use} (${seg})`;
+  const fab = l.fabric_fit ? l.fabric_fit : plainFabric(seg);
+  const makes = l.application ? `They make ${String(l.application).toLowerCase()}` : `They work in ${seg.toLowerCase()}`;
+  const pr = l.priority || 'Medium';
+  if (pr === 'High') return `${makes} — a strong match for our ${fab}.`;
+  if (pr === 'Low') return `${makes}. Lighter fit — ${seg.toLowerCase()} only sometimes needs fabrics like ours.`;
+  return `${makes} — likely a good use for our ${fab}.`;
 }
 // AI "Recommended": High priority OR an explicit fabric match — the strongest-fit exhibitors.
 const isRecommended = (l) => l.priority === 'High' || !!l.fabric_fit;
@@ -764,10 +791,29 @@ const extLink = (url, label) => (url
   ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${label} ↗</a>`
   : '<span class="text-slate-300">—</span>');
 
+const parseShowDate = (s) => { const t = Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(String(s || '')) ? s + 'T00:00:00' : s); return isNaN(t) ? null : new Date(t); };
+
 function exhibitionFiltered() {
-  const q = state.filters.search.trim().toLowerCase();
-  let list = state.exhibitions;
-  if (q) list = list.filter((d) => `${d.name} ${d.country || ''} ${d.place || ''} ${d.segment || ''}`.toLowerCase().includes(q));
+  const f = state.filters;
+  const q = f.search.trim().toLowerCase();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const fromD = f.from ? parseShowDate(f.from) : null;
+  const toD = f.to ? parseShowDate(f.to) : null;
+  const list = state.exhibitions.filter((d) => {
+    if (q && !`${d.name} ${d.country || ''} ${d.place || ''} ${d.segment || ''}`.toLowerCase().includes(q)) return false;
+    if (f.segment !== 'all' && d.segment !== f.segment) return false;
+    const end = showEndDate(d);
+    const start = parseShowDate(d.start) || end;
+    if (f.timing === 'upcoming' && !(end && end >= today)) return false;
+    if (f.timing === 'past' && !(end && end < today)) return false;
+    if (fromD || toD) {                                   // "how many shows between these dates"
+      if (!start && !end) return false;                  // undated shows can't be placed in a range
+      const s = start || end, e = end || start;
+      if (toD && s > toD) return false;                  // begins after the window
+      if (fromD && e < fromD) return false;              // ended before the window
+    }
+    return true;
+  });
   return exhibitionsByDate(list);
 }
 
@@ -777,21 +823,24 @@ function exhibitionRowsHtml() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   return rows.map((d) => {
     const end = showEndDate(d); const past = end && end < today;
-    const isNew = d.source === 'discovered' ? ` <span class="ml-1 inline-flex items-center rounded-full bg-fuchsia-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-fuchsia-600" title="${escapeHtml(d.relevance_reason || 'Auto-discovered')}">✨ New</span>` : '';
-    return `<tr class="cursor-pointer border-t border-slate-100 hover:bg-slate-50/60${past ? ' opacity-60' : ''}" data-exh-id="${escapeHtml(d.id)}" title="See exhibitors from ${escapeHtml(d.name)}">
-      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(segLabel(d.segment), segColor(d.segment))}</td>
-      <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${isNew}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(dash(d.country))}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500">${escapeHtml(dash(d.place))}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500 tnum">${d.dates ? escapeHtml(d.dates) : '<span class="text-slate-300">—</span>'}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm">${extLink(d.website, 'Website')}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm">${extLink(d.registration, 'Register')}</td>
-      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(d.status, STATUS_COLORS[d.status] || '#94a3b8')}</td>
+    const ended = past ? ' <span class="rounded bg-slate-100 px-1 py-0.5 text-[10px] font-semibold text-slate-400">ended</span>' : '';
+    return `<tr class="cursor-pointer border-t border-slate-100 align-middle hover:bg-slate-50/60" data-exh-id="${escapeHtml(d.id)}" title="See exhibitors from ${escapeHtml(d.name)}">
+      <td class="whitespace-nowrap px-3 py-3">${coloredChip(segLabel(d.segment), segColor(d.segment))}</td>
+      <td class="px-3 py-3 text-sm font-semibold text-slate-800"><div class="min-w-[150px] max-w-[280px]">${escapeHtml(d.name)}</div></td>
+      <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-600">${countryCell(d.country)}</td>
+      <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-500">${escapeHtml(dash(d.place))}</td>
+      <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-500 tnum">${d.dates ? escapeHtml(d.dates) + ended : '<span class="text-slate-300">—</span>'}</td>
+      <td class="whitespace-nowrap px-3 py-3 text-sm">${extLink(d.website, 'Website')}</td>
+      <td class="whitespace-nowrap px-3 py-3 text-sm">${extLink(d.registration, 'Register')}</td>
+      <td class="whitespace-nowrap px-3 py-3">${coloredChip(d.status, STATUS_COLORS[d.status] || '#94a3b8')}</td>
     </tr>`;
   }).join('');
 }
 
-function refreshExhibitionsTable() { const b = $('#exhRows'); if (b) b.innerHTML = exhibitionRowsHtml(); }
+function refreshExhibitionsTable() {
+  const b = $('#exhRows'); if (b) b.innerHTML = exhibitionRowsHtml();
+  const c = $('#exhCount'); if (c) c.textContent = exhibitionFiltered().length;
+}
 
 // One comprehensive, date-sorted table of ALL exhibitions (never hides any). Row → its exhibitors.
 function renderExhibitions() {
@@ -801,18 +850,38 @@ function renderExhibitions() {
   const f = state.filters;
   const total = state.exhibitions.length;
   const upcoming = state.exhibitions.filter(showUpcoming).length;
+  const shown = exhibitionFiltered().length;
+  const segs = [...new Set(state.exhibitions.map((d) => d.segment))].sort();
+  const timingSel = `<select id="f-timing" class="rounded-xl border-0 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+      <option value="all"${f.timing === 'all' ? ' selected' : ''}>All dates</option>
+      <option value="upcoming"${f.timing === 'upcoming' ? ' selected' : ''}>Upcoming only</option>
+      <option value="past"${f.timing === 'past' ? ' selected' : ''}>Completed only</option>
+    </select>`;
+  const dateBox = `<div class="flex items-center gap-1.5 rounded-xl bg-white px-2.5 py-1.5 text-[12px] font-medium text-slate-500 shadow-sm ring-1 ring-slate-200">
+      <span>From</span>
+      <input type="date" id="f-from" value="${escapeHtml(f.from)}" aria-label="From date" class="rounded-lg border-0 bg-slate-50 px-2 py-1 text-[12px] text-slate-700 ring-1 ring-slate-200 focus:outline-none" />
+      <span>to</span>
+      <input type="date" id="f-to" value="${escapeHtml(f.to)}" aria-label="To date" class="rounded-lg border-0 bg-slate-50 px-2 py-1 text-[12px] text-slate-700 ring-1 ring-slate-200 focus:outline-none" />
+      ${(f.from || f.to) ? '<button type="button" data-cleardates class="ml-0.5 font-semibold text-indigo-600 hover:underline">clear</button>' : ''}
+    </div>`;
+  const plain = f.timing === 'all' && !f.from && !f.to;
   return `<div class="fade-in">
     <div class="mb-3 flex flex-wrap items-center gap-2">
-      <div class="relative min-w-[180px] flex-1">
+      <div class="relative min-w-[160px] flex-1">
         <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
         <input id="f-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search exhibitions…"
           class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
       </div>
-      <span class="text-[12px] text-slate-500"><span class="tnum font-semibold text-slate-700">${total}</span> shows · <span class="tnum font-semibold text-emerald-600">${upcoming}</span> upcoming</span>
+      ${selectHtml('f-seg', 'All industries', f.segment, segs)}
+      ${timingSel}
+      ${dateBox}
     </div>
-    <div class="mb-2 px-0.5 text-[12px] text-slate-400">Soonest upcoming first; past shows sink to the bottom. Click a show to see its exhibitors.</div>
+    <div class="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-0.5 text-[12px] text-slate-500">
+      <span><span id="exhCount" class="tnum font-semibold text-slate-700">${shown}</span> of ${total} shows${plain ? ` · <span class="tnum font-semibold text-emerald-600">${upcoming}</span> upcoming` : ''}</span>
+      <span class="text-slate-400">Tap a show to see its exhibitors →</span>
+    </div>
     <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-      <table class="w-full min-w-[900px] border-collapse text-left">
+      <table class="w-full min-w-[880px] border-collapse text-left">
         <thead><tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
           <th class="px-3 py-2.5 font-semibold">Industry</th>
           <th class="px-3 py-2.5 font-semibold">Exhibition</th>
@@ -1189,9 +1258,13 @@ function sortedLeads(list) {
 // Exhibitors-table cells (merge leads.json + outreach.json contacts live; graceful "—").
 function leadContactCell(l) {
   const c = displayContact(l.id);
-  if (!c || !c.name) return '<span class="text-sm text-slate-300">—</span>';
+  if (!c || (!c.name && !c.linkedin_url)) return '<span class="text-sm text-slate-300">—</span>';
+  const name = c.name
+    ? `<div class="truncate text-sm text-slate-700" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</div>`
+    : '<div class="text-sm text-slate-400">—</div>';
   const role = c.title ? `<div class="truncate text-[11px] text-slate-400" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : '';
-  return `<div class="max-w-[180px]"><div class="truncate text-sm text-slate-700" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</div>${role}</div>`;
+  const li = c.linkedin_url ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="mt-0.5 inline-block text-[11px] font-semibold text-[#0a66c2] hover:underline">in ↗</a>` : '';
+  return `<div class="max-w-[150px]">${name}${role}${li}</div>`;
 }
 function leadLinkedinCell(l) {
   const c = displayContact(l.id);
@@ -1201,17 +1274,16 @@ function leadLinkedinCell(l) {
 }
 function leadEmailCell(l) {
   const c = displayContact(l.id);
-  if (c && c.email) return `<div class="max-w-[210px]"><a href="mailto:${escapeHtml(c.email)}" class="block truncate text-[13px] text-indigo-600 hover:underline" title="${escapeHtml(c.email)}">${escapeHtml(c.email)}</a>${emailClassBadge(c)}</div>`;
+  if (c && c.email) return `<div class="max-w-[170px]"><a href="mailto:${escapeHtml(c.email)}" class="block truncate text-[13px] text-indigo-600 hover:underline" title="${escapeHtml(c.email)}">${escapeHtml(c.email)}</a><div class="mt-0.5">${emailClassBadge(c)}</div></div>`;
   return emailClassBadge(c, true); // grey "No email"
 }
+// Table cell: just the chip — tap the row to see the full plain-English reason in the detail panel.
 function leadPriorityCell(l) {
-  const why = priorityReason(l);
-  return `<div class="min-w-[200px] max-w-[300px]">${priorityChip(l.priority)}<div class="mt-0.5 text-[11px] leading-snug text-slate-400" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" title="${escapeHtml(why)}">${escapeHtml(why)}</div></div>`;
+  return `<div class="whitespace-nowrap" title="${escapeHtml(priorityReason(l))}">${priorityChip(l.priority)}</div>`;
 }
 function leadShowCell(l) {
   const show = sourceShow(l.source);
-  if (show) return `<span class="text-[12px] text-slate-600">🎪 ${escapeHtml(show.name)}</span>`;
-  if (String(l.source || '').startsWith('category:')) return '<span class="text-[12px] text-slate-400">category search</span>';
+  if (show) return `<div class="max-w-[130px] truncate text-[12px] text-slate-600" title="${escapeHtml(show.name)}">🎪 ${escapeHtml(show.name)}</div>`;
   return '<span class="text-slate-300">—</span>';
 }
 const leadStarCell = (l) => {
@@ -1225,23 +1297,21 @@ function leadsTableHtml() {
   const sortTh = (k, label) => `<th class="cursor-pointer whitespace-nowrap px-3 py-2.5 font-semibold hover:text-slate-600 ${sk === k ? 'text-indigo-600' : ''}" data-sort="${k}">${escapeHtml(label)}<span class="tnum">${arrow(k)}</span></th>`;
   const plainTh = (label) => `<th class="whitespace-nowrap px-3 py-2.5 font-semibold">${escapeHtml(label)}</th>`;
   const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-    <th class="px-2 py-2.5"></th>${sortTh('company', 'Company')}${sortTh('segment', 'Industry')}${sortTh('country', 'Country')}${plainTh('Fabric fit')}${sortTh('contact', 'Contact person')}${plainTh('LinkedIn')}${plainTh('Email')}${sortTh('priority', 'Priority')}${plainTh('Show')}
+    <th class="px-2 py-2.5"></th>${sortTh('company', 'Company')}${sortTh('segment', 'Industry')}${sortTh('country', 'Country')}${sortTh('contact', 'Contact')}${plainTh('Email')}${sortTh('priority', 'Priority')}${plainTh('Show')}
   </tr>`;
   const rows = sortedLeads(filteredLeads());
   const body = rows.length ? rows.map((l) => `
-    <tr class="cursor-pointer border-t border-slate-100 align-top hover:bg-slate-50/60" data-lead-id="${escapeHtml(l.id)}">
-      <td class="px-2 py-2.5 text-center">${leadStarCell(l)}</td>
-      <td class="whitespace-nowrap px-3 py-2.5"><div class="flex items-center gap-1.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}${isRecommended(l) ? '<span class="shrink-0 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600" title="Strong fabric fit — recommended lead">★ Rec</span>' : ''}</div></td>
-      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</td>
-      <td class="px-3 py-2.5 text-[13px] text-slate-600"><div class="max-w-[160px] truncate" title="${escapeHtml(l.fabric_fit || '')}">${escapeHtml(dash(l.fabric_fit))}</div></td>
-      <td class="px-3 py-2.5">${leadContactCell(l)}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm">${leadLinkedinCell(l)}</td>
-      <td class="px-3 py-2.5">${leadEmailCell(l)}</td>
-      <td class="px-3 py-2.5">${leadPriorityCell(l)}</td>
-      <td class="px-3 py-2.5">${leadShowCell(l)}</td>
-    </tr>`).join('') : `<tr><td colspan="10" class="px-4 py-10 text-center text-sm text-slate-400">No exhibitors match these filters.</td></tr>`;
-  return `<table class="w-full min-w-[1180px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
+    <tr class="cursor-pointer border-t border-slate-100 align-middle hover:bg-slate-50/60" data-lead-id="${escapeHtml(l.id)}" title="Open ${escapeHtml(l.company)} — full details">
+      <td class="px-2 py-3 text-center">${leadStarCell(l)}</td>
+      <td class="px-3 py-3"><div class="flex max-w-[220px] items-center gap-1.5"><span class="truncate text-sm font-semibold text-slate-800" title="${escapeHtml(l.company)}">${escapeHtml(l.company)}</span>${isRecommended(l) ? '<span class="shrink-0 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600" title="Recommended lead">★ Rec</span>' : ''}</div></td>
+      <td class="whitespace-nowrap px-3 py-3">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
+      <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-600">${countryCell(l.country)}</td>
+      <td class="px-3 py-3">${leadContactCell(l)}</td>
+      <td class="px-3 py-3">${leadEmailCell(l)}</td>
+      <td class="px-3 py-3">${leadPriorityCell(l)}</td>
+      <td class="px-3 py-3">${leadShowCell(l)}</td>
+    </tr>`).join('') : `<tr><td colspan="8" class="px-4 py-10 text-center text-sm text-slate-400">No exhibitors match these filters.</td></tr>`;
+  return `<table class="w-full min-w-[900px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
 }
 
 function refreshLeadsTable() {
@@ -1284,7 +1354,6 @@ function renderLeadsList() {
         ${selectHtml('l-seg', 'All segments', f.segment, segs)}
         ${selectHtml('l-country', 'All countries', f.country, countries)}
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
-        <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
       </div>
       ${showBanner}
       <div class="mb-3 flex flex-wrap items-center gap-2">
@@ -1294,7 +1363,7 @@ function renderLeadsList() {
         ${classChip('need', '📮 Need contact', '#64748b', ec.need)}
         ${f.emailClass !== 'all' ? `<button type="button" data-lclass="${f.emailClass}" class="text-[12px] font-semibold text-indigo-600 hover:underline">clear filter</button>` : ''}
       </div>
-      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · ⭐ ${starCount} my leads · <span class="font-semibold text-emerald-600">${ec.good}</span> real people · <span class="font-semibold text-amber-600">${ec.company}</span> company inboxes · <span class="font-semibold text-slate-500">${ec.need}</span> need contact</div>
+      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · ⭐ ${starCount} my leads</div>
       <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="leadsTableWrap">${leadsTableHtml()}</div></div>
     </div>`;
 }
@@ -1313,13 +1382,17 @@ function openLeadDrawer(id) {
   if (!l) return;
   const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-slate-100 py-2.5"><span class="shrink-0 text-[12px] font-medium text-slate-400">${escapeHtml(label)}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
   const website = l.website ? `<a href="${escapeHtml(l.website)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${escapeHtml(String(l.website).replace(/^https?:\/\//, ''))}</a>` : '—';
+  const show = sourceShow(l.source);
+  const why = priorityReason(l);
   const body = `
-    <div class="flex flex-wrap items-center gap-2">${coloredChip(l.segment, leadSegColor(l.segment))}${priorityChip(l.priority)}</div>
+    <div class="flex flex-wrap items-center gap-2">${coloredChip(l.segment, leadSegColor(l.segment))}${priorityChip(l.priority)}${isRecommended(l) ? '<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">★ Recommended</span>' : ''}</div>
+    ${why ? `<p class="mt-2 text-[13px] leading-snug text-slate-500">${escapeHtml(why)}</p>` : ''}
     <div class="mt-4">
-      ${row('Country', (l.country ? (FLAGS[l.country] || '') + ' ' : '') + escapeHtml(dash(l.country)))}
-      ${row('Website', website)}
+      ${row('Country', countryCell(l.country))}
+      ${row('Fabric fit', escapeHtml(dash(l.fabric_fit)))}
       ${row('Used for', escapeHtml(dash(l.application)))}
-      ${row('Where we found them', escapeHtml(dash(l.source)))}
+      ${row('Website', website)}
+      ${show ? row('Exhibiting at', '🎪 ' + escapeHtml(show.name)) : ''}
     </div>`;
   // Layer B — manual contact bridge (Nishad's real ContactOut-extension workflow).
   // Only a source-backed, relevant contact is shown; a mismatched person is hidden.
@@ -1375,13 +1448,13 @@ function openCompetitorDrawer(id) {
   if (!c) return;
   const b = positionBucket(c.positioning);
   const show = sourceShow(c.source);
-  const whichShow = show ? '🎪 ' + escapeHtml(show.name) : (String(c.source || '').startsWith('category:') ? 'Category search' : '—');
+  const whichShow = show ? '🎪 ' + escapeHtml(show.name) : '—';
   const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-slate-100 py-2.5"><span class="shrink-0 text-[12px] font-medium text-slate-400">${escapeHtml(label)}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
   const segs = (c.segments || []).map((s) => coloredChip(segLabel(s), anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
   const body = `
     <div class="flex flex-wrap items-center gap-2">${coloredChip(b.label, b.color)}</div>
     <div class="mt-4">
-      ${row('Country', (c.country ? (FLAGS[c.country] || '') + ' ' : '') + escapeHtml(dash(c.country)))}
+      ${row('Country', countryCell(c.country))}
       ${row('How they compete', escapeHtml(b.label))}
       ${row('Which show', whichShow)}
     </div>
@@ -1477,15 +1550,15 @@ function renderCompetitorsList() {
     const b = positionBucket(c.positioning);
     const segs = (c.segments || []).map((s) => coloredChip(segLabel(s), anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
     const show = sourceShow(c.source);
-    const showCell = show ? `🎪 ${escapeHtml(show.name)}` : (String(c.source || '').startsWith('category:') ? '<span class="text-slate-400">category search</span>' : '<span class="text-slate-300">—</span>');
+    const showCell = show ? `<div class="max-w-[150px] truncate text-[12px] text-slate-600" title="${escapeHtml(show.name)}">🎪 ${escapeHtml(show.name)}</div>` : '<span class="text-slate-300">—</span>';
     return `
-      <tr class="cursor-pointer border-t border-slate-100 align-top hover:bg-slate-50/60" data-comp-id="${escapeHtml(c.id)}">
-        <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(c.company)}</td>
-        <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${c.country ? (FLAGS[c.country] || '') + ' ' : ''}${escapeHtml(dash(c.country))}</td>
-        <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(b.label, b.color)}</td>
-        <td class="px-3 py-2.5"><div class="max-w-[360px] text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</div></td>
-        <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1.5">${segs}</div></td>
-        <td class="whitespace-nowrap px-3 py-2.5 text-[12px] text-slate-600">${showCell}</td>
+      <tr class="cursor-pointer border-t border-slate-100 align-middle hover:bg-slate-50/60" data-comp-id="${escapeHtml(c.id)}" title="Open ${escapeHtml(c.company)} — full details">
+        <td class="px-3 py-3 text-sm font-semibold text-slate-800"><div class="max-w-[190px] truncate" title="${escapeHtml(c.company)}">${escapeHtml(c.company)}</div></td>
+        <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-600">${countryCell(c.country)}</td>
+        <td class="whitespace-nowrap px-3 py-3">${coloredChip(b.label, b.color)}</td>
+        <td class="px-3 py-3"><div class="max-w-[320px] truncate text-[13px] text-slate-600" title="${escapeHtml(c.focus || '')}">${escapeHtml(dash(c.focus))}</div></td>
+        <td class="px-3 py-3"><div class="flex flex-wrap gap-1.5">${segs}</div></td>
+        <td class="whitespace-nowrap px-3 py-3">${showCell}</td>
       </tr>`;
   }).join('');
   return `<div class="fade-in overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
@@ -1497,14 +1570,11 @@ function renderCompetitors() {
   if (!state.competitors.length) {
     return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No competitors loaded.</div>`;
   }
-  const subBtn = (id, label) => {
-    const active = state.competitorsSub === id;
-    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
-    return `<button type="button" data-csub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
-  };
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('landscape', '🗺️ Overview')}${subBtn('list', '📋 List')}</div>`;
-  const body = state.competitorsSub === 'landscape' ? renderCompetitorsLandscape() : renderCompetitorsList();
-  return `<div class="mb-4">${toggle}</div>${body}`;
+  const total = state.competitors.length;
+  return `<div class="fade-in">
+    <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span class="tnum font-semibold text-slate-700">${total}</span> competitors · tap any to see full details</div>
+    ${renderCompetitorsList()}
+  </div>`;
 }
 
 /* ------------------------------------------------------------------ *
@@ -1754,6 +1824,137 @@ function copyEmail(btn) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Centered modals: exhibition detail, products catalog, export picker
+ * ------------------------------------------------------------------ */
+
+function openModalHtml(html) {
+  const m = $('#modal');
+  m.innerHTML = html;
+  requestAnimationFrame(() => m.classList.add('open'));
+}
+
+// One exhibitor row inside the exhibition modal — ☆ toggles it straight into "my leads".
+function exhibitorMiniRow(l) {
+  const c = displayContact(l.id) || {};
+  const who = c.name ? escapeHtml(c.name) : '';
+  const on = isStarred(l.id);
+  return `<div class="flex items-center gap-2 border-t border-slate-100 py-2 first:border-t-0">
+    <button type="button" data-star="${escapeHtml(l.id)}" aria-pressed="${on}" title="${on ? 'Remove from my leads' : 'Add to my leads'}" class="shrink-0 text-lg leading-none ${on ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'}">${on ? '★' : '☆'}</button>
+    <div class="min-w-0 flex-1">
+      <div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(l.company)}${isRecommended(l) ? ' <span class="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">★ Rec</span>' : ''}</div>
+      <div class="truncate text-[12px] text-slate-500">${escapeHtml(dash(l.segment))}${who ? ' · ' + who : ''}</div>
+    </div>
+    <div class="shrink-0">${priorityChip(l.priority)}</div>
+  </div>`;
+}
+
+// Centered exhibition detail: full info + its exhibitors (add-to-lead inline) + its competitors.
+function openExhibitionModal(id) {
+  const d = state.exhibitions.find((x) => x.id === id);
+  if (!d) return;
+  const leads = state.leads.filter((l) => l.source === 'exhibition:' + id);
+  const comps = state.competitors.filter((c) => c.source === 'exhibition:' + id);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const end = showEndDate(d); const past = end && end < today;
+  const link = (url, label) => (url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${label} ↗</a>` : '<span class="text-slate-400">—</span>');
+  const info = (label, val) => `<div class="flex items-baseline justify-between gap-3 border-b border-slate-100 py-2 last:border-b-0"><span class="shrink-0 text-[12px] font-medium text-slate-400">${label}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
+  const CAP = 40;
+  const leadRows = leads.length
+    ? leads.slice(0, CAP).map(exhibitorMiniRow).join('') + (leads.length > CAP ? `<button type="button" data-exh-open-leads="${escapeHtml(id)}" class="mt-2 w-full rounded-lg bg-slate-100 py-2 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">See all ${leads.length} exhibitors →</button>` : '')
+    : '<div class="py-4 text-center text-[13px] text-slate-400">No exhibitor list captured for this show yet.</div>';
+  const compRows = comps.length
+    ? comps.map((c) => `<div class="border-t border-slate-100 py-2 first:border-t-0"><div class="text-sm font-semibold text-slate-800">${escapeHtml(c.company)}</div><div class="text-[12px] text-slate-500">${countryCell(c.country)}${c.focus ? ' · ' + escapeHtml(c.focus) : ''}</div></div>`).join('')
+    : '<div class="py-4 text-center text-[13px] text-slate-400">No competitors linked to this show.</div>';
+  openModalHtml(`
+    <div data-modal-backdrop class="absolute inset-0 bg-slate-900/40"></div>
+    <div class="modal-card absolute left-1/2 top-1/2 flex max-h-[88vh] w-[calc(100%-2rem)] max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" data-exh-modal="${escapeHtml(id)}">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-100 p-4">
+        <div class="min-w-0">
+          <div class="mb-1 flex flex-wrap items-center gap-2">${coloredChip(segLabel(d.segment), segColor(d.segment))}${coloredChip(d.status, STATUS_COLORS[d.status] || '#94a3b8')}${past ? '<span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">ended</span>' : ''}</div>
+          <h3 class="font-display text-lg font-extrabold leading-tight text-slate-900">${escapeHtml(d.name)}</h3>
+        </div>
+        <button type="button" data-modal-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
+      </div>
+      <div class="flex-1 space-y-4 overflow-y-auto p-4">
+        <div class="rounded-xl bg-slate-50 px-3 ring-1 ring-slate-100">
+          ${info('Country', countryCell(d.country))}${info('Place', escapeHtml(dash(d.place)))}${info('Date', d.dates ? escapeHtml(d.dates) : '—')}${info('Website', link(d.website, 'Visit website'))}${info('Registration', link(d.registration, 'Register'))}
+        </div>
+        <div>
+          <div class="mb-1 flex items-center justify-between"><h4 class="font-display text-sm font-bold text-slate-800">🏢 Exhibitors here</h4><span class="tnum text-[12px] text-slate-400">${leads.length}</span></div>
+          <p class="mb-1.5 text-[11px] text-slate-400">Tap ☆ to add a company straight to your leads.</p>
+          <div class="rounded-xl bg-white px-3 ring-1 ring-slate-200">${leadRows}</div>
+        </div>
+        <div>
+          <div class="mb-1 flex items-center justify-between"><h4 class="font-display text-sm font-bold text-slate-800">🛡️ Competitors here</h4><span class="tnum text-[12px] text-slate-400">${comps.length}</span></div>
+          <div class="rounded-xl bg-white px-3 ring-1 ring-slate-200">${compRows}</div>
+        </div>
+      </div>
+    </div>`);
+}
+
+// Products catalog (behind the header 🧵 button).
+function productMiniCard(p) {
+  const props = (p.properties || []).slice(0, 6).map((x) => `<span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">${escapeHtml(x)}</span>`).join(' ');
+  const segs = (p.segments || []).map((s) => coloredChip(segLabel(s), anyColor(s))).join(' ');
+  return `<div class="rounded-xl bg-white p-3 ring-1 ring-slate-200">
+    <div class="flex items-baseline justify-between gap-2"><div class="text-sm font-bold text-slate-800">${escapeHtml(p.name)}</div><div class="shrink-0 text-[11px] text-slate-400">${escapeHtml(p.family || '')}</div></div>
+    <div class="mt-0.5 text-[12px] text-slate-500">${escapeHtml(p.base || '')}${p.deniers ? ' · ' + escapeHtml(p.deniers) : ''}${(p.coatings && p.coatings.length) ? ' · ' + escapeHtml(p.coatings.join(', ')) : ''}</div>
+    ${props ? `<div class="mt-2 flex flex-wrap gap-1">${props}</div>` : ''}
+    ${segs ? `<div class="mt-2 flex flex-wrap gap-1">${segs}</div>` : ''}
+  </div>`;
+}
+function productsFiltered() {
+  const q = state.prodModalSearch.trim().toLowerCase();
+  if (!q) return state.products;
+  return state.products.filter((p) => `${p.name} ${p.family || ''} ${(p.segments || []).join(' ')} ${(p.applications || []).join(' ')} ${(p.properties || []).join(' ')}`.toLowerCase().includes(q));
+}
+function productsModalListHtml() {
+  const list = productsFiltered();
+  return list.length
+    ? `<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">${list.map(productMiniCard).join('')}</div>`
+    : '<div class="py-8 text-center text-[13px] text-slate-400">No products match your search.</div>';
+}
+function openProductsModal() {
+  openModalHtml(`
+    <div data-modal-backdrop class="absolute inset-0 bg-slate-900/40"></div>
+    <div class="modal-card absolute left-1/2 top-1/2 flex max-h-[88vh] w-[calc(100%-2rem)] max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div class="flex items-center justify-between gap-3 border-b border-slate-100 p-4">
+        <div><h3 class="font-display text-base font-extrabold text-slate-900">🧵 Kusumgar Products</h3><p class="text-[12px] text-slate-500">${state.products.length} fabrics in the catalog</p></div>
+        <button type="button" data-modal-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
+      </div>
+      <div class="border-b border-slate-100 p-3">
+        <div class="relative"><span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+          <input id="prod-modal-search" type="search" value="${escapeHtml(state.prodModalSearch)}" placeholder="Search products…" class="w-full rounded-xl border-0 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" /></div>
+      </div>
+      <div id="prodModalList" class="flex-1 overflow-y-auto p-3">${productsModalListHtml()}</div>
+    </div>`);
+}
+
+// Export picker: one tab, or the whole dashboard, as a Kusumgar-branded workbook.
+function openExportModal() {
+  const opt = (scope, icon, label, desc) => `<button type="button" data-export-scope="${scope}" class="flex w-full items-center gap-3 rounded-xl bg-white p-3 text-left ring-1 ring-slate-200 transition-colors hover:bg-slate-50 hover:ring-indigo-300">
+    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-indigo-50 text-lg">${icon}</span>
+    <span class="min-w-0"><span class="block text-sm font-semibold text-slate-800">${label}</span><span class="block text-[12px] text-slate-500">${desc}</span></span>
+  </button>`;
+  openModalHtml(`
+    <div data-modal-backdrop class="absolute inset-0 bg-slate-900/40"></div>
+    <div class="modal-card absolute left-1/2 top-1/2 flex max-h-[88vh] w-[calc(100%-2rem)] max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div class="flex items-center justify-between gap-3 border-b border-slate-100 p-4">
+        <div><h3 class="font-display text-base font-extrabold text-slate-900">📊 Export to Excel</h3><p class="text-[12px] text-slate-500">Pick what to download — Kusumgar-branded, cleanly formatted.</p></div>
+        <button type="button" data-modal-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
+      </div>
+      <div class="flex-1 space-y-2 overflow-y-auto p-4">
+        ${opt('all', '🗂️', 'Entire dashboard', 'Every tab in one workbook (5 sheets)')}
+        ${opt('exhibitions', '🎪', 'Exhibitions', 'All shows — dates, place, links, status')}
+        ${opt('leads', '🏢', 'Exhibitors', 'Companies + contacts + priority + why')}
+        ${opt('competitors', '🛡️', 'Competitors', 'Who they are and what they sell')}
+        ${opt('products', '🧵', 'Products', 'The Kusumgar fabric catalog')}
+        ${opt('outreach', '📮', 'Outreach pipeline', 'Your tracked leads + stages')}
+      </div>
+    </div>`);
+}
+
+/* ------------------------------------------------------------------ *
  * Pipeline compose workspace — left = my ⭐ leads, right = compose panel.
  * Reuses the drafted-email data (Nishad's voice) from outreach.json. Nothing
  * is auto-sent: Copy / Open in Gmail / Mark-as-sent are the manual send bridge.
@@ -1859,7 +2060,7 @@ function composePanelHtml(id) {
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
         <h3 class="font-display text-base font-extrabold text-slate-900">${escapeHtml(l.company)}</h3>
-        <p class="truncate text-[12px] text-slate-500">${escapeHtml(dash(l.segment))} · ${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</p>
+        <p class="truncate text-[12px] text-slate-500">${escapeHtml(dash(l.segment))} · ${countryCell(l.country)}</p>
       </div>
       <div class="shrink-0">${stageChip}</div>
     </div>
@@ -2015,7 +2216,6 @@ function renderTracker() {
       </div>
       <select id="o-stage" class="rounded-xl border-0 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">${stageSel}</select>
       <button type="button" data-goto="leads" class="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads</button>
-      <button type="button" data-export="outreach" class="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
     </div>
     <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="oCount" class="tnum font-semibold text-slate-700">${trackerRows().length}</span> in pipeline</div>
     <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="trackerTableWrap">${trackerTableHtml()}</div></div>
@@ -2107,8 +2307,8 @@ function renderToday() {
     <button type="button" data-exh-id="${escapeHtml(d.id)}" class="flex w-full items-center gap-3 border-t border-slate-100 py-2.5 text-left first:border-t-0 hover:bg-slate-50/60" title="See exhibitors from ${escapeHtml(d.name)}">
       <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${segColor(d.segment)}"></span>
       <div class="min-w-0 flex-1">
-        <div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${d.source === 'discovered' ? ' <span class="rounded-full bg-fuchsia-100 px-1.5 py-0.5 text-[10px] font-bold text-fuchsia-600">✨</span>' : ''}</div>
-        <div class="truncate text-[12px] text-slate-500">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(dash(d.country))}${d.place ? ' · ' + escapeHtml(d.place) : ''}</div>
+        <div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(d.name)}</div>
+        <div class="truncate text-[12px] text-slate-500">${countryCell(d.country)}${d.place ? ' · ' + escapeHtml(d.place) : ''}</div>
       </div>
       <div class="shrink-0 text-right text-[12px] font-medium text-slate-500 tnum">${escapeHtml(dash(d.dates))}</div>
     </button>`).join('') : `<div class="py-6 text-center text-sm text-slate-400">No upcoming shows.</div>`;
@@ -2119,7 +2319,7 @@ function renderToday() {
     const c = displayContact(l.id);
     const who = c && (c.name || c.email);
     const show = sourceShow(l.source);
-    const sub = [escapeHtml(l.segment || ''), l.country ? (FLAGS[l.country] || '') + ' ' + escapeHtml(l.country) : '', who ? escapeHtml(who) : '', show ? '🎪 ' + escapeHtml(show.name) : ''].filter(Boolean).join(' · ');
+    const sub = [escapeHtml(l.segment || ''), l.country ? countryCell(l.country) : '', who ? escapeHtml(who) : '', show ? '🎪 ' + escapeHtml(show.name) : ''].filter(Boolean).join(' · ');
     return `<button type="button" data-lead-id="${escapeHtml(l.id)}" class="flex w-full items-center gap-3 border-t border-slate-100 py-2.5 text-left first:border-t-0 hover:bg-slate-50/60">
       <div class="min-w-0 flex-1">
         <div class="flex flex-wrap items-center gap-1.5"><span class="truncate text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</span>${isRecommended(l) ? '<span class="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">★ Recommended</span>' : ''}</div>
@@ -2178,99 +2378,181 @@ function searchGo(token) {
   const si = $('#globalSearch'); if (si) si.value = '';
   if (type === 'lead') { state.tab = 'leads'; state.leadsSub = 'list'; render(); openLeadDrawer(id); }
   else if (type === 'exhibition') { const ex = state.exhibitions.find((x) => x.id === id); state.tab = 'exhibitions'; state.sub = 'list'; state.filters = { ...state.filters, search: ex ? ex.name : '', segment: 'all', country: 'all', status: 'all' }; render(); }
-  else if (type === 'product') { const pr = state.products.find((x) => x.id === id); state.tab = 'products'; state.productsSub = 'catalog'; state.productFilters = { search: pr ? pr.name : '', industry: 'all', family: 'all' }; render(); }
-  else if (type === 'competitor') { state.tab = 'competitors'; state.competitorsSub = 'list'; render(); }
+  else if (type === 'product') { const pr = state.products.find((x) => x.id === id); state.prodModalSearch = pr ? pr.name : ''; openProductsModal(); }
+  else if (type === 'competitor') { state.tab = 'competitors'; render(); openCompetitorDrawer(id); }
 }
 
 /* ------------------------------------------------------------------ *
  * Excel export (ExcelJS via CDN)
  * ------------------------------------------------------------------ */
 
-function styleHeader(ws) {
-  const row = ws.getRow(1);
-  row.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-  row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF6366F1' } };
-  row.alignment = { vertical: 'middle' };
-  row.height = 20;
-}
-
+// Kusumgar-branded workbook palette.
+const XL = { brand: 'FF4F46E5', header: 'FF6366F1', headerText: 'FFFFFFFF', band: 'FFEEF2FF', border: 'FFCBD5E1', ink: 'FF1E293B', zebra: 'FFF8FAFC', muted: 'FF64748B' };
+const xlBorder = () => { const s = { style: 'thin', color: { argb: XL.border } }; return { top: s, left: s, bottom: s, right: s }; };
 // Tint an "Email type" cell to match the on-screen badge (verified/personal green, company amber, none grey).
 const XLSX_EMAIL_ARGB = { verified: 'FF10B981', personal: 'FF10B981', company: 'FFF59E0B', none: 'FFE2E8F0' };
 function paintEmailType(cell, klass) {
   cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XLSX_EMAIL_ARGB[klass] || 'FFE2E8F0' } };
   cell.font = { bold: true, color: { argb: klass === 'none' ? 'FF475569' : 'FFFFFFFF' } };
 }
+const colLetter = (n) => { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; };
 
-function buildLeadsSheet(wb) {
-  const ws = wb.addWorksheet('Leads');
-  ws.columns = [
-    { header: 'Company', key: 'company', width: 30 },
-    { header: 'Segment', key: 'segment', width: 26 },
-    { header: 'Country', key: 'country', width: 14 },
-    { header: 'Application', key: 'application', width: 30 },
-    { header: 'Priority', key: 'priority', width: 10 },
-    { header: 'Website', key: 'website', width: 30 },
-    { header: 'Contact name', key: 'cname', width: 22 },
-    { header: 'Contact title', key: 'ctitle', width: 24 },
-    { header: 'Contact email', key: 'cemail', width: 28 },
-    { header: 'Email status', key: 'estatus', width: 14 },
-    { header: 'Email type', key: 'etype', width: 15 },
-    { header: 'Has draft', key: 'draft', width: 10 },
-  ];
-  sortedLeads(filteredLeads()).forEach((l) => {
-    const c = displayContact(l.id) || {};
-    const klass = classifyEmail(c);
-    const r = ws.addRow({
-      company: l.company, segment: l.segment, country: l.country || '', application: l.application || '',
-      priority: l.priority || '', website: l.website || '', cname: c.name || '', ctitle: c.title || '',
-      cemail: c.email || '', estatus: c.email_status || '', etype: EMAIL_CLASS[klass][1], draft: hasDraftFor(l.id) ? 'Yes' : '',
-    });
-    paintEmailType(r.getCell('etype'), klass);
+// One beautifully formatted sheet: brand title band, colored bold header, thin borders, zebra rows,
+// frozen header, auto-filter, gridlines off. `painters[key]` can restyle a specific column's cells.
+function buildStyledSheet(wb, name, title, columns, rows, painters = {}) {
+  const ws = wb.addWorksheet(name.slice(0, 31), { views: [{ showGridLines: false }] });
+  const n = columns.length;
+  const last = colLetter(n);
+  columns.forEach((col, i) => { ws.getColumn(i + 1).width = col.width || 18; });
+
+  ws.mergeCells(`A1:${last}1`);
+  const t = ws.getCell('A1');
+  t.value = `KUSUMGAR  ·  ${title}`;
+  t.font = { bold: true, size: 15, color: { argb: 'FFFFFFFF' } };
+  t.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XL.brand } };
+  t.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+  ws.getRow(1).height = 30;
+
+  ws.mergeCells(`A2:${last}2`);
+  const s = ws.getCell('A2');
+  s.value = `Kusumgar Growth Engine   ·   ${rows.length} row${rows.length === 1 ? '' : 's'}   ·   exported ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  s.font = { italic: true, size: 10, color: { argb: XL.muted } };
+  s.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XL.band } };
+  s.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+  ws.getRow(2).height = 18;
+
+  const H = 3;
+  columns.forEach((col, i) => {
+    const cell = ws.getCell(H, i + 1);
+    cell.value = col.header;
+    cell.font = { bold: true, color: { argb: XL.headerText } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XL.header } };
+    cell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+    cell.border = xlBorder();
   });
-  styleHeader(ws);
-  ws.views = [{ state: 'frozen', ySplit: 1 }];
+  ws.getRow(H).height = 22;
+
+  rows.forEach((row, ri) => {
+    const er = ws.getRow(H + 1 + ri);
+    columns.forEach((col, ci) => {
+      const cell = er.getCell(ci + 1);
+      cell.value = row[col.key] == null ? '' : row[col.key];
+      cell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1, wrapText: !!col.wrap };
+      cell.border = xlBorder();
+      cell.font = { color: { argb: XL.ink } };
+      if (ri % 2 === 1) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: XL.zebra } };
+      if (painters[col.key]) painters[col.key](cell, row);
+    });
+    er.height = 18;
+  });
+
+  ws.views = [{ state: 'frozen', ySplit: H, showGridLines: false }];
+  ws.autoFilter = { from: { row: H, column: 1 }, to: { row: H, column: n } };
+  return ws;
 }
 
-function buildOutreachSheet(wb) {
-  const ws = wb.addWorksheet('Outreach pipeline');
-  ws.columns = [
-    { header: 'Company', key: 'company', width: 30 },
-    { header: 'Segment', key: 'segment', width: 26 },
-    { header: 'Stage', key: 'stage', width: 18 },
-    { header: 'Current/Potential', key: 'deal', width: 18 },
-    { header: 'Own/Jobwork/Agency', key: 'mfg', width: 20 },
-    { header: 'Contact', key: 'contact', width: 24 },
-    { header: 'Email type', key: 'etype', width: 15 },
-    { header: 'Has draft', key: 'draft', width: 10 },
+function addExhibitionsSheet(wb, list) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const cols = [
+    { header: 'Industry', key: 'segment', width: 22 }, { header: 'Exhibition', key: 'name', width: 34 },
+    { header: 'Country', key: 'country', width: 16 }, { header: 'Place', key: 'place', width: 18 },
+    { header: 'Date', key: 'dates', width: 20 }, { header: 'Timing', key: 'timing', width: 12 },
+    { header: 'Website', key: 'website', width: 34 }, { header: 'Registration', key: 'registration', width: 30 },
+    { header: 'Status', key: 'status', width: 12 },
   ];
-  pipelinedLeads().forEach((l) => {
-    const pl = state.pipeline[l.id];
-    const c = displayContact(l.id) || {};
-    const klass = classifyEmail(c);
-    const r = ws.addRow({
-      company: l.company, segment: l.segment, stage: pl.stage, deal: pl.dealType || 'current',
-      mfg: pl.mfg || 'own', contact: c.name || c.email || '', etype: EMAIL_CLASS[klass][1], draft: hasDraftFor(l.id) ? 'Yes' : '',
-    });
-    paintEmailType(r.getCell('etype'), klass);
-  });
-  styleHeader(ws);
-  ws.views = [{ state: 'frozen', ySplit: 1 }];
+  const rows = list.map((d) => { const end = showEndDate(d); return {
+    segment: segLabel(d.segment), name: d.name, country: d.country || '', place: d.place || '',
+    dates: d.dates || '', timing: end ? (end < today ? 'Completed' : 'Upcoming') : '—',
+    website: d.website || '', registration: d.registration || '', status: d.status || '',
+  }; });
+  buildStyledSheet(wb, 'Exhibitions', 'Exhibitions', cols, rows);
 }
 
-function exportExcel(kind) {
+function addExhibitorsSheet(wb, leads) {
+  const cols = [
+    { header: 'Company', key: 'company', width: 30 }, { header: 'Industry', key: 'segment', width: 22 },
+    { header: 'Country', key: 'country', width: 16 }, { header: 'Priority', key: 'priority', width: 10 },
+    { header: 'Why (fit)', key: 'why', width: 52, wrap: true }, { header: 'Contact', key: 'cname', width: 22 },
+    { header: 'Role', key: 'ctitle', width: 24 }, { header: 'Email', key: 'cemail', width: 28 },
+    { header: 'Email type', key: 'etype', width: 14 }, { header: 'LinkedIn', key: 'linkedin', width: 30 },
+    { header: 'Website', key: 'website', width: 30 }, { header: 'Which show', key: 'show', width: 24 },
+  ];
+  const rows = leads.map((l) => { const c = displayContact(l.id) || {}; const show = sourceShow(l.source); return {
+    company: l.company, segment: segLabel(l.segment), country: l.country || '', priority: l.priority || '',
+    why: priorityReason(l), cname: c.name || '', ctitle: c.title || '', cemail: c.email || '',
+    etype: EMAIL_CLASS[classifyEmail(c)][1], linkedin: c.linkedin_url || '', website: l.website || '',
+    show: show ? show.name : '', _klass: classifyEmail(c),
+  }; });
+  buildStyledSheet(wb, 'Exhibitors', 'Exhibitors (leads)', cols, rows, { etype: (cell, row) => paintEmailType(cell, row._klass) });
+}
+
+function addCompetitorsSheet(wb, comps) {
+  const cols = [
+    { header: 'Company', key: 'company', width: 28 }, { header: 'Country', key: 'country', width: 16 },
+    { header: 'How they compete', key: 'compete', width: 20 }, { header: 'What they sell', key: 'focus', width: 50, wrap: true },
+    { header: 'Industries', key: 'industries', width: 30 }, { header: 'Which show', key: 'show', width: 24 },
+  ];
+  const rows = comps.map((c) => { const show = sourceShow(c.source); return {
+    company: c.company, country: c.country || '', compete: positionBucket(c.positioning).label,
+    focus: c.focus || '', industries: (c.segments || []).map(segLabel).join(', '), show: show ? show.name : '',
+  }; });
+  buildStyledSheet(wb, 'Competitors', 'Competitors', cols, rows);
+}
+
+function addProductsSheet(wb, products) {
+  const cols = [
+    { header: 'Product', key: 'name', width: 34 }, { header: 'Family', key: 'family', width: 22 },
+    { header: 'Base', key: 'base', width: 16 }, { header: 'Deniers', key: 'deniers', width: 14 },
+    { header: 'Coatings', key: 'coatings', width: 24 }, { header: 'Properties', key: 'properties', width: 44, wrap: true },
+    { header: 'Industries', key: 'segments', width: 30 }, { header: 'Applications', key: 'applications', width: 40, wrap: true },
+  ];
+  const rows = products.map((p) => ({
+    name: p.name, family: p.family || '', base: p.base || '', deniers: p.deniers || '',
+    coatings: (p.coatings || []).join(', '), properties: (p.properties || []).join(', '),
+    segments: (p.segments || []).map(segLabel).join(', '), applications: (p.applications || []).join(', '),
+  }));
+  buildStyledSheet(wb, 'Products', 'Products (Kusumgar catalog)', cols, rows);
+}
+
+function addOutreachSheet(wb, leads) {
+  const cols = [
+    { header: 'Company', key: 'company', width: 30 }, { header: 'Industry', key: 'segment', width: 22 },
+    { header: 'Stage', key: 'stage', width: 18 }, { header: 'Follow-up', key: 'next', width: 14 },
+    { header: 'Contact', key: 'contact', width: 24 }, { header: 'Email', key: 'email', width: 28 },
+    { header: 'Email type', key: 'etype', width: 14 }, { header: 'Has draft', key: 'draft', width: 10 },
+  ];
+  const rows = leads.map((l) => { const pl = state.pipeline[l.id] || {}; const c = displayContact(l.id) || {}; return {
+    company: l.company, segment: segLabel(l.segment), stage: pl.stage || '', next: pl.next || '',
+    contact: c.name || '', email: c.email || '', etype: EMAIL_CLASS[classifyEmail(c)][1],
+    draft: hasDraftFor(l.id) ? 'Yes' : '', _klass: classifyEmail(c),
+  }; });
+  buildStyledSheet(wb, 'Outreach', 'Outreach pipeline', cols, rows, { etype: (cell, row) => paintEmailType(cell, row._klass) });
+}
+
+// scope: 'exhibitions' | 'leads' | 'competitors' | 'products' | 'outreach' | 'all'
+function exportExcel(scope) {
   if (!window.ExcelJS) { console.error('ExcelJS not loaded yet'); return; }
   try {
     const wb = new ExcelJS.Workbook();
     wb.creator = 'Kusumgar Growth Engine';
-    if (kind === 'leads') buildLeadsSheet(wb);
-    else if (kind === 'outreach') buildOutreachSheet(wb);
+    if (scope === 'all') {
+      addExhibitionsSheet(wb, exhibitionsByDate(state.exhibitions));
+      addExhibitorsSheet(wb, sortedLeads(state.leads));
+      addCompetitorsSheet(wb, state.competitors);
+      addProductsSheet(wb, state.products);
+      addOutreachSheet(wb, pipelinedLeads());
+    } else if (scope === 'exhibitions') addExhibitionsSheet(wb, exhibitionFiltered());
+    else if (scope === 'leads') addExhibitorsSheet(wb, sortedLeads(filteredLeads()));
+    else if (scope === 'competitors') addCompetitorsSheet(wb, state.competitors);
+    else if (scope === 'products') addProductsSheet(wb, state.products);
+    else if (scope === 'outreach') addOutreachSheet(wb, pipelinedLeads());
     else return;
     wb.xlsx.writeBuffer().then((buf) => {
       const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `kusumgar-${kind}-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.download = `kusumgar-${scope}-${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1500);
     }).catch((e) => console.error('export failed', e));
@@ -2487,14 +2769,12 @@ function wireEvents() {
     if (leadView) { state.leadFilters.view = leadView.getAttribute('data-leadview'); render(); return; }
     const clearShow = e.target.closest('[data-clearshow]');
     if (clearShow) { state.leadFilters.show = 'all'; render(); return; }
+    const clearDates = e.target.closest('[data-cleardates]');
+    if (clearDates) { state.filters.from = ''; state.filters.to = ''; render(); return; }
 
-    // Exhibition row → open that show's exhibitors (filtered).
+    // Exhibition row → centered detail modal (full info + exhibitors + competitors).
     const exhRow = e.target.closest('[data-exh-id]');
-    if (exhRow) {
-      state.tab = 'leads';
-      state.leadFilters = { ...state.leadFilters, show: exhRow.getAttribute('data-exh-id'), view: 'all', search: '', segment: 'all', country: 'all', priority: 'all', emailClass: 'all' };
-      render(); return;
-    }
+    if (exhRow) { openExhibitionModal(exhRow.getAttribute('data-exh-id')); return; }
 
     // Competitor row → detail drawer.
     const compRow = e.target.closest('[data-comp-id]');
@@ -2514,10 +2794,10 @@ function wireEvents() {
     else if (e.target.id === 'composeTo' || e.target.id === 'composeSubject' || e.target.id === 'composeBody') { updateComposeMailto(); }
   });
   view.addEventListener('change', (e) => {
-    const exMap = { 'f-seg': 'segment', 'f-country': 'country', 'f-status': 'status' };
+    const exMap = { 'f-seg': 'segment', 'f-timing': 'timing', 'f-from': 'from', 'f-to': 'to' };
     const pMap = { 'p-industry': 'industry', 'p-family': 'family' };
     const lMap = { 'l-seg': 'segment', 'l-country': 'country', 'l-priority': 'priority' };
-    if (exMap[e.target.id]) { state.filters[exMap[e.target.id]] = e.target.value; refreshRows(); }
+    if (exMap[e.target.id]) { state.filters[exMap[e.target.id]] = e.target.value; render(); }
     else if (pMap[e.target.id]) { state.productFilters[pMap[e.target.id]] = e.target.value; refreshCatalog(); }
     else if (lMap[e.target.id]) { state.leadFilters[lMap[e.target.id]] = e.target.value; refreshLeadsTable(); }
     else if (e.target.id === 'o-stage') { state.trackerFilters.stage = e.target.value; refreshTrackerTable(); }
@@ -2562,12 +2842,34 @@ function wireEvents() {
     if (draft) { openEmailModal(draft.getAttribute('data-lead-id')); }
   });
 
-  // Outreach/email modal (stable element outside #view).
+  // Header buttons (stable, outside #view): Products catalog + Export picker.
+  const bP = $('#btnProducts'); if (bP) bP.addEventListener('click', openProductsModal);
+  const bE = $('#btnExport'); if (bE) bE.addEventListener('click', openExportModal);
+
+  // Centered modals (email, exhibition detail, products, export) — stable #modal outside #view.
   const modal = $('#modal');
   modal.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;   // links open normally
     if (e.target.closest('[data-modal-close]') || e.target.hasAttribute('data-modal-backdrop')) { closeModal(); return; }
     const copy = e.target.closest('[data-copy]');
-    if (copy) copyEmail(copy);
+    if (copy) { copyEmail(copy); return; }
+    // Export picker → build the workbook for that scope.
+    const exp = e.target.closest('[data-export-scope]');
+    if (exp) { exportExcel(exp.getAttribute('data-export-scope')); closeModal(); return; }
+    // Exhibition modal: ☆ add-to-lead (refresh modal in place) / "see all exhibitors".
+    const star = e.target.closest('[data-star]');
+    if (star) { toggleStar(star.getAttribute('data-star')); const card = modal.querySelector('[data-exh-modal]'); if (card) openExhibitionModal(card.getAttribute('data-exh-modal')); return; }
+    const seeAll = e.target.closest('[data-exh-open-leads]');
+    if (seeAll) {
+      const sid = seeAll.getAttribute('data-exh-open-leads');
+      closeModal();
+      state.tab = 'leads';
+      state.leadFilters = { ...state.leadFilters, show: sid, view: 'all', search: '', segment: 'all', country: 'all', priority: 'all', emailClass: 'all' };
+      render(); return;
+    }
+  });
+  modal.addEventListener('input', (e) => {
+    if (e.target.id === 'prod-modal-search') { state.prodModalSearch = e.target.value; const w = $('#prodModalList'); if (w) w.innerHTML = productsModalListHtml(); }
   });
   modal.addEventListener('change', (e) => {
     const id = e.target.getAttribute('data-modal-stage');
