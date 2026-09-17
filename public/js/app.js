@@ -111,10 +111,10 @@ const ENGAGED = new Set(['Exhibited', 'Visited', 'Attended']);
 const TABS = [
   { id: 'today', label: 'Home', icon: '🏠', live: true },
   { id: 'exhibitions', label: 'Exhibitions', icon: '🎪', live: true },
-  { id: 'products', label: 'Products', icon: '🧵', live: true },
-  { id: 'leads', label: 'Leads', icon: '🎯', live: true },
+  { id: 'leads', label: 'Exhibitors', icon: '🏢', live: true },   // companies exhibiting at the shows
   { id: 'competitors', label: 'Competitors', icon: '🛡️', live: true },
   { id: 'outreach', label: 'Outreach', icon: '📮', live: true },
+  { id: 'products', label: 'Products', icon: '🧵', live: true },   // reference catalog — last
 ];
 
 const FLAGS = {
@@ -150,9 +150,10 @@ const state = {
   filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false },
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
-  leadsSub: 'overview',   // 'overview' | 'list'
-  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', emailClass: 'all' },
+  leadsSub: 'list',       // exhibitors are one comprehensive table now
+  leadFilters: { search: '', segment: 'all', country: 'all', priority: 'all', emailClass: 'all', view: 'all', show: 'all' },
   leadSort: { key: 'company', dir: 'asc' },
+  stars: {},              // leadId -> true  (⭐ "my leads", localStorage)
   competitorsSub: 'landscape', // 'landscape' | 'list'
   outreachSub: 'pipeline',     // 'pipeline' | 'tracker'
   trackerFilters: { search: '', stage: 'all' },
@@ -162,6 +163,58 @@ const PIPE_KEY = (id) => `kgr.outreach.${id}`;
 
 const REL_KEY = (id) => `kgr.relevant.${id}`;
 const REL_COLORS = { yes: '#10b981', no: '#f43f5e', undecided: '#94a3b8' };
+
+/* ---- Round-1 helpers: ⭐ my-leads, exhibition date-sort, priority reasons ---- */
+const STAR_KEY = (id) => `kgr.star.${id}`;
+function loadStars(ids) { ids.forEach((id) => { try { if (localStorage.getItem(STAR_KEY(id)) === '1') state.stars[id] = true; } catch { /* storage unavailable */ } }); }
+const isStarred = (id) => !!state.stars[id];
+function toggleStar(id) {
+  const on = !state.stars[id];
+  try { if (on) localStorage.setItem(STAR_KEY(id), '1'); else localStorage.removeItem(STAR_KEY(id)); } catch { /* in-memory only */ }
+  if (on) state.stars[id] = true; else delete state.stars[id];
+}
+// The exhibition a lead/competitor came from: source "exhibition:<id>" → the show record (else null).
+function sourceShow(src) {
+  const s = String(src || '');
+  if (!s.startsWith('exhibition:')) return null;
+  return state.exhibitions.find((e) => e.id === s.slice('exhibition:'.length)) || null;
+}
+// Sort exhibitions: upcoming/ongoing first (soonest→latest), then past (most-recent→oldest), then undated.
+function exhibitionsByDate(list) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const endTs = (e) => { const d = showEndDate(e); return d ? +d : null; };
+  const startTs = (e) => { const s = String(e.start || ''); const t = Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(s) ? s + 'T00:00:00' : s); return isNaN(t) ? null : t; };
+  const bucket = (e) => { const end = endTs(e); if (end == null) return 2; return end >= +today ? 0 : 1; };
+  return list.slice().sort((a, b) => {
+    const ba = bucket(a), bb = bucket(b);
+    if (ba !== bb) return ba - bb;
+    if (ba === 2) return String(a.name).localeCompare(String(b.name));
+    const sa = startTs(a) ?? endTs(a) ?? 0, sb = startTs(b) ?? endTs(b) ?? 0;
+    return ba === 0 ? sa - sb : sb - sa;   // upcoming ascending, past most-recent-first
+  });
+}
+// Kusumgar fabric hint per segment — used to explain a lead's priority in plain terms.
+const FABRIC_HINT = {
+  'Military & Tactical': 'our high-tenacity coated Nylon 66 / Cordura-type fabrics',
+  'Industrial': 'our 600D–1680D PU/PVC-coated polyester & nylon',
+  'Tool & Equipment Bags': 'our 600D–1680D PU-coated polyester',
+  'Medical & Emergency': 'our coated FR & antimicrobial fabrics',
+  'Outdoor': 'our ripstop nylon & DWR-finished fabrics',
+  'Automotive': 'our coated technical fabrics',
+  'Marine': 'our PU/PVC-coated marine fabrics',
+  'Aeronautical': 'our ripstop nylon (parachute / canopy) fabrics',
+  'Workwear': 'our FR & DWR workwear fabrics',
+};
+const fabricHint = (seg) => FABRIC_HINT[seg] || 'our coated technical fabrics';
+// Short WHY for a lead's priority, computed from fabric_fit + application + segment (every lead gets one).
+function priorityReason(l) {
+  const seg = l.segment || 'technical textiles';
+  const fab = l.fabric_fit ? `our ${l.fabric_fit}` : fabricHint(seg);
+  const use = l.application ? ` for their ${String(l.application).toLowerCase()}` : ` in the ${seg} space`;
+  return `${fab} fits${use} (${seg})`;
+}
+// AI "Recommended": High priority OR an explicit fabric match — the strongest-fit exhibitors.
+const isRecommended = (l) => l.priority === 'High' || !!l.fabric_fit;
 
 /* ------------------------------------------------------------------ *
  * Small helpers
@@ -704,71 +757,74 @@ function refreshRows() {
  * Exhibitions tab shell (sub-toggle + body)
  * ------------------------------------------------------------------ */
 
+// External link cell (opens in a new tab) or a muted em-dash when unknown.
+const extLink = (url, label) => (url
+  ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">${label} ↗</a>`
+  : '<span class="text-slate-300">—</span>');
+
+function exhibitionFiltered() {
+  const q = state.filters.search.trim().toLowerCase();
+  let list = state.exhibitions;
+  if (q) list = list.filter((d) => `${d.name} ${d.country || ''} ${d.place || ''} ${d.segment || ''}`.toLowerCase().includes(q));
+  return exhibitionsByDate(list);
+}
+
+function exhibitionRowsHtml() {
+  const rows = exhibitionFiltered();
+  if (!rows.length) return `<tr><td colspan="8" class="px-4 py-10 text-center text-sm text-slate-400">No exhibitions match your search.</td></tr>`;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return rows.map((d) => {
+    const end = showEndDate(d); const past = end && end < today;
+    const isNew = d.source === 'discovered' ? ` <span class="ml-1 inline-flex items-center rounded-full bg-fuchsia-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-fuchsia-600" title="${escapeHtml(d.relevance_reason || 'Auto-discovered')}">✨ New</span>` : '';
+    return `<tr class="cursor-pointer border-t border-slate-100 hover:bg-slate-50/60${past ? ' opacity-60' : ''}" data-exh-id="${escapeHtml(d.id)}" title="See exhibitors from ${escapeHtml(d.name)}">
+      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(segLabel(d.segment), segColor(d.segment))}</td>
+      <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${isNew}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(dash(d.country))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500">${escapeHtml(dash(d.place))}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-500 tnum">${d.dates ? escapeHtml(d.dates) : '<span class="text-slate-300">—</span>'}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm">${extLink(d.website, 'Website')}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm">${extLink(d.registration, 'Register')}</td>
+      <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(d.status, STATUS_COLORS[d.status] || '#94a3b8')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function refreshExhibitionsTable() { const b = $('#exhRows'); if (b) b.innerHTML = exhibitionRowsHtml(); }
+
+// One comprehensive, date-sorted table of ALL exhibitions (never hides any). Row → its exhibitors.
 function renderExhibitions() {
-  const subBtn = (id, label) => {
-    const active = state.sub === id;
-    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
-    return `<button type="button" data-sub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
-  };
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('overview', '📊 Overview')}${subBtn('list', '📋 List')}${subBtn('byshow', '🌳 By show')}</div>`;
-  const body = state.sub === 'overview' ? renderOverview() : state.sub === 'byshow' ? renderExhibitionTree() : renderList();
-  return `<div class="mb-4">${toggle}</div>${body}`;
-}
-
-// "By show" drill-down: each exhibition → its product category, its leads, its competitors.
-// Everything is grouped by the real `exhibition:<id>` source tag the engines write (no guessing).
-function renderExhibitionTree() {
-  const TAG = 'exhibition:';
-  const leadsBy = {}, compsBy = {};
-  for (const l of state.leads) { const s = String(l.source || ''); if (s.startsWith(TAG)) (leadsBy[s.slice(TAG.length)] ||= []).push(l); }
-  for (const c of state.competitors) { const s = String(c.source || ''); if (s.startsWith(TAG)) (compsBy[s.slice(TAG.length)] ||= []).push(c); }
-  const rows = state.exhibitions
-    .map((e) => ({ e, leads: leadsBy[e.id] || [], comps: compsBy[e.id] || [] }))
-    .sort((a, b) => (b.leads.length + b.comps.length) - (a.leads.length + a.comps.length) || a.e.name.localeCompare(b.e.name));
-  const linked = rows.filter((r) => r.leads.length || r.comps.length);
-  const empty = rows.length - linked.length;
-  const totalLeads = linked.reduce((n, r) => n + r.leads.length, 0);
-  const totalComps = linked.reduce((n, r) => n + r.comps.length, 0);
-  const intro = `<div class="mb-3 flex flex-wrap items-center gap-2 text-[12px] text-slate-500">
-    <span>Click a show to open its leads &amp; competitors.</span>
-    <span class="rounded-full bg-white px-2.5 py-1 font-medium shadow-sm ring-1 ring-slate-100"><span class="tnum font-bold text-slate-900">${linked.length}</span> shows with data</span>
-    <span class="rounded-full bg-white px-2.5 py-1 font-medium shadow-sm ring-1 ring-slate-100">🎯 <span class="tnum font-bold text-slate-900">${totalLeads}</span> leads</span>
-    <span class="rounded-full bg-white px-2.5 py-1 font-medium shadow-sm ring-1 ring-slate-100">🛡️ <span class="tnum font-bold text-slate-900">${totalComps}</span> competitors</span>
-    ${empty ? `<span class="text-slate-400">· ${empty} more shows have none yet</span>` : ''}
-  </div>`;
-  const cards = linked.map(exhibitionTreeCard).join('');
-  return `<div class="fade-in">${intro}<div class="space-y-2.5">${cards || '<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No shows are linked to leads yet — run a leads refresh.</div>'}</div></div>`;
-}
-
-function exhibitionTreeCard({ e, leads, comps }) {
-  const chip = coloredChip(e.segment, segColor(e.segment));
-  const meta = `${e.country ? (FLAGS[e.country] || '') + ' ' + escapeHtml(e.country) : ''}${e.dates ? ' · ' + escapeHtml(e.dates) : ''}`;
-  const leadChips = leads.slice().sort((a, b) => (a.priority === 'High' ? 0 : 1) - (b.priority === 'High' ? 0 : 1) || a.company.localeCompare(b.company))
-    .map((l) => `<button type="button" data-lead-id="${escapeHtml(l.id)}" class="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2 py-1 text-[12px] font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-700">${l.priority === 'High' ? '⭐ ' : ''}${escapeHtml(l.company)}</button>`).join('');
-  const compChips = comps.map((c) => `<span class="inline-flex items-center rounded-lg bg-rose-50 px-2 py-1 text-[12px] font-medium text-rose-600" title="${escapeHtml(c.focus || c.positioning || '')}">${escapeHtml(c.company)}</span>`).join('');
-  const section = (label, chipsHtml, emptyMsg) => `<div>
-    <div class="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">${label}</div>
-    <div class="flex flex-wrap gap-1.5">${chipsHtml || `<span class="text-[12px] text-slate-400">${emptyMsg}</span>`}</div>
-  </div>`;
-  return `<details class="group rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-    <summary class="flex cursor-pointer list-none items-center gap-3 p-4 hover:bg-slate-50/60">
-      <span class="text-lg">🎪</span>
-      <div class="min-w-0 flex-1">
-        <div class="flex flex-wrap items-center gap-2"><span class="truncate font-semibold text-slate-800">${escapeHtml(e.name)}</span>${chip}</div>
-        ${meta ? `<div class="mt-0.5 text-[12px] text-slate-500">${meta}</div>` : ''}
+  if (!state.exhibitions.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No exhibitions loaded.</div>`;
+  }
+  const f = state.filters;
+  const total = state.exhibitions.length;
+  const upcoming = state.exhibitions.filter(showUpcoming).length;
+  return `<div class="fade-in">
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <div class="relative min-w-[180px] flex-1">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+        <input id="f-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search exhibitions…"
+          class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
       </div>
-      <div class="flex shrink-0 items-center gap-1.5 text-[12px] font-semibold">
-        <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-indigo-600">🎯 ${leads.length}</span>
-        <span class="rounded-full bg-rose-50 px-2 py-0.5 text-rose-600">🛡️ ${comps.length}</span>
-        <span class="text-slate-300 transition-transform group-open:rotate-180">▾</span>
-      </div>
-    </summary>
-    <div class="space-y-3 border-t border-slate-100 p-4 pt-3">
-      ${section('Product category', chip, '—')}
-      ${section(`🎯 Leads (${leads.length})`, leadChips, 'none yet')}
-      ${section(`🛡️ Competitors (${comps.length})`, compChips, 'none found')}
+      <span class="text-[12px] text-slate-500"><span class="tnum font-semibold text-slate-700">${total}</span> shows · <span class="tnum font-semibold text-emerald-600">${upcoming}</span> upcoming</span>
     </div>
-  </details>`;
+    <div class="mb-2 px-0.5 text-[12px] text-slate-400">Soonest upcoming first; past shows sink to the bottom. Click a show to see its exhibitors.</div>
+    <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+      <table class="w-full min-w-[900px] border-collapse text-left">
+        <thead><tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+          <th class="px-3 py-2.5 font-semibold">Industry</th>
+          <th class="px-3 py-2.5 font-semibold">Exhibition</th>
+          <th class="px-3 py-2.5 font-semibold">Country</th>
+          <th class="px-3 py-2.5 font-semibold">Place</th>
+          <th class="px-3 py-2.5 font-semibold">Date</th>
+          <th class="px-3 py-2.5 font-semibold">Website</th>
+          <th class="px-3 py-2.5 font-semibold">Registration</th>
+          <th class="px-3 py-2.5 font-semibold">Status</th>
+        </tr></thead>
+        <tbody id="exhRows">${exhibitionRowsHtml()}</tbody>
+      </table>
+    </div>
+  </div>`;
 }
 
 function renderPlaceholder(tab) {
@@ -1092,6 +1148,8 @@ function filteredLeads() {
   const f = state.leadFilters;
   const q = f.search.trim().toLowerCase();
   return state.leads.filter((l) => {
+    if (f.view === 'mine' && !isStarred(l.id)) return false;
+    if (f.show !== 'all' && l.source !== 'exhibition:' + f.show) return false;
     if (f.segment !== 'all' && l.segment !== f.segment) return false;
     if (f.country !== 'all' && (l.country || 'Unknown') !== f.country) return false;
     if (f.priority !== 'all' && l.priority !== f.priority) return false;
@@ -1126,36 +1184,62 @@ function sortedLeads(list) {
   });
 }
 
-const LEAD_COLS = [
-  { key: 'company', label: 'Company' }, { key: 'segment', label: 'Industry' },
-  { key: 'country', label: 'Country' }, { key: 'contact', label: 'Contact' },
-  { key: 'priority', label: 'Priority' },
-];
-
-// Table cell for a lead's found contact: real name + real role, or "—" (not found / not processed).
+// Exhibitors-table cells (merge leads.json + outreach.json contacts live; graceful "—").
 function leadContactCell(l) {
   const c = displayContact(l.id);
-  const who = c && (c.name || c.email);
-  if (!who) return '<span class="text-sm text-slate-300">—</span>';
+  if (!c || !c.name) return '<span class="text-sm text-slate-300">—</span>';
   const role = c.title ? `<div class="truncate text-[11px] text-slate-400" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : '';
-  return `<div class="max-w-[230px]"><div class="flex items-center gap-1.5 truncate text-sm text-slate-700" title="${escapeHtml(who)}">${escapeHtml(who)}${emailClassBadge(c)}</div>${role}</div>`;
+  return `<div class="max-w-[180px]"><div class="truncate text-sm text-slate-700" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</div>${role}</div>`;
 }
+function leadLinkedinCell(l) {
+  const c = displayContact(l.id);
+  return (c && c.linkedin_url)
+    ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="font-semibold text-[#0a66c2] hover:underline">in ↗</a>`
+    : '<span class="text-slate-300">—</span>';
+}
+function leadEmailCell(l) {
+  const c = displayContact(l.id);
+  if (c && c.email) return `<div class="max-w-[210px]"><a href="mailto:${escapeHtml(c.email)}" class="block truncate text-[13px] text-indigo-600 hover:underline" title="${escapeHtml(c.email)}">${escapeHtml(c.email)}</a>${emailClassBadge(c)}</div>`;
+  return emailClassBadge(c, true); // grey "No email"
+}
+function leadPriorityCell(l) {
+  const why = priorityReason(l);
+  return `<div class="min-w-[200px] max-w-[300px]">${priorityChip(l.priority)}<div class="mt-0.5 text-[11px] leading-snug text-slate-400" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden" title="${escapeHtml(why)}">${escapeHtml(why)}</div></div>`;
+}
+function leadShowCell(l) {
+  const show = sourceShow(l.source);
+  if (show) return `<span class="text-[12px] text-slate-600">🎪 ${escapeHtml(show.name)}</span>`;
+  if (String(l.source || '').startsWith('category:')) return '<span class="text-[12px] text-slate-400">category search</span>';
+  return '<span class="text-slate-300">—</span>';
+}
+const leadStarCell = (l) => {
+  const on = isStarred(l.id);
+  return `<button type="button" data-star="${escapeHtml(l.id)}" aria-pressed="${on}" title="${on ? 'Remove from my leads' : 'Move to my leads'}" class="text-lg leading-none ${on ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'}">${on ? '★' : '☆'}</button>`;
+};
 
 function leadsTableHtml() {
   const { key: sk, dir } = state.leadSort;
   const arrow = (k) => (sk === k ? (dir === 'asc' ? ' ▲' : ' ▼') : '');
-  const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">` + LEAD_COLS.map((c) =>
-    `<th class="cursor-pointer whitespace-nowrap px-3 py-2.5 font-semibold hover:text-slate-600 ${sk === c.key ? 'text-indigo-600' : ''}" data-sort="${c.key}">${escapeHtml(c.label)}<span class="tnum">${arrow(c.key)}</span></th>`).join('') + `</tr>`;
+  const sortTh = (k, label) => `<th class="cursor-pointer whitespace-nowrap px-3 py-2.5 font-semibold hover:text-slate-600 ${sk === k ? 'text-indigo-600' : ''}" data-sort="${k}">${escapeHtml(label)}<span class="tnum">${arrow(k)}</span></th>`;
+  const plainTh = (label) => `<th class="whitespace-nowrap px-3 py-2.5 font-semibold">${escapeHtml(label)}</th>`;
+  const thead = `<tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+    <th class="px-2 py-2.5"></th>${sortTh('company', 'Company')}${sortTh('segment', 'Industry')}${sortTh('country', 'Country')}${plainTh('Fabric fit')}${sortTh('contact', 'Contact person')}${plainTh('LinkedIn')}${plainTh('Email')}${sortTh('priority', 'Priority')}${plainTh('Show')}
+  </tr>`;
   const rows = sortedLeads(filteredLeads());
   const body = rows.length ? rows.map((l) => `
-    <tr class="cursor-pointer border-t border-slate-100 hover:bg-slate-50/60" data-lead-id="${escapeHtml(l.id)}">
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
+    <tr class="cursor-pointer border-t border-slate-100 align-top hover:bg-slate-50/60" data-lead-id="${escapeHtml(l.id)}">
+      <td class="px-2 py-2.5 text-center">${leadStarCell(l)}</td>
+      <td class="whitespace-nowrap px-3 py-2.5"><div class="flex items-center gap-1.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}${isRecommended(l) ? '<span class="shrink-0 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600" title="Strong fabric fit — recommended lead">★ Rec</span>' : ''}</div></td>
       <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(l.segment, leadSegColor(l.segment))}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</td>
+      <td class="px-3 py-2.5 text-[13px] text-slate-600"><div class="max-w-[160px] truncate" title="${escapeHtml(l.fabric_fit || '')}">${escapeHtml(dash(l.fabric_fit))}</div></td>
       <td class="px-3 py-2.5">${leadContactCell(l)}</td>
-      <td class="whitespace-nowrap px-3 py-2.5">${priorityChip(l.priority)}</td>
-    </tr>`).join('') : `<tr><td colspan="5" class="px-4 py-10 text-center text-sm text-slate-400">No leads match these filters.</td></tr>`;
-  return `<table class="w-full min-w-[980px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm">${leadLinkedinCell(l)}</td>
+      <td class="px-3 py-2.5">${leadEmailCell(l)}</td>
+      <td class="px-3 py-2.5">${leadPriorityCell(l)}</td>
+      <td class="px-3 py-2.5">${leadShowCell(l)}</td>
+    </tr>`).join('') : `<tr><td colspan="10" class="px-4 py-10 text-center text-sm text-slate-400">No exhibitors match these filters.</td></tr>`;
+  return `<table class="w-full min-w-[1180px] border-collapse text-left"><thead>${thead}</thead><tbody>${body}</tbody></table>`;
 }
 
 function refreshLeadsTable() {
@@ -1176,12 +1260,23 @@ function renderLeadsList() {
       class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${on ? 'text-white ring-transparent' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}"
       style="${on ? `background:${color}` : ''}">${label} <span class="tnum">${n}</span></button>`;
   };
+  const starCount = state.leads.filter((l) => isStarred(l.id)).length;
+  const viewBtn = (key, label) => {
+    const on = f.view === key;
+    return `<button type="button" data-leadview="${key}" aria-pressed="${on}" class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${on ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">${label}</button>`;
+  };
+  const viewToggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${viewBtn('all', 'All exhibitors')}${viewBtn('mine', `⭐ My leads${starCount ? ` (${starCount})` : ''}`)}</div>`;
+  const showEx = f.show !== 'all' ? state.exhibitions.find((e) => e.id === f.show) : null;
+  const showBanner = f.show !== 'all'
+    ? `<div class="mb-3 flex items-center gap-2 rounded-xl bg-indigo-50 px-3 py-2 text-[13px] text-indigo-700 ring-1 ring-indigo-100"><span>🎪 Showing exhibitors from <span class="font-semibold">${escapeHtml(showEx ? showEx.name : f.show)}</span></span><button type="button" data-clearshow class="font-semibold underline">clear</button></div>`
+    : '';
   return `
     <div class="fade-in">
       <div class="mb-3 flex flex-wrap items-center gap-2">
-        <div class="relative min-w-[170px] flex-1">
+        ${viewToggle}
+        <div class="relative min-w-[160px] flex-1">
           <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
-          <input id="l-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search leads…"
+          <input id="l-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search exhibitors…"
             class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
         </div>
         ${selectHtml('l-seg', 'All segments', f.segment, segs)}
@@ -1189,6 +1284,7 @@ function renderLeadsList() {
         ${selectHtml('l-priority', 'All priorities', f.priority, ['High', 'Medium'])}
         <button type="button" data-export="leads" class="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">📊 Export Excel</button>
       </div>
+      ${showBanner}
       <div class="mb-3 flex flex-wrap items-center gap-2">
         <span class="text-[12px] font-medium text-slate-400">Email:</span>
         ${classChip('good', '✅ Personal / verified', '#10b981', ec.good)}
@@ -1196,23 +1292,17 @@ function renderLeadsList() {
         ${classChip('need', '📮 Need contact', '#64748b', ec.need)}
         ${f.emailClass !== 'all' ? `<button type="button" data-lclass="${f.emailClass}" class="text-[12px] font-semibold text-indigo-600 hover:underline">clear filter</button>` : ''}
       </div>
-      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · <span class="font-semibold text-emerald-600">${ec.good}</span> real people · <span class="font-semibold text-amber-600">${ec.company}</span> company inboxes · <span class="font-semibold text-slate-500">${ec.need}</span> need contact</div>
+      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · ⭐ ${starCount} my leads · <span class="font-semibold text-emerald-600">${ec.good}</span> real people · <span class="font-semibold text-amber-600">${ec.company}</span> company inboxes · <span class="font-semibold text-slate-500">${ec.need}</span> need contact</div>
       <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="leadsTableWrap">${leadsTableHtml()}</div></div>
     </div>`;
 }
 
+// Exhibitors tab — one comprehensive table (companies exhibiting at the shows).
 function renderLeads() {
   if (!state.leads.length) {
-    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No leads loaded.</div>`;
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No exhibitors loaded.</div>`;
   }
-  const subBtn = (id, label) => {
-    const active = state.leadsSub === id;
-    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
-    return `<button type="button" data-lsub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
-  };
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('overview', '📊 Overview')}${subBtn('list', '📋 Leads list')}</div>`;
-  const body = state.leadsSub === 'overview' ? renderLeadsOverview() : renderLeadsList();
-  return `<div class="mb-4">${toggle}</div>${body}`;
+  return renderLeadsList();
 }
 
 // Drill-panel (right slide-over) for a single lead.
@@ -1277,6 +1367,45 @@ function closeDrawer() {
   setTimeout(() => { if (!d.classList.contains('open')) d.innerHTML = ''; }, 260);
 }
 
+// Right-side detail panel for a competitor (same style as the lead drawer).
+function openCompetitorDrawer(id) {
+  const c = state.competitors.find((x) => x.id === id);
+  if (!c) return;
+  const b = positionBucket(c.positioning);
+  const show = sourceShow(c.source);
+  const whichShow = show ? '🎪 ' + escapeHtml(show.name) : (String(c.source || '').startsWith('category:') ? 'Category search' : '—');
+  const row = (label, val) => `<div class="flex justify-between gap-4 border-b border-slate-100 py-2.5"><span class="shrink-0 text-[12px] font-medium text-slate-400">${escapeHtml(label)}</span><span class="text-right text-[13px] font-semibold text-slate-700">${val}</span></div>`;
+  const segs = (c.segments || []).map((s) => coloredChip(segLabel(s), anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
+  const body = `
+    <div class="flex flex-wrap items-center gap-2">${coloredChip(b.label, b.color)}</div>
+    <div class="mt-4">
+      ${row('Country', (c.country ? (FLAGS[c.country] || '') + ' ' : '') + escapeHtml(dash(c.country)))}
+      ${row('How they compete', escapeHtml(b.label))}
+      ${row('Which show', whichShow)}
+    </div>
+    <div class="mt-4">
+      <div class="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">What they sell</div>
+      <div class="rounded-xl bg-slate-50 p-3 text-[13px] text-slate-700 ring-1 ring-slate-100">${escapeHtml(dash(c.focus))}</div>
+    </div>
+    <div class="mt-4">
+      <div class="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Industries</div>
+      <div class="flex flex-wrap gap-1.5">${segs}</div>
+    </div>`;
+  const html = `
+    <div data-drawer-backdrop class="absolute inset-0 bg-slate-900/30"></div>
+    <aside class="drawer-panel absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-100 p-5">
+        <div><h3 class="font-display text-lg font-extrabold leading-tight text-slate-900">${escapeHtml(c.company)}</h3><p class="mt-0.5 text-[12px] text-slate-500">Competitor</p></div>
+        <button type="button" data-drawer-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5">${body}</div>
+    </aside>`;
+  const d = $('#drawer');
+  d.innerHTML = html;
+  requestAnimationFrame(() => d.classList.add('open'));
+  try { document.body.style.overflow = 'hidden'; } catch { /* noop */ }
+}
+
 /* ------------------------------------------------------------------ *
  * Competitors tab — Landscape + list
  * ------------------------------------------------------------------ */
@@ -1338,23 +1467,27 @@ function renderCompetitorsList() {
     <th class="px-3 py-2.5">Company</th>
     <th class="px-3 py-2.5">Country</th>
     <th class="px-3 py-2.5">How they compete</th>
-    <th class="px-3 py-2.5">What they make</th>
+    <th class="px-3 py-2.5">What they sell</th>
     <th class="px-3 py-2.5">Industries</th>
+    <th class="px-3 py-2.5">Which show</th>
   </tr>`;
   const rows = comps.map((c) => {
     const b = positionBucket(c.positioning);
     const segs = (c.segments || []).map((s) => coloredChip(segLabel(s), anyColor(s))).join(' ') || '<span class="text-slate-300">—</span>';
+    const show = sourceShow(c.source);
+    const showCell = show ? `🎪 ${escapeHtml(show.name)}` : (String(c.source || '').startsWith('category:') ? '<span class="text-slate-400">category search</span>' : '<span class="text-slate-300">—</span>');
     return `
-      <tr class="border-t border-slate-100 align-top hover:bg-slate-50/60">
+      <tr class="cursor-pointer border-t border-slate-100 align-top hover:bg-slate-50/60" data-comp-id="${escapeHtml(c.id)}">
         <td class="px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(c.company)}</td>
         <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${c.country ? (FLAGS[c.country] || '') + ' ' : ''}${escapeHtml(dash(c.country))}</td>
         <td class="whitespace-nowrap px-3 py-2.5">${coloredChip(b.label, b.color)}</td>
-        <td class="px-3 py-2.5"><div class="max-w-[380px] text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</div></td>
+        <td class="px-3 py-2.5"><div class="max-w-[360px] text-[13px] text-slate-600">${escapeHtml(dash(c.focus))}</div></td>
         <td class="px-3 py-2.5"><div class="flex flex-wrap gap-1.5">${segs}</div></td>
+        <td class="whitespace-nowrap px-3 py-2.5 text-[12px] text-slate-600">${showCell}</td>
       </tr>`;
   }).join('');
   return `<div class="fade-in overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-    <table class="w-full min-w-[820px] border-collapse text-left"><thead>${thead}</thead><tbody>${rows}</tbody></table>
+    <table class="w-full min-w-[960px] border-collapse text-left"><thead>${thead}</thead><tbody>${rows}</tbody></table>
   </div>`;
 }
 
@@ -1809,69 +1942,44 @@ function renderOutreach() {
  * Today / Home tab — surfaces existing data (no new state)
  * ------------------------------------------------------------------ */
 
+// Home — clean and minimal: just upcoming exhibitions + recently found leads. No charts.
 function renderToday() {
-  const leads = state.leads;
-  // Hot leads: High-priority with a drafted email; fall back to High-priority.
-  const drafted = leads.filter((l) => l.priority === 'High' && hasDraftFor(l.id));
-  const hot = (drafted.length ? drafted : leads.filter((l) => l.priority === 'High')).slice(0, 6);
-  const hotCards = hot.length ? `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">` + hot.map((l) => {
-    const hasDraft = hasDraftFor(l.id);
-    return `<button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="flex flex-col rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-100 transition hover:ring-indigo-200">
-      <div class="mb-1 flex items-center justify-between gap-2">
-        <h4 class="truncate font-display text-[15px] font-bold text-slate-800">${escapeHtml(l.company)}</h4>
-        ${hasDraft ? '<span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">✉️ draft ready</span>' : '<span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-400">draft</span>'}
+  const upcomingAll = state.exhibitions.filter(showUpcoming);
+  const upcoming = exhibitionsByDate(upcomingAll).slice(0, 8);
+  const comingList = upcoming.length ? upcoming.map((d) => `
+    <button type="button" data-exh-id="${escapeHtml(d.id)}" class="flex w-full items-center gap-3 border-t border-slate-100 py-2.5 text-left first:border-t-0 hover:bg-slate-50/60" title="See exhibitors from ${escapeHtml(d.name)}">
+      <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${segColor(d.segment)}"></span>
+      <div class="min-w-0 flex-1">
+        <div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${d.source === 'discovered' ? ' <span class="rounded-full bg-fuchsia-100 px-1.5 py-0.5 text-[10px] font-bold text-fuchsia-600">✨</span>' : ''}</div>
+        <div class="truncate text-[12px] text-slate-500">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(dash(d.country))}${d.place ? ' · ' + escapeHtml(d.place) : ''}</div>
       </div>
-      <div class="mb-2 flex flex-wrap gap-1.5">${coloredChip(l.segment, leadSegColor(l.segment))}</div>
-      <p class="mt-auto truncate text-[12px] text-slate-500">${l.country ? (FLAGS[l.country] || '') + ' ' + escapeHtml(l.country) : ''}</p>
-    </button>`;
-  }).join('') + `</div>`
-    : `<div class="rounded-2xl bg-white p-6 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No high-priority leads yet.</div>`;
-
-  // Coming up: shows that haven't finished yet, soonest first (in-progress shows stay until they end).
-  const upcoming = state.exhibitions.filter(showUpcoming).sort((a, b) => a.start.localeCompare(b.start)).slice(0, 6);
-  const comingList = upcoming.length ? upcoming.map((d) => {
-    const col = segColor(d.segment);
-    const isNew = d.source === 'discovered' ? ' <span class="rounded-full bg-fuchsia-100 px-1.5 py-0.5 text-[10px] font-bold text-fuchsia-600">✨</span>' : '';
-    return `<div class="flex items-center gap-3 border-t border-slate-100 py-2.5 first:border-t-0">
-      <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${col}"></span>
-      <div class="min-w-0 flex-1"><div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(d.name)}${isNew}</div><div class="text-[12px] text-slate-500">${d.country ? (FLAGS[d.country] || '') + ' ' : ''}${escapeHtml(d.country)}${d.place ? ' · ' + escapeHtml(d.place) : ''}</div></div>
       <div class="shrink-0 text-right text-[12px] font-medium text-slate-500 tnum">${escapeHtml(dash(d.dates))}</div>
-    </div>`;
-  }).join('') : `<div class="py-6 text-center text-sm text-slate-400">No dated shows yet.</div>`;
-  const comingCard = chartCard('📅', 'Coming up', `${upcoming.length} next shows`, comingList);
+    </button>`).join('') : `<div class="py-6 text-center text-sm text-slate-400">No upcoming shows.</div>`;
 
-  // Pipeline snapshot.
-  const inPipe = pipelinedLeads();
-  let snap;
-  if (!inPipe.length) {
-    snap = chartCard('📊', 'Pipeline snapshot', 'outreach stages', `<div class="py-6 text-center"><p class="text-sm text-slate-400">No leads in the pipeline yet.</p><button type="button" data-goto="outreach" class="mt-3 rounded-xl bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700">Open Outreach</button></div>`);
-  } else {
-    const stageItems = OUTREACH_STAGES.map((s) => ({ label: s.key, value: inPipe.filter((l) => state.pipeline[l.id].stage === s.key).length, color: s.color, key: 'tsg:' + s.key })).filter((i) => i.value > 0);
-    const cur = inPipe.filter((l) => (state.pipeline[l.id].dealType || 'current') === 'current').length;
-    const dealItems = [
-      { label: 'Current', value: cur, color: '#6366f1', key: 'tdl:current' },
-      { label: 'Potential', value: inPipe.length - cur, color: '#94a3b8', key: 'tdl:potential' },
-    ].filter((i) => i.value > 0);
-    const dealLegend = `<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">` + dealItems.map((i) => `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
-    snap = chartCard('📊', 'Pipeline snapshot', `${inPipe.length} in play`, buildBars(stageItems, { unit: 'lead' }) + `<div class="mt-3 border-t border-slate-100 pt-3">${buildStackedBar(dealItems, { unit: 'lead' })}${dealLegend}</div>`);
-  }
+  const foundAll = state.leads.filter((l) => isEngineSource(l.source));
+  const recent = foundAll.slice(-8).reverse(); // most recently appended first
+  const recentList = recent.length ? recent.map((l) => {
+    const c = displayContact(l.id);
+    const who = c && (c.name || c.email);
+    const show = sourceShow(l.source);
+    const sub = [escapeHtml(l.segment || ''), l.country ? (FLAGS[l.country] || '') + ' ' + escapeHtml(l.country) : '', who ? escapeHtml(who) : '', show ? '🎪 ' + escapeHtml(show.name) : ''].filter(Boolean).join(' · ');
+    return `<button type="button" data-lead-id="${escapeHtml(l.id)}" class="flex w-full items-center gap-3 border-t border-slate-100 py-2.5 text-left first:border-t-0 hover:bg-slate-50/60">
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-1.5"><span class="truncate text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</span>${isRecommended(l) ? '<span class="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">★ Recommended</span>' : ''}</div>
+        <div class="truncate text-[12px] text-slate-500">${sub}</div>
+      </div>
+      ${priorityChip(l.priority)}
+    </button>`;
+  }).join('') : `<div class="py-6 text-center text-sm text-slate-400">No leads found yet — the engine adds them from exhibitor lists.</div>`;
 
-  const dueNow = followupLeads().filter((l) => daysUntil(state.pipeline[l.id].next) <= 0);
-  const followCard = dueNow.length ? `<section>
-    <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-rose-50 to-amber-50 p-4 ring-1 ring-rose-100">
-      <div class="min-w-0"><div class="font-display text-base font-bold text-slate-800">⏰ ${dueNow.length} follow-up${dueNow.length > 1 ? 's' : ''} to chase</div><div class="mt-0.5 truncate text-[12px] text-slate-500">${dueNow.slice(0, 4).map((l) => escapeHtml(l.company)).join(' · ')}${dueNow.length > 4 ? ' …' : ''}</div></div>
-      <button type="button" data-gofollow class="shrink-0 rounded-xl bg-rose-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-rose-700">Chase now →</button>
-    </div>
-  </section>` : '';
-  return `<div class="fade-in space-y-5">${followCard}
-    <section>
-      <h3 class="mb-3 font-display text-sm font-bold text-slate-700">🔥 Hot leads</h3>
-      ${hotCards}
-    </section>
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
-      <div data-chart>${comingCard}</div>
-      <div data-chart>${snap}</div>
-    </div>
+  const card = (icon, title, sub, body) => `<section class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
+    <div class="mb-1.5 flex items-baseline justify-between gap-2"><h3 class="font-display text-sm font-bold text-slate-800">${icon} ${title}</h3><span class="text-[12px] text-slate-400">${sub}</span></div>
+    ${body}
+  </section>`;
+
+  return `<div class="fade-in grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+    ${card('📅', 'Upcoming exhibitions', `${upcomingAll.length} upcoming`, comingList)}
+    ${card('🏢', 'Recently found leads', `${foundAll.length} found`, recentList)}
   </div>`;
 }
 
@@ -2196,13 +2304,38 @@ function wireEvents() {
     const draftBtn = e.target.closest('[data-action="draft-email"]');
     if (draftBtn) { openEmailModal(draftBtn.getAttribute('data-lead-id')); return; }
 
+    // Real links (Website / Registration / LinkedIn / mailto) open in a new tab — don't trigger row clicks.
+    if (e.target.closest('a')) return;
+
+    // ⭐ Move-to-Lead toggle (Exhibitors table).
+    const starBtn = e.target.closest('[data-star]');
+    if (starBtn) { toggleStar(starBtn.getAttribute('data-star')); render(); return; }
+
+    // Exhibitors "All | ⭐ My leads" view + "clear show filter".
+    const leadView = e.target.closest('[data-leadview]');
+    if (leadView) { state.leadFilters.view = leadView.getAttribute('data-leadview'); render(); return; }
+    const clearShow = e.target.closest('[data-clearshow]');
+    if (clearShow) { state.leadFilters.show = 'all'; render(); return; }
+
+    // Exhibition row → open that show's exhibitors (filtered).
+    const exhRow = e.target.closest('[data-exh-id]');
+    if (exhRow) {
+      state.tab = 'leads';
+      state.leadFilters = { ...state.leadFilters, show: exhRow.getAttribute('data-exh-id'), view: 'all', search: '', segment: 'all', country: 'all', priority: 'all', emailClass: 'all' };
+      render(); return;
+    }
+
+    // Competitor row → detail drawer.
+    const compRow = e.target.closest('[data-comp-id]');
+    if (compRow) { openCompetitorDrawer(compRow.getAttribute('data-comp-id')); return; }
+
     const leadRow = e.target.closest('[data-lead-id]');
     if (leadRow) { openLeadDrawer(leadRow.getAttribute('data-lead-id')); }
   });
 
   // Filters (search inputs + selects)
   view.addEventListener('input', (e) => {
-    if (e.target.id === 'f-search') { state.filters.search = e.target.value; refreshRows(); }
+    if (e.target.id === 'f-search') { state.filters.search = e.target.value; refreshExhibitionsTable(); }
     else if (e.target.id === 'p-search') { state.productFilters.search = e.target.value; refreshCatalog(); }
     else if (e.target.id === 'l-search') { state.leadFilters.search = e.target.value; refreshLeadsTable(); }
     else if (e.target.id === 'o-search') { state.trackerFilters.search = e.target.value; refreshTrackerTable(); }
@@ -2332,9 +2465,7 @@ async function boot() {
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
     loadRelevance(state.exhibitions.map((d) => d.id));
     loadPipeline(state.leads.map((l) => l.id));
-    // Keep the full sets so the "only found" toggle can hide/restore seed rows without a reload.
-    state.master = { leads: state.leads, competitors: state.competitors, exhibitions: state.exhibitions };
-    applyOnlyFound();
+    loadStars(state.leads.map((l) => l.id));   // ⭐ my-leads shortlist (localStorage)
 
     // "Updated" reflects the freshest REAL refresh — the newest _meta.scraped_at across the data
     // files, falling back to meta.updated_at — so it can never show a stale hardcoded date.

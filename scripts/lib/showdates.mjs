@@ -8,6 +8,13 @@ const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const parseISO = (s) => (ISO_RE.test(String(s || '')) ? new Date(String(s) + 'T00:00:00Z') : null);
 const valid = (d) => d instanceof Date && !isNaN(d.getTime());
 
+// Normalize a candidate URL to a clean absolute http(s) link, or null. Never invents a link.
+export function cleanUrl(u) {
+  const s = String(u || '').trim();
+  if (!/^https?:\/\/[^\s]+\.[^\s]{2,}/i.test(s)) return null;
+  try { return new URL(s).toString().replace(/\/+$/, ''); } catch { return null; }
+}
+
 // Human display range in the "D–D Mon YYYY" family the dashboard parses.
 export function displayDates(startISO, endISO) {
   const s = parseISO(startISO); if (!valid(s)) return null;
