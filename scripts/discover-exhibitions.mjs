@@ -15,7 +15,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { firecrawlScrape, firecrawlSearch, scrapedoGet, apiKey as firecrawlKey, haveScrapedo } from './lib/firecrawl.mjs';
 import { askClaude, haveBedrock } from './lib/llm.mjs';
-import { normalizeEdition } from './lib/showdates.mjs';
+import { normalizeEdition, cleanUrl } from './lib/showdates.mjs';
 
 const p = (env, rel) => process.env[env] || fileURLToPath(new URL(rel, import.meta.url));
 const EXHIBITIONS_PATH = p('KGR_EXHIBITIONS_PATH', '../public/data/exhibitions.json');
@@ -74,7 +74,7 @@ async function main() {
       const text = await sourceText(source, debug);
       if (!text.trim()) { console.log(`[discover] no text from ${source.id}`); continue; }
       const res = await askClaude({
-        system: `You find trade shows/exhibitions relevant to Kusumgar, an Indian technical-textile manufacturer (fabrics: ${productSummary}) serving segments: ${SEGMENTS.join(', ')}. From directory text, return ONLY genuinely relevant, real shows. For EACH show also capture its NEXT edition on or after ${todayISO} and its host city — but ONLY when clearly stated in the text; never guess dates. Return STRICT JSON: {"shows":[{"name","country","segment","reason","city":string|null,"start":"YYYY-MM-DD"|null,"end":"YYYY-MM-DD"|null}]} — segment must be one of the listed segments; use null for any date or city not clearly stated.`,
+        system: `You find trade shows/exhibitions relevant to Kusumgar, an Indian technical-textile manufacturer (fabrics: ${productSummary}) serving segments: ${SEGMENTS.join(', ')}. From directory text, return ONLY genuinely relevant, real shows. For EACH show also capture (ONLY when clearly stated in the text; never guess): its NEXT edition on or after ${todayISO}, its host city, the official show website, and the registration/visitor-ticket page URL. Return STRICT JSON: {"shows":[{"name","country","segment","reason","city":string|null,"start":"YYYY-MM-DD"|null,"end":"YYYY-MM-DD"|null,"website":"https://…"|null,"registration":"https://…"|null}]} — segment must be one of the listed segments; use null for anything not clearly stated.`,
         user: `Directory: ${source.name} (${source.website})\nToday: ${todayISO}\n\nListing text:\n${text}\n\nReturn up to 12 relevant shows as {"shows":[...]}.`,
         json: true, maxTokens: 1400,
       });
@@ -90,6 +90,7 @@ async function main() {
         const show = {
           id: slug(s.name), segment: SEGMENTS.includes(s.segment) ? s.segment : 'Industrial',
           name: String(s.name).trim(), country: s.country || null, place: ed.place, dates: ed.dates, start: ed.start,
+          website: cleanUrl(s.website), registration: cleanUrl(s.registration),
           status: 'Not yet', source: 'discovered', discovered_at: new Date().toISOString(),
           relevance_reason: s.reason || `Found via ${source.name}`,
         };

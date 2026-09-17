@@ -16,7 +16,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { firecrawlSearch, firecrawlScrape, apiKey as firecrawlKey } from './lib/firecrawl.mjs';
 import { askClaude, haveBedrock } from './lib/llm.mjs';
-import { normalizeEdition } from './lib/showdates.mjs';
+import { normalizeEdition, cleanUrl } from './lib/showdates.mjs';
 
 const p = (env, rel) => process.env[env] || fileURLToPath(new URL(rel, import.meta.url));
 const EXHIBITIONS_PATH = p('KGR_EXHIBITIONS_PATH', '../public/data/exhibitions.json');
@@ -49,13 +49,15 @@ async function findEdition(show, todayISO, debug) {
   const text = await gatherText(show, debug);
   if (!text.trim()) return null;
   const res = await askClaude({
-    system: `You are given REAL web-search results about a trade show/exhibition. From ONLY this text, extract the single NEXT edition happening on or after ${todayISO} and its host city. Never guess or infer dates. Return STRICT JSON: {"start":"YYYY-MM-DD"|null,"end":"YYYY-MM-DD"|null,"city":string|null}. Use null for anything not clearly stated in the text.`,
+    system: `You are given REAL web-search results about a trade show/exhibition. From ONLY this text, extract the single NEXT edition happening on or after ${todayISO}, its host city, the OFFICIAL show website (homepage), and the show's REGISTRATION / visitor-ticket page URL. Never guess or infer — use only what is clearly present in the results. Return STRICT JSON: {"start":"YYYY-MM-DD"|null,"end":"YYYY-MM-DD"|null,"city":string|null,"website":"https://…"|null,"registration":"https://…"|null}. Use null for anything not clearly stated.`,
     user: `Show: ${show.name}\nCountry: ${show.country || 'unknown'}\nToday: ${todayISO}\n\nResults:\n${text}`,
-    json: true, maxTokens: 150,
+    json: true, maxTokens: 220,
   });
   if (!res) return null;
   const norm = normalizeEdition(res, todayISO, text);
-  return (norm.start || norm.place) ? norm : null;
+  norm.website = cleanUrl(res.website);
+  norm.registration = cleanUrl(res.registration);
+  return (norm.start || norm.place || norm.website || norm.registration) ? norm : null;
 }
 
 async function main() {
@@ -66,8 +68,8 @@ async function main() {
   if (!raw || !list.length) { console.log('[find-show-dates] no exhibitions; nothing to do.'); return; }
 
   const todayISO = new Date().toISOString().slice(0, 10);
-  // Target shows still missing a date OR a place.
-  const queue = list.filter((e) => e && (!e.start || !e.place))
+  // Target shows still missing a date, place, website OR registration link.
+  const queue = list.filter((e) => e && (!e.start || !e.place || !e.website || !e.registration))
     .sort((a, b) => String(a.name).localeCompare(String(b.name))).slice(0, MAX);
   console.log(`[find-show-dates] looking up details for ${queue.length} show(s)`);
 
@@ -85,7 +87,9 @@ async function main() {
         changed = true;
       }
       if (found.place && !show.place) { show.place = found.place; changed = true; }
-      if (changed) { filled++; console.log(`[find-show-dates] ${show.name} -> ${show.dates || '(no date)'}${show.place ? ` · ${show.place}` : ''}`); }
+      if (found.website && !show.website) { show.website = found.website; changed = true; }
+      if (found.registration && !show.registration) { show.registration = found.registration; changed = true; }
+      if (changed) { filled++; console.log(`[find-show-dates] ${show.name} -> ${show.dates || '(no date)'}${show.place ? ` · ${show.place}` : ''}${show.website ? ' · site' : ''}${show.registration ? ' · reg' : ''}`); }
     }
   } catch (e) { console.error(`[find-show-dates] pipeline error (continuing): ${e.message}`); }
 
