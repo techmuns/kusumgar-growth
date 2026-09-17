@@ -155,8 +155,10 @@ const state = {
   leadSort: { key: 'company', dir: 'asc' },
   stars: {},              // leadId -> true  (⭐ "my leads", localStorage)
   competitorsSub: 'landscape', // 'landscape' | 'list'
-  outreachSub: 'pipeline',     // 'pipeline' | 'tracker'
+  outreachSub: 'pipeline',     // 'pipeline' | 'tracker' | 'followups' (tracker + followups live under one "Tracker" view)
   trackerFilters: { search: '', stage: 'all' },
+  composeId: null,             // lead currently open in the Pipeline compose panel
+  pipeSearch: '',              // search box in the Pipeline "My leads" column
 };
 
 const PIPE_KEY = (id) => `kgr.outreach.${id}`;
@@ -1751,56 +1753,198 @@ function copyEmail(btn) {
   setTimeout(() => { btn.textContent = '📋 Copy'; }, 1500);
 }
 
-function renderPipeline() {
-  const inPipe = pipelinedLeads();
-  if (!inPipe.length) {
-    const step = (n, title, sub) => `<div class="rounded-xl bg-slate-50 p-3 text-left ring-1 ring-slate-100">
-        <div class="font-display text-base font-extrabold text-indigo-500">${n}</div>
-        <div class="mt-0.5 text-[13px] font-semibold text-slate-700">${title}</div>
-        <div class="text-[12px] leading-snug text-slate-500">${sub}</div>
-      </div>`;
-    return `<div class="fade-in rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-100">
-      <div class="mb-2 text-4xl">📮</div>
-      <div class="font-display text-lg font-bold text-slate-800">This is your outreach desk</div>
-      <p class="mx-auto mt-1 max-w-xl text-sm text-slate-500">Pick the leads you want to chase and work them here — from first contact to won. For each one the engine finds the right person and email and drafts a tailored Kusumgar intro, so you just review and send.</p>
-      <div class="mx-auto mt-5 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
-        ${step('1', 'Find the buyer', 'the right contact person + their email')}
-        ${step('2', 'Draft the email', 'a tailored intro, written for you')}
-        ${step('3', 'Track the stage', 'to&nbsp;contact → meeting → won')}
+/* ------------------------------------------------------------------ *
+ * Pipeline compose workspace — left = my ⭐ leads, right = compose panel.
+ * Reuses the drafted-email data (Nishad's voice) from outreach.json. Nothing
+ * is auto-sent: Copy / Open in Gmail / Mark-as-sent are the manual send bridge.
+ * ------------------------------------------------------------------ */
+
+// Compose links, built live from the current (edited) To / Subject / Body.
+const gmailComposeUrl = (to, su, body) =>
+  `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to || '')}&su=${encodeURIComponent(su || '')}&body=${encodeURIComponent(body || '')}`;
+const mailtoUrl = (to, su, body) =>
+  `mailto:${(to || '').trim()}?subject=${encodeURIComponent(su || '')}&body=${encodeURIComponent(body || '')}`;
+
+// Clipboard copy that works without permissions (hidden textarea + execCommand, clipboard API fallback).
+function copyText(text, btn) {
+  let done = false;
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    done = document.execCommand('copy'); ta.remove();
+  } catch { /* fall through */ }
+  if (!done) { try { if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {}); } catch { /* noop */ } }
+  if (btn) { const orig = btn.textContent; btn.textContent = 'Copied ✓'; setTimeout(() => { btn.textContent = orig; }, 1500); }
+}
+function copyComposeEmail(btn) {
+  const su = ($('#composeSubject') || {}).value || '';
+  const body = ($('#composeBody') || {}).value || '';
+  copyText(`Subject: ${su}\n\n${body}`, btn);
+}
+function openInGmail() {
+  const to = (($('#composeTo') || {}).value || '').trim();
+  const su = ($('#composeSubject') || {}).value || '';
+  const body = ($('#composeBody') || {}).value || '';
+  const url = gmailComposeUrl(to, su, body);
+  try { window.open(url, '_blank', 'noopener'); } catch { location.href = url; }
+}
+// Keep the plain-mailto fallback link in sync with the edited fields.
+function updateComposeMailto() {
+  const a = $('#composeMailto'); if (!a) return;
+  const to = (($('#composeTo') || {}).value || '').trim();
+  const su = ($('#composeSubject') || {}).value || '';
+  const body = ($('#composeBody') || {}).value || '';
+  a.setAttribute('href', mailtoUrl(to, su, body));
+}
+// "Mark as sent": capture a pasted email, move the stage to "Email sent" (which auto-sets a
+// follow-up date), then re-render so it shows in the Tracker + Follow-ups.
+function markComposeSent() {
+  const id = state.composeId; if (!id) return;
+  const to = (($('#composeTo') || {}).value || '').trim();
+  const cur = displayContact(id);
+  if (to && /.+@.+\..+/.test(to) && (!cur || cur.email !== to)) saveManualContact(id, to);
+  setPipeline(id, { stage: 'Email sent' });
+  render();
+  const p = $('#composePanel');
+  if (p && window.innerWidth < 1024) p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const starredLeads = () => state.leads.filter((l) => isStarred(l.id));
+function pipeMatch(l, q) {
+  const c = displayContact(l.id);
+  return `${l.company} ${l.segment || ''} ${l.country || ''} ${(c && c.name) || ''} ${(c && c.email) || ''}`.toLowerCase().includes(q);
+}
+function pipeLeadRow(l, selected) {
+  const c = displayContact(l.id);
+  const who = (c && c.name) ? escapeHtml(c.name) : '<span class="text-slate-400">→ find contact</span>';
+  const pl = state.pipeline[l.id] || {};
+  const col = STAGE_COLOR[pl.stage] || '#94a3b8';
+  const stage = pl.stage
+    ? `<span class="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:${col}1f;color:${darken(col, 0.35)}">${escapeHtml(pl.stage)}</span>` : '';
+  const badge = emailClassBadge(c || {}, false);
+  const selCls = selected ? 'bg-indigo-50 ring-2 ring-indigo-400' : 'bg-white ring-1 ring-slate-200 hover:bg-slate-50';
+  return `<button type="button" data-compose-id="${escapeHtml(l.id)}" aria-pressed="${selected}" class="block w-full rounded-xl ${selCls} px-3 py-2.5 text-left transition-colors">
+    <div class="flex items-center gap-2"><span class="min-w-0 flex-1 truncate text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</span>${stage}</div>
+    <div class="mt-0.5 flex items-center gap-2"><span class="min-w-0 flex-1 truncate text-[12px] text-slate-500">${who}</span>${badge}</div>
+  </button>`;
+}
+
+function composePanelHtml(id) {
+  const placeholder = `<div class="grid min-h-[320px] place-items-center rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-100">
+    <div><div class="text-4xl">✉️</div>
+      <div class="mt-2 font-display text-base font-bold text-slate-700">Pick a lead to draft an email</div>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-slate-500">Choose one of your ⭐ leads on the left — its email drafts here, ready to edit and send.</p>
+    </div></div>`;
+  if (!id) return placeholder;
+  const l = state.leads.find((x) => x.id === id);
+  if (!l) return placeholder;
+
+  const c = displayContact(id) || {};
+  const eDraft = resolvedEmail(id);              // engine draft (Nishad's voice) wins
+  const draft = eDraft || draftFromTemplate(l);  // else fill the same template client-side
+  const to = c.email || '';
+  const pl = state.pipeline[id] || {};
+  const alreadySent = !!pl.stage && STAGE_KEYS.indexOf(pl.stage) >= STAGE_KEYS.indexOf('Email sent');
+  const stageChip = pl.stage ? coloredChip(pl.stage, STAGE_COLOR[pl.stage] || '#64748b')
+    : '<span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-400">Not started</span>';
+
+  const profileLink = c.linkedin_url
+    ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="font-semibold text-[#0a66c2] hover:underline">in ↗ LinkedIn profile</a>` : '';
+  const findLink = `<a href="${escapeHtml(linkedinSearchUrl(l))}" target="_blank" rel="noopener" class="font-medium text-indigo-600 hover:underline">🔗 Find contact on LinkedIn ↗</a>`;
+
+  return `<div class="space-y-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
+    <div class="rounded-xl bg-indigo-50 px-3 py-2 text-[12px] font-medium text-indigo-700 ring-1 ring-indigo-100">🔌 Connect Gmail for one-click send + automatic in-thread follow-ups — coming next.</div>
+
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h3 class="font-display text-base font-extrabold text-slate-900">${escapeHtml(l.company)}</h3>
+        <p class="truncate text-[12px] text-slate-500">${escapeHtml(dash(l.segment))} · ${l.country ? (FLAGS[l.country] || '') + ' ' : ''}${escapeHtml(dash(l.country))}</p>
       </div>
-      <button type="button" data-goto="leads" class="mt-6 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads from the Leads tab</button>
-      <p class="mx-auto mt-3 max-w-xl text-[12px] text-slate-400">Tip: open any lead and click “➕ Add to Outreach”, then use “🔗 Find contact on LinkedIn” and “Save &amp; draft” in the lead’s panel.</p>
+      <div class="shrink-0">${stageChip}</div>
+    </div>
+
+    <div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+      <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Contact</div>
+      <div class="mt-1 text-sm font-bold text-slate-800">${escapeHtml(c.name || '—')}</div>
+      ${c.title ? `<div class="text-[12px] text-slate-500">${escapeHtml(c.title)}</div>` : ''}
+      <div class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px]">${profileLink}${findLink}</div>
+      <label for="composeTo" class="mt-3 block text-[11px] font-semibold uppercase tracking-wide text-slate-400">To</label>
+      <div class="mt-1 flex flex-wrap items-center gap-2">
+        <input id="composeTo" type="email" value="${escapeHtml(to)}" placeholder="paste the buyer's email…" class="min-w-0 flex-1 rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-800 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+        ${emailClassBadge(c, true)}
+      </div>
+      ${to ? '' : '<div class="mt-1 text-[11px] text-slate-400">No email found yet — find the buyer on LinkedIn, then paste their address above.</div>'}
+    </div>
+
+    <div>
+      <label for="composeSubject" class="block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Subject</label>
+      <input id="composeSubject" value="${escapeHtml(draft.subject)}" class="mt-1 w-full rounded-lg border-0 bg-white px-3 py-2 text-sm font-semibold text-slate-800 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+    </div>
+    <div>
+      <label for="composeBody" class="block text-[11px] font-semibold uppercase tracking-wide text-slate-400">Message</label>
+      <textarea id="composeBody" rows="14" class="mt-1 w-full resize-y rounded-lg border-0 bg-white px-3 py-3 text-[13px] leading-relaxed text-slate-700 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">${escapeHtml(draft.body)}</textarea>
+      <div class="mt-1 text-[11px] text-slate-400">${eDraft ? "✍️ Pre-written in Nishad's voice" : '✍️ Draft'} — edit anything before you send. Nothing is sent automatically.</div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+      <button type="button" data-compose-gmail class="rounded-xl bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">✉️ Open in Gmail</button>
+      <button type="button" data-compose-copy class="rounded-xl bg-slate-100 px-3.5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">📋 Copy email</button>
+      <button type="button" data-compose-sent class="rounded-xl bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">✅ Mark as sent</button>
+      <a id="composeMailto" data-compose-mailto href="${escapeHtml(mailtoUrl(to, draft.subject, draft.body))}" class="text-[12px] text-slate-500 hover:text-slate-700 hover:underline">or use your mail app</a>
+    </div>
+    ${alreadySent ? `<div class="rounded-xl bg-emerald-50 px-3 py-2 text-[12px] font-semibold text-emerald-700 ring-1 ring-emerald-200">✅ Marked as sent — now tracked in the Tracker${pl.next ? ` · follow-up ${escapeHtml(fmtDate(pl.next))} (${escapeHtml(dueLabel(pl.next))})` : ''}.</div>` : ''}
+  </div>`;
+}
+
+// Re-render just the "My leads" list (keeps the search box + its focus intact).
+function refreshPipeList() {
+  const w = $('#pipeList'); if (!w) return;
+  const q = state.pipeSearch.trim().toLowerCase();
+  const rows = starredLeads().filter((l) => !q || pipeMatch(l, q));
+  w.innerHTML = rows.length
+    ? rows.map((l) => pipeLeadRow(l, l.id === state.composeId)).join('')
+    : `<div class="px-3 py-8 text-center text-[13px] text-slate-400">No leads match your search.</div>`;
+}
+
+function renderPipeline() {
+  const stars = starredLeads();
+  // Keep composeId valid; auto-open the first ⭐ lead so the workspace isn't empty on arrival.
+  let cid = state.composeId;
+  if (cid && !stars.some((l) => l.id === cid)) cid = null;
+  if (!cid && stars.length) cid = stars[0].id;
+  state.composeId = cid;
+
+  if (!stars.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-100">
+      <div class="mb-2 text-4xl">⭐</div>
+      <div class="font-display text-lg font-bold text-slate-800">No leads picked yet</div>
+      <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">Pick leads in the <span class="font-semibold">Exhibitors</span> tab (⭐ Move to Lead) — they show up here to email.</p>
+      <button type="button" data-goto="leads" class="mt-5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">🏢 Go to Exhibitors</button>
     </div>`;
   }
-  const total = inPipe.length;
-  const stageOf = (l) => state.pipeline[l.id].stage;
-  const won = inPipe.filter((l) => stageOf(l) === 'Won').length;
-  const meetings = inPipe.filter((l) => stageOf(l) === 'Meeting set').length;
 
-  const chips = `<div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-    ${statChip('🔀', total, 'In pipeline', '#6366f1')}
-    ${statChip('🗓️', meetings, 'Meetings set', '#8b5cf6')}
-    ${statChip('🏆', won, 'Won', '#10b981')}
-  </div>`;
+  const q = state.pipeSearch.trim().toLowerCase();
+  const rows = stars.filter((l) => !q || pipeMatch(l, q));
+  const listHtml = rows.length
+    ? rows.map((l) => pipeLeadRow(l, l.id === cid)).join('')
+    : `<div class="px-3 py-8 text-center text-[13px] text-slate-400">No leads match your search.</div>`;
 
-  const stageItems = OUTREACH_STAGES.map((s) => ({ label: s.key, value: inPipe.filter((l) => stageOf(l) === s.key).length, color: s.color, key: 'stg:' + s.key }));
-  const funnel = buildBars(stageItems, { unit: 'lead' });
-  const funnelNote = `<div class="mt-3 text-[11px] font-medium text-slate-400">Leads at each stage of Nishad's outreach flow.</div>`;
+  const left = `<aside class="rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-100">
+    <div class="mb-2 flex items-baseline justify-between gap-2 px-1">
+      <h3 class="font-display text-sm font-bold text-slate-800">⭐ My leads</h3>
+      <span class="tnum text-[12px] font-semibold text-slate-400">${stars.length}</span>
+    </div>
+    <div class="relative mb-2">
+      <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+      <input id="pipe-search" type="search" value="${escapeHtml(state.pipeSearch)}" placeholder="Search my leads…" class="w-full rounded-xl border-0 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+    </div>
+    <div id="pipeList" class="max-h-[70vh] space-y-2 overflow-y-auto pr-0.5">${listHtml}</div>
+  </aside>`;
 
-  const cur = inPipe.filter((l) => (state.pipeline[l.id].dealType || 'current') === 'current').length;
-  const dealItems = [
-    { label: 'Current', value: cur, color: '#6366f1', key: 'dl:current' },
-    { label: 'Potential', value: total - cur, color: '#94a3b8', key: 'dl:potential' },
-  ].filter((i) => i.value > 0);
-  const dealBar = buildStackedBar(dealItems, { unit: 'lead' });
-  const dealLegend = `<div class="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">` + dealItems.map((i) =>
-    `<div class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
+  const right = `<section id="composePanel">${composePanelHtml(cid)}</section>`;
 
-  const grid = `<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
-    <div data-chart>${chartCard('🔀', 'Pipeline funnel', `${total} in play`, funnel + funnelNote)}</div>
-    <div data-chart>${chartCard('⚖️', 'Current vs potential', 'business type', dealBar + dealLegend)}</div>
-  </div>`;
-  return `<div class="fade-in">${chips}${grid}</div>`;
+  return `<div class="fade-in grid grid-cols-1 gap-4 lg:grid-cols-[minmax(230px,320px)_1fr] lg:items-start">${left}${right}</div>`;
 }
 
 function trackerRows() {
@@ -1926,16 +2070,29 @@ function renderFollowups() {
 }
 
 function renderOutreach() {
-  const subBtn = (id, label) => {
-    const active = state.outreachSub === id;
-    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
-    return `<button type="button" data-osub="${id}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
-  };
   const dueCount = followupLeads().filter((l) => daysUntil(state.pipeline[l.id].next) <= 0).length;
   const fuBadge = dueCount ? ` <span class="ml-0.5 rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">${dueCount}</span>` : '';
-  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('pipeline', '🔀 Pipeline')}${subBtn('tracker', '📋 Tracker')}${subBtn('followups', `⏰ Follow-ups${fuBadge}`)}</div>`;
-  const body = state.outreachSub === 'pipeline' ? renderPipeline() : state.outreachSub === 'followups' ? renderFollowups() : renderTracker();
+  const isTracker = state.outreachSub === 'tracker' || state.outreachSub === 'followups';
+  const topBtn = (active, osub, label) => {
+    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
+    return `<button type="button" data-osub="${osub}" class="rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors ${cls}">${label}</button>`;
+  };
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${topBtn(state.outreachSub === 'pipeline', 'pipeline', '✉️ Pipeline')}${topBtn(isTracker, 'tracker', `📊 Tracker${fuBadge}`)}</div>`;
+  const body = state.outreachSub === 'pipeline' ? renderPipeline() : renderTrackerHub();
   return `<div class="mb-4">${toggle}</div>${body}`;
+}
+
+// Tracker hub: the existing stage board + follow-ups, kept exactly as-is, under one Tracker view.
+function renderTrackerHub() {
+  const dueCount = followupLeads().filter((l) => daysUntil(state.pipeline[l.id].next) <= 0).length;
+  const fuBadge = dueCount ? ` <span class="ml-1 rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">${dueCount}</span>` : '';
+  const onFollow = state.outreachSub === 'followups';
+  const innerBtn = (active, osub, label) => {
+    const cls = active ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700';
+    return `<button type="button" data-osub="${osub}" class="rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors ${cls}">${label}</button>`;
+  };
+  const inner = `<div class="mb-3 inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${innerBtn(!onFollow, 'tracker', '📋 Stage board')}${innerBtn(onFollow, 'followups', `⏰ Follow-ups${fuBadge}`)}</div>`;
+  return `${inner}${onFollow ? renderFollowups() : renderTracker()}`;
 }
 
 /* ------------------------------------------------------------------ *
@@ -2189,7 +2346,6 @@ function render() {
   else if (state.tab === 'products' && state.productsSub === 'coverage') revealCharts();
   else if (state.tab === 'leads' && state.leadsSub === 'overview') revealCharts();
   else if (state.tab === 'competitors' && state.competitorsSub === 'landscape') revealCharts();
-  else if (state.tab === 'outreach' && state.outreachSub === 'pipeline') revealCharts();
 }
 
 // Kick chart entrance animations after the DOM paints (idempotent, so a
@@ -2256,6 +2412,21 @@ function wireEvents() {
 
     const osub = e.target.closest('[data-osub]');
     if (osub) { state.outreachSub = osub.getAttribute('data-osub'); render(); return; }
+
+    // Pipeline compose: pick a lead (left) → draft opens (right); action buttons read the live fields.
+    const composeRow = e.target.closest('[data-compose-id]');
+    if (composeRow) {
+      state.composeId = composeRow.getAttribute('data-compose-id');
+      render();
+      if (window.innerWidth < 1024) { const p = $('#composePanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      return;
+    }
+    const cGmail = e.target.closest('[data-compose-gmail]');
+    if (cGmail) { openInGmail(); return; }
+    const cCopy = e.target.closest('[data-compose-copy]');
+    if (cCopy) { copyComposeEmail(cCopy); return; }
+    const cSent = e.target.closest('[data-compose-sent]');
+    if (cSent) { markComposeSent(); return; }
 
     const goFollow = e.target.closest('[data-gofollow]');
     if (goFollow) { state.tab = 'outreach'; state.outreachSub = 'followups'; render(); return; }
@@ -2339,6 +2510,8 @@ function wireEvents() {
     else if (e.target.id === 'p-search') { state.productFilters.search = e.target.value; refreshCatalog(); }
     else if (e.target.id === 'l-search') { state.leadFilters.search = e.target.value; refreshLeadsTable(); }
     else if (e.target.id === 'o-search') { state.trackerFilters.search = e.target.value; refreshTrackerTable(); }
+    else if (e.target.id === 'pipe-search') { state.pipeSearch = e.target.value; refreshPipeList(); }
+    else if (e.target.id === 'composeTo' || e.target.id === 'composeSubject' || e.target.id === 'composeBody') { updateComposeMailto(); }
   });
   view.addEventListener('change', (e) => {
     const exMap = { 'f-seg': 'segment', 'f-country': 'country', 'f-status': 'status' };
