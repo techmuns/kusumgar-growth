@@ -1020,6 +1020,9 @@ function renderLeadsOverview() {
   const segCounts = countBy(leads, (d) => d.segment);
   const high = leads.filter((d) => d.priority === 'High').length;
   const withSite = leads.filter((d) => d.website).length;
+  // Honest email reality (who you can actually reach), computed live from the classifier.
+  const ec = { good: 0, company: 0, need: 0 };
+  leads.forEach((l) => { ec[leadEmailClass(l.id)]++; });
 
   const chips = `
     <div class="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1027,6 +1030,17 @@ function renderLeadsOverview() {
       ${statChip('🧩', segCounts.size, 'Segments', '#0ea5e9')}
       ${statChip('⭐', high, 'High priority', '#10b981')}
       ${statChip('🌐', withSite, 'With website', '#f59e0b')}
+    </div>`;
+
+  // Headline: the email split in plain terms — never a vague single "verified emails" number.
+  const emailLine = `
+    <div class="mb-4 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-100">
+      <div class="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">📧 Emails — who you can actually reach</div>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px]">
+        <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:#10b981"></span><span class="tnum font-bold text-slate-900">${ec.good}</span><span class="text-slate-600">real people (verified / personal)</span></span>
+        <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:#f59e0b"></span><span class="tnum font-bold text-slate-900">${ec.company}</span><span class="text-slate-600">company inboxes (info@ / sales@)</span></span>
+        <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:#94a3b8"></span><span class="tnum font-bold text-slate-900">${ec.need}</span><span class="text-slate-600">still need a contact</span></span>
+      </div>
     </div>`;
 
   // Live source split (grows once the classify engine appends exhibition leads).
@@ -1052,8 +1066,6 @@ function renderLeadsOverview() {
     `<div class="hovable flex items-center gap-1.5" data-key="${i.key}" data-tip-title="${escapeHtml(i.label)} priority" data-tip-color="${i.color}" data-tip-sub="${plural(i.value, 'lead')}"><span class="h-2.5 w-2.5 rounded-full" style="background:${i.color}"></span><span class="text-[13px] font-medium text-slate-600">${i.label}</span><span class="tnum text-[13px] font-bold text-slate-900">${i.value}</span></div>`).join('') + `</div>`;
 
   // Source-backed outreach progress (replaces the old best-fit-fabric estimate chart).
-  const ec = { good: 0, company: 0, need: 0 };
-  leads.forEach((l) => { ec[leadEmailClass(l.id)]++; });
   const statusItems = [
     { label: 'Website found', value: withSite, key: 'st:site', color: '#6366f1' },
     { label: 'Personal / verified email', value: ec.good, key: 'st:good', color: '#10b981' },
@@ -1073,7 +1085,7 @@ function renderLeadsOverview() {
       </div>
     </div>`;
 
-  return chips + sourceLine + grid;
+  return chips + emailLine + sourceLine + grid;
 }
 
 function filteredLeads() {
@@ -1184,7 +1196,7 @@ function renderLeadsList() {
         ${classChip('need', '📮 Need contact', '#64748b', ec.need)}
         ${f.emailClass !== 'all' ? `<button type="button" data-lclass="${f.emailClass}" class="text-[12px] font-semibold text-indigo-600 hover:underline">clear filter</button>` : ''}
       </div>
-      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · <span class="font-semibold text-emerald-600">${ec.good}</span> personal/verified · <span class="font-semibold text-amber-600">${ec.company}</span> company-inbox · <span class="font-semibold text-slate-500">${ec.need}</span> need contact</div>
+      <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="lCount" class="tnum font-semibold text-slate-700">${filteredLeads().length}</span> shown · <span class="font-semibold text-emerald-600">${ec.good}</span> real people · <span class="font-semibold text-amber-600">${ec.company}</span> company inboxes · <span class="font-semibold text-slate-500">${ec.need}</span> need contact</div>
       <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="leadsTableWrap">${leadsTableHtml()}</div></div>
     </div>`;
 }
