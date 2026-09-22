@@ -52,8 +52,14 @@ const LEAD_SEGMENT_COLORS = {
   'Protective & Industrial Covers': '#f97316', // orange (Industry-Research segment label)
   'Automotive Seating': '#8b5cf6',           // violet
 };
+// New-development product application segments (Carbon Fibre, TPU-coated) — Title Case to match the engine.
+const NEWPRODUCT_SEG_COLORS = {
+  'Aerospace Composites': '#6366f1', 'Automotive Lightweighting': '#0ea5e9', 'Wind Energy Blades': '#10b981',
+  'Sporting Goods': '#f59e0b', 'Pressure Vessels': '#8b5cf6',
+  'Inflatables': '#ec4899', 'Medical': '#ef4444', 'Protective Apparel': '#14b8a6', 'Tarpaulins': '#f97316', 'Sports Equipment': '#22c55e',
+};
 // Resolve a color for any segment string across all maps.
-const anyColor = (s) => LEAD_SEGMENT_COLORS[s] || SEGMENT_COLORS[s] || '#64748b';
+const anyColor = (s) => LEAD_SEGMENT_COLORS[s] || NEWPRODUCT_SEG_COLORS[s] || SEGMENT_COLORS[s] || '#64748b';
 const leadSegColor = (s) => LEAD_SEGMENT_COLORS[s] || anyColor(s);
 
 const PRIORITY_COLORS = { High: '#10b981', Medium: '#94a3b8', Low: '#94a3b8' };
@@ -208,6 +214,8 @@ const state = {
   prodModalSearch: '',         // search box in the Products catalog modal
   research: [],                // curated target companies (research_targets.json)
   researchSub: 'market',       // 'market' | 'targets'  (Market shown first — the industry-mapping step)
+  researchProduct: '600d-pu-polyester', // which product's target map is showing
+  productsModalKind: 'existing', // Products modal tab: 'existing' | 'new'
   researchFilters: { segment: 'all', search: '', country: 'all' },
   researchSent: new Set(),     // target ids sent to the Growth Engine (localStorage)
   market: null,                // UN Comtrade market intel (market_intel.json)
@@ -2027,30 +2035,71 @@ function productMiniCard(p) {
     ${segs ? `<div class="mt-2 flex flex-wrap gap-1">${segs}</div>` : ''}
   </div>`;
 }
+const existingProducts = () => state.products.filter((p) => p.kind !== 'new');
+const newProductsList = () => state.products.filter((p) => p.kind === 'new');
+
 function productsFiltered() {
   const q = state.prodModalSearch.trim().toLowerCase();
-  if (!q) return state.products;
-  return state.products.filter((p) => `${p.name} ${p.family || ''} ${(p.segments || []).join(' ')} ${(p.applications || []).join(' ')} ${(p.properties || []).join(' ')}`.toLowerCase().includes(q));
+  const base = existingProducts();
+  if (!q) return base;
+  return base.filter((p) => `${p.name} ${p.family || ''} ${(p.segments || []).join(' ')} ${(p.applications || []).join(' ')} ${(p.properties || []).join(' ')}`.toLowerCase().includes(q));
+}
+function newProductsFiltered() {
+  const q = state.prodModalSearch.trim().toLowerCase();
+  const base = newProductsList();
+  if (!q) return base;
+  return base.filter((p) => `${p.name} ${p.brief || ''} ${(p.applications || []).join(' ')}`.toLowerCase().includes(q));
+}
+const PRODUCT_STATUS_BADGE = { exploring: ['bg-amber-50 text-amber-600', '🔎 Exploring'], developing: ['bg-sky-50 text-sky-600', '🧪 Developing'], live: ['bg-emerald-50 text-emerald-600', '✅ Live'] };
+function newProductCard(p) {
+  const cnt = state.research.filter((t) => t.product_id === p.id).length;
+  const [cls, label] = PRODUCT_STATUS_BADGE[p.status] || ['bg-slate-100 text-slate-500', p.status || 'New'];
+  const apps = (p.applications || []).map((a) => `<span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">${escapeHtml(a)}</span>`).join(' ');
+  return `<div class="rounded-xl bg-white p-3 ring-1 ring-slate-200">
+    <div class="flex items-start justify-between gap-2">
+      <div class="text-sm font-bold text-slate-800">${escapeHtml(p.name)}</div>
+      <span class="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${cls}">${escapeHtml(label)}</span>
+    </div>
+    ${p.brief ? `<p class="mt-1 text-[12px] leading-snug text-slate-500">${escapeHtml(p.brief)}</p>` : ''}
+    ${apps ? `<div class="mt-2 flex flex-wrap gap-1">${apps}</div>` : ''}
+    <div class="mt-2 text-[11px] text-slate-400"><span class="font-semibold text-emerald-600">${cnt}</span> target compan${cnt === 1 ? 'y' : 'ies'} mapped so far · see 🔬 Industry Research</div>
+  </div>`;
 }
 function productsModalListHtml() {
+  if (state.productsModalKind === 'new') {
+    const list = newProductsFiltered();
+    return list.length
+      ? `<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">${list.map(newProductCard).join('')}</div>`
+      : '<div class="py-8 text-center text-[13px] text-slate-400">No new-development products match your search.</div>';
+  }
   const list = productsFiltered();
   return list.length
     ? `<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">${list.map(productMiniCard).join('')}</div>`
     : '<div class="py-8 text-center text-[13px] text-slate-400">No products match your search.</div>';
 }
+function productsModalBodyHtml() {
+  const kind = state.productsModalKind === 'new' ? 'new' : 'existing';
+  const btn = (key, label, n) => {
+    const on = kind === key;
+    return `<button type="button" data-prodkind="${key}" aria-pressed="${on}" class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${on ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">${label} <span class="tnum">${n}</span></button>`;
+  };
+  const toggle = `<div class="mb-3 inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${btn('existing', 'Existing', existingProducts().length)}${btn('new', 'New developments', newProductsList().length)}</div>`;
+  return `${toggle}<div id="prodModalList">${productsModalListHtml()}</div>`;
+}
+function refreshProductsModal() { const b = $('#prodModalBody'); if (b) b.innerHTML = productsModalBodyHtml(); }
 function openProductsModal() {
   openModalHtml(`
     <div data-modal-backdrop class="absolute inset-0 bg-slate-900/40"></div>
     <div class="modal-card absolute left-1/2 top-1/2 flex max-h-[88vh] w-[calc(100%-2rem)] max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
       <div class="flex items-center justify-between gap-3 border-b border-slate-100 p-4">
-        <div><h3 class="font-display text-base font-extrabold text-slate-900">🧵 Kusumgar Products</h3><p class="text-[12px] text-slate-500">${state.products.length} fabrics in the catalog</p></div>
+        <div><h3 class="font-display text-base font-extrabold text-slate-900">🧵 Kusumgar Products</h3><p class="text-[12px] text-slate-500">${existingProducts().length} fabrics in the catalog · ${newProductsList().length} new in development</p></div>
         <button type="button" data-modal-close aria-label="Close" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕</button>
       </div>
       <div class="border-b border-slate-100 p-3">
         <div class="relative"><span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
           <input id="prod-modal-search" type="search" value="${escapeHtml(state.prodModalSearch)}" placeholder="Search products…" class="w-full rounded-xl border-0 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" /></div>
       </div>
-      <div id="prodModalList" class="flex-1 overflow-y-auto p-3">${productsModalListHtml()}</div>
+      <div id="prodModalBody" class="flex-1 overflow-y-auto p-3">${productsModalBodyHtml()}</div>
     </div>`);
 }
 
@@ -2480,10 +2529,18 @@ function researchBadge(t) {
   return '<span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-400">⏳ Not checked yet</span>';
 }
 
+// Targets for a given product (missing product_id = the original 600D PU list).
+const researchProductTargets = (pid) => state.research.filter((t) => (t.product_id || '600d-pu-polyester') === pid);
+// The product selector's options: 600D PU (default/existing) + each kind:"new" product.
+function researchProductList() {
+  const base = [{ id: '600d-pu-polyester', name: '600D PU Polyester', kind: 'existing' }];
+  const news = (state.products || []).filter((p) => p.kind === 'new').map((p) => ({ id: p.id, name: p.name, kind: 'new' }));
+  return base.concat(news);
+}
 function researchFiltered() {
   const f = state.researchFilters;
   const q = f.search.trim().toLowerCase();
-  return state.research.filter((t) => {
+  return researchProductTargets(state.researchProduct).filter((t) => {
     if (f.segment !== 'all' && t.segment !== f.segment) return false;
     if (f.country !== 'all' && (t.country || '') !== f.country) return false;
     if (q && !`${t.company} ${t.segment} ${t.country || ''} ${t.application || ''}`.toLowerCase().includes(q)) return false;
@@ -2531,18 +2588,41 @@ function refreshResearchList() {
 
 function renderResearch() {
   const sub = state.researchSub === 'targets' ? 'targets' : 'market';
+  const isExisting = state.researchProduct === '600d-pu-polyester';
   const subBtn = (key, label) => {
     const on = sub === key;
     return `<button type="button" data-researchsub="${key}" aria-pressed="${on}" class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${on ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">${label}</button>`;
   };
   const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('market', '📈 Market')}${subBtn('targets', '🎯 Targets')}</div>`;
+  const prodChip = (p) => {
+    const on = state.researchProduct === p.id;
+    const n = researchProductTargets(p.id).length;
+    return `<button type="button" data-rproduct="${escapeHtml(p.id)}" aria-pressed="${on}" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-semibold shadow-sm ring-1 transition-colors ${on ? 'bg-slate-900 text-white ring-slate-900' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}">${p.kind === 'new' ? '🧪 ' : ''}${escapeHtml(p.name)} <span class="tnum ${on ? 'text-white/70' : 'text-slate-400'}">${n}</span></button>`;
+  };
+  const selector = `<div class="mb-3 flex flex-wrap items-center gap-2">
+    <span class="text-[12px] font-semibold text-slate-400">Product:</span>
+    ${researchProductList().map(prodChip).join('')}
+  </div>`;
+  const body = sub === 'market' ? (isExisting ? renderMarketView() : marketPlaceholder()) : renderResearchTargets();
   return `<div class="fade-in">
     <div class="mb-3">
       <h2 class="font-display text-lg font-extrabold text-slate-900">🔬 Industry Research</h2>
-      <p class="mt-0.5 text-sm text-slate-500">First map the market with real UN trade data, then work your target companies. Nothing is invented.</p>
+      <p class="mt-0.5 text-sm text-slate-500">Pick a product, then map its market and its real target companies. Nothing is invented.</p>
     </div>
+    ${selector}
     <div class="mb-4">${toggle}</div>
-    ${sub === 'market' ? renderMarketView() : renderResearchTargets()}
+    ${body}
+  </div>`;
+}
+
+// Honest placeholder for a NEW product's Market view — no faked numbers.
+function marketPlaceholder() {
+  const p = (state.products || []).find((x) => x.id === state.researchProduct);
+  const name = p ? p.name : 'this product';
+  return `<div class="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-100">
+    <div class="text-2xl">📈</div>
+    <h3 class="mt-2 font-display text-base font-extrabold text-slate-900">Live market data (UN Comtrade) for ${escapeHtml(name)} is coming next</h3>
+    <p class="mx-auto mt-1 max-w-md text-[13px] text-slate-500">Per-product market sizing needs an HS-code mapping for this line — a later brick. We will never show a made-up market number. For now, open <span class="font-semibold text-indigo-600">🎯 Targets</span> for the real companies we have mapped.</p>
   </div>`;
 }
 
@@ -2666,23 +2746,31 @@ function renderMonthlyPanel(mon) {
 }
 
 function renderResearchTargets() {
-  if (!state.research.length) {
-    return '<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No research targets loaded.</div>';
+  const rows = researchProductTargets(state.researchProduct);
+  const prod = researchProductList().find((p) => p.id === state.researchProduct);
+  const prodName = prod ? prod.name : 'this product';
+  if (!rows.length) {
+    return `<div class="rounded-2xl bg-white p-8 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-100">
+      <div class="text-2xl">🛰️</div>
+      <p class="mt-2">No companies mapped yet for <span class="font-semibold text-slate-700">${escapeHtml(prodName)}</span>.</p>
+      <p class="mt-1 text-[12px] text-slate-400">The weekly engine searches the web for makers of this product and verifies each against its own website. Check back after the next run.</p>
+    </div>`;
   }
   const f = state.researchFilters;
-  const total = state.research.length;
-  const verified = state.research.filter((t) => t.verified === true && t.product_confirmed === true).length;
-  const bySeg = {}; state.research.forEach((t) => { bySeg[t.segment] = (bySeg[t.segment] || 0) + 1; });
-  const countries = [...new Set(state.research.map((t) => t.country || 'Unknown'))].sort();
+  const total = rows.length;
+  const verified = rows.filter((t) => t.verified === true && t.product_confirmed === true).length;
+  const bySeg = {}; rows.forEach((t) => { bySeg[t.segment] = (bySeg[t.segment] || 0) + 1; });
+  const countries = [...new Set(rows.map((t) => t.country || 'Unknown'))].sort();
+  const segOrder = state.researchProduct === '600d-pu-polyester' ? RESEARCH_SEGMENTS : Object.keys(bySeg).sort();
 
   const chip = (key, label, n) => {
     const on = f.segment === key;
     return `<button type="button" data-rsub="${escapeHtml(key)}" aria-pressed="${on}" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold shadow-sm ring-1 transition-colors ${on ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}">${label} <span class="tnum ${on ? 'text-white/80' : 'text-slate-400'}">${n}</span></button>`;
   };
-  const chips = [chip('all', 'All', total)].concat(RESEARCH_SEGMENTS.filter((s) => bySeg[s]).map((s) => chip(s, segLabel(s), bySeg[s]))).join('');
+  const chips = [chip('all', 'All', total)].concat(segOrder.filter((s) => bySeg[s]).map((s) => chip(s, segLabel(s), bySeg[s]))).join('');
 
   return `<div>
-    <p class="mb-3 text-[12px] text-slate-400">Your real target-company universe — each company gets verified against its own website. <span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified against their site.</p>
+    <p class="mb-3 text-[12px] text-slate-400">Real companies for <span class="font-semibold text-slate-600">${escapeHtml(prodName)}</span>, each verified against its own website. <span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified against their site.</p>
     <div class="mb-3 flex flex-wrap items-center gap-2">${chips}</div>
     <div class="mb-3 flex flex-wrap items-center gap-2">
       <div class="relative min-w-[180px] flex-1">
@@ -3098,6 +3186,8 @@ function wireEvents() {
     if (researchSub) { state.researchSub = researchSub.getAttribute('data-researchsub'); render(); return; }
     const mktCmd = e.target.closest('[data-mktcmd]');
     if (mktCmd) { state.marketCommodity = mktCmd.getAttribute('data-mktcmd'); render(); return; }
+    const rprod = e.target.closest('[data-rproduct]');
+    if (rprod) { state.researchProduct = rprod.getAttribute('data-rproduct'); state.researchFilters.segment = 'all'; render(); return; }
 
     // Industry Research: segment chip + "Send to Growth Engine".
     const rsub = e.target.closest('[data-rsub]');
@@ -3268,6 +3358,9 @@ function wireEvents() {
     // Export picker → build the workbook for that scope.
     const exp = e.target.closest('[data-export-scope]');
     if (exp) { exportExcel(exp.getAttribute('data-export-scope')); closeModal(); return; }
+    // Products modal: Existing / New developments toggle.
+    const prodKind = e.target.closest('[data-prodkind]');
+    if (prodKind) { state.productsModalKind = prodKind.getAttribute('data-prodkind'); refreshProductsModal(); return; }
     // Exhibition modal: ☆ add-to-lead (refresh modal in place) / "see all exhibitors".
     const star = e.target.closest('[data-star]');
     if (star) { toggleStar(star.getAttribute('data-star')); const card = modal.querySelector('[data-exh-modal]'); if (card) openExhibitionModal(card.getAttribute('data-exh-modal')); return; }
