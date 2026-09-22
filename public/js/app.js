@@ -517,6 +517,31 @@ function buildValueLegend(items) {
     </li>`).join('') + `</ul>`;
 }
 
+// Month helpers for the recent-monthly layer. period is 'YYYYMM'.
+function monthLabel(p) { const s = String(p); const m = +s.slice(4, 6); return `${MONTHS[m] || '?'} ${s.slice(0, 4)}`; }
+function monthShort(p) { const s = String(p); const m = +s.slice(4, 6); return m === 1 ? `Jan '${s.slice(2, 4)}` : (MONTHS[m] || '?'); }
+
+// Recent-monthly dual-line trend (imports vs exports). Hand-built SVG, wipe-reveal, hover per point.
+function buildMonthlyTrend(series) {
+  if (!series || series.length < 2) return '';
+  const W = 520, H = 160, PADL = 8, PADR = 8, PADT = 12, PADB = 22;
+  const n = series.length;
+  const xs = (i) => PADL + (i * (W - PADL - PADR)) / (n - 1);
+  const maxV = Math.max(...series.flatMap((s) => [s.import_value, s.export_value]), 1);
+  const yFor = (v) => PADT + (1 - v / maxV) * (H - PADT - PADB);
+  const line = (key, color, name) => {
+    const pts = series.map((s, i) => `${xs(i).toFixed(1)},${yFor(s[key]).toFixed(1)}`).join(' ');
+    const dots = series.map((s, i) => `<circle class="hovable" data-key="${key}${s.period}" data-tip-title="${monthLabel(s.period)}" data-tip-color="${color}" data-tip-sub="${name}: ${fmtUSD(s[key])}" cx="${xs(i).toFixed(1)}" cy="${yFor(s[key]).toFixed(1)}" r="3.2" fill="${color}"></circle>`).join('');
+    return `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>${dots}`;
+  };
+  const xlabels = series.map((s, i) => (i % 2 === 0 || i === n - 1) ? `<text x="${xs(i).toFixed(1)}" y="${H - 6}" text-anchor="middle" style="font-size:9.5px;fill:#94a3b8;">${monthShort(s.period)}</text>` : '').join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Recent monthly world trade">
+    <defs><clipPath id="mtl-wipe"><rect class="reveal-scale" x="0" y="0" width="${W}" height="${H}"></rect></clipPath></defs>
+    <g clip-path="url(#mtl-wipe)">${line('import_value', '#6366f1', 'Imports')}${line('export_value', '#10b981', 'Exports')}</g>
+    ${xlabels}
+  </svg>`;
+}
+
 // Stacked bar — items: [{label, value, color, key}]
 function buildStackedBar(items, { unit = 'show' } = {}) {
   const total = items.reduce((s, i) => s + i.value, 0) || 1;
@@ -2568,12 +2593,16 @@ function renderMarketView() {
   }));
 
   const hsLabel = cmd === 'hs5903' ? 'HS 5903' : 'HS 5903.20';
+  const yearReason = (m._meta && m._meta.year_reason) || '';
+  const whyChip = yearReason
+    ? `<span class="hovable ml-1 inline-flex cursor-help items-center rounded-full bg-indigo-50 px-1.5 py-0.5 align-middle text-[10px] font-semibold text-indigo-500" title="${escapeHtml(yearReason)}" data-tip-title="Why ${escapeHtml(String(year))}?" data-tip-color="#6366f1" data-tip-sub="${escapeHtml(yearReason)}">ⓘ latest complete year</span>`
+    : '';
 
   return `
     <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
       <div class="min-w-0">
-        <h3 class="font-display text-base font-extrabold text-slate-900">Global coated-fabric market — real UN trade data (${escapeHtml(hsLabel)}, ${escapeHtml(String(year))})</h3>
-        <p class="mt-0.5 text-[12px] text-slate-500">Source: ${srcLink(impUrl)} — every figure below is a value UN Comtrade actually reported, not a model.</p>
+        <h3 class="font-display text-base font-extrabold text-slate-900">Global coated-fabric market — real UN trade data (${escapeHtml(hsLabel)}, ${escapeHtml(String(year))})${whyChip}</h3>
+        <p class="mt-0.5 text-[12px] text-slate-500">Source: ${srcLink(impUrl)} — every figure below is a value UN Comtrade actually reported, not a model. Year auto-detected so it always uses the freshest complete data.</p>
       </div>
       ${cmdToggle}
     </div>
@@ -2606,8 +2635,34 @@ function renderMarketView() {
       ${buildValueBars(expItems)}
     </div>
 
+    ${m.monthly ? renderMonthlyPanel(m.monthly) : ''}
+
     <p class="mt-3 text-center text-[11px] text-slate-400">Real UN Comtrade annual trade (HS classification), partner = World. ${srcLink(impUrl, 'View the exact query ↗')}</p>
   `;
+}
+
+// 📅 Recent monthly activity — a separate, clearly-provisional freshness panel (never the headline).
+function renderMonthlyPanel(mon) {
+  const src = (mon.query_urls && mon.query_urls.imports) || '#';
+  const link = `<a href="${escapeHtml(src)}" target="_blank" rel="noopener" class="shrink-0 text-[11px] font-semibold text-indigo-500 hover:underline">UN Comtrade (monthly) ↗</a>`;
+  const chip = (label, val, color) => `<div class="rounded-xl bg-slate-50 px-3 py-2 ring-1 ring-slate-100"><div class="text-[11px] font-semibold text-slate-500">${escapeHtml(label)}</div><div class="tnum text-lg font-extrabold ${color}">${escapeHtml(val)}</div></div>`;
+  return `
+    <div class="mt-4 rounded-2xl bg-white p-4 shadow-sm ring-2 ring-amber-100">
+      <div class="mb-1 flex flex-wrap items-center justify-between gap-2">
+        <h4 class="text-sm font-bold text-slate-800">📅 Recent monthly activity <span class="ml-1 rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-600">provisional</span></h4>
+        ${link}
+      </div>
+      <p class="mb-3 text-[12px] text-slate-500">World coated-fabric trade (HS 5903) by month, through <span class="font-semibold text-slate-600">${escapeHtml(monthLabel(mon.through))}</span>. Recent months get revised up as more countries report, and China doesn’t report monthly — so this runs below the annual pace. It’s a freshness signal, not the headline.</p>
+      <div class="mb-3 grid grid-cols-2 gap-2 sm:max-w-md">
+        ${chip(`Imports · last ${mon.months_count} mo`, fmtUSD(mon.last12_import_value), 'text-indigo-600')}
+        ${chip(`Exports · last ${mon.months_count} mo`, fmtUSD(mon.last12_export_value), 'text-emerald-600')}
+      </div>
+      ${buildMonthlyTrend(mon.series)}
+      <div class="mt-1 flex items-center justify-center gap-4 text-[11px] font-medium text-slate-500">
+        <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:#6366f1"></span>Imports</span>
+        <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" style="background:#10b981"></span>Exports</span>
+      </div>
+    </div>`;
 }
 
 function renderResearchTargets() {

@@ -92,6 +92,7 @@ async function main() {
     research_verified_count: research.filter((t) => t && t.verified === true && t.product_confirmed === true).length,
     market_year: (market && market._meta && market._meta.year) || null,
     market_updated_at: (market && market._meta && market._meta.updated_at) || null,
+    market_latest_month: (market && market._meta && market._meta.monthly_through) || null,
   };
 
   await writeFile(path.join(DATA_DIR, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
