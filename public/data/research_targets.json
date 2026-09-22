@@ -15,12 +15,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Commodity Buyer - Seating Textiles",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://adient.com",
+   "product_confirmed": true,
+   "product_evidence": "A leader in automotive seating with unmatched global reach and scale",
+   "verify_source_url": "https://www.adient.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "lear-corporation",
@@ -32,12 +32,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Global Category Manager - Textiles",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://lear.com",
+   "product_confirmed": true,
+   "product_evidence": "Lear Corporation is a global automotive leader in Seating and E-Systems",
+   "verify_source_url": "https://www.lear.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "toyota-boshoku",
@@ -49,12 +49,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Procurement Manager - Materials",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://toyota-boshoku.com",
+   "product_confirmed": true,
+   "product_evidence": "Automobile Seats Aircraft seats",
+   "verify_source_url": "https://www.toyota-boshoku.com/global/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ts-tech",
@@ -372,12 +372,12 @@
    "sourcing_model": "Direct/Converter",
    "buyer_role": "Sourcing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://kleintools.com",
+   "product_confirmed": true,
+   "product_evidence": "Lineman Bucket Bags & Accessories",
+   "verify_source_url": "https://www.kleintools.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "stanley-black-decker",
@@ -491,12 +491,12 @@
    "sourcing_model": "Direct/Converter",
    "buyer_role": "Purchasing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://vetopropac.com",
+   "product_confirmed": true,
+   "product_evidence": "Tool Bags, Tool Backpacks and Tool Storage That Works",
+   "verify_source_url": "https://vetopropac.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "clc-work-gear",
@@ -525,12 +525,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Sourcing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coverstore.com",
+   "product_confirmed": true,
+   "product_evidence": "industry-leading selection of weatherproof patio furniture covers, grill covers, TV covers, and more",
+   "verify_source_url": "https://www.coverstore.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "classic-accessories",
@@ -542,12 +542,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Commodity Buyer",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://classicaccessories.com",
+   "product_confirmed": true,
+   "product_evidence": "premium outdoor covers designed to protect patio furniture, vehicles, boats, and equipment",
+   "verify_source_url": "https://classicaccessories.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "duck-covers",
@@ -559,12 +559,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Procurement Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://duck-covers.com",
+   "product_confirmed": true,
+   "product_evidence": "offering exceptional, waterproof, and durable outdoor furniture covers tailored to protect your patio furniture",
+   "verify_source_url": "https://duck-covers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "empirecovers",
@@ -780,12 +780,12 @@
    "sourcing_model": "Direct/Converter",
    "buyer_role": "Commodity Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://covercraft.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.covercraft.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "brunswick",
@@ -1528,12 +1528,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://greatlakesboattop.com",
+   "product_confirmed": true,
+   "product_evidence": "Factory bimini tops, boat canvas and boat enclosures made to match the original with a full selection of factory replacement marine canvas products",
+   "verify_source_url": "https://greatlakesboattop.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ameritex-fabric-systems",
@@ -1562,12 +1562,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://taylormadeproducts.com",
+   "product_confirmed": true,
+   "product_evidence": "Taylor Made boat covers are available in semi-custom and aftermarket options, ensuring a perfect fit and superior protection",
+   "verify_source_url": "https://www.taylormadeproducts.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "commercial-sewing",
@@ -2310,12 +2310,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://ridgid.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.ridgid.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "greenlee",
@@ -2327,12 +2327,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://greenlee.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.greenlee.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "fluke",
@@ -2344,12 +2344,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://fluke.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.fluke.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "knipex",
@@ -2990,12 +2990,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://medcotec.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.medcotec.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "statpacks",
@@ -3007,12 +3007,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://statpacks.com",
+   "product_confirmed": true,
+   "product_evidence": "Shop by Mission EMS + Fire Water Safety Sports Tactical",
+   "verify_source_url": "https://statpacks.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "meret",
@@ -3024,12 +3024,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://meretusa.com",
+   "product_confirmed": true,
+   "product_evidence": "MERET designs and produces the highest quality first responder bags and equipment",
+   "verify_source_url": "https://meretusa.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "thomas-ems",
@@ -3772,12 +3772,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tarpsplus.com",
+   "product_confirmed": true,
+   "product_evidence": "offers poly tarps, canvas tarps, mesh tarps, vinyl tarps, and industrial covers",
+   "verify_source_url": "https://www.tarpsplus.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "mytee-products",
@@ -3789,29 +3789,29 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://myteeproducts.com",
+   "product_confirmed": true,
+   "product_evidence": "specializes in trucking supplies, truck tarps and cargo control trucking equipment",
+   "verify_source_url": "https://www.myteeproducts.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "western-tarp",
    "segment": "Protective & Industrial Covers",
    "company": "Western Tarp",
-   "country": "USA",
+   "country": "Canada",
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://westerntarp.com",
+   "product_confirmed": true,
+   "product_evidence": "We are a leading manufacturer of industrial textile products.",
+   "verify_source_url": "https://www.westerntarp.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "cunningham-covers",
