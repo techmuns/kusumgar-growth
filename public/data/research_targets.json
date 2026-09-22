@@ -66,12 +66,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Purchasing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://tstech.co.jp",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://tstech.co.jp",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "forvia-faurecia",
@@ -83,12 +83,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Commodity Buyer",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://forvia.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://forvia.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "magna-seating",
@@ -100,12 +100,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Strategic Sourcing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://magna.com",
+   "product_confirmed": true,
+   "product_evidence": "Seating",
+   "verify_source_url": "https://www.magna.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "grammer-ag",
@@ -117,12 +117,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Purchasing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://grammer.com",
+   "product_confirmed": true,
+   "product_evidence": "GRAMMER Commercial Vehicles entwickelt und produziert weltweit Fahrer- und Passagiersitze für Land- und Baumaschinen, Stapler, Lkw, Busse und Bahnen.",
+   "verify_source_url": "https://www.grammer.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "freedman-seating",
@@ -134,12 +134,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Materials Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://freedmanseating.com",
+   "product_confirmed": true,
+   "product_evidence": "Freedman manufactures seats and seating related products for many different applications, including bus, rail, marine, delivery truck, specialty and commercial vehicle seating.",
+   "verify_source_url": "https://freedmanseating.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "harita-seating",
@@ -168,12 +168,12 @@
    "sourcing_model": "Direct fabric sourcing",
    "buyer_role": "Purchase Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://bharatseats.com",
+   "product_confirmed": true,
+   "product_evidence": "Bharat Seats Ltd is engaged in the manufacturing of seating systems, NVH components and body sealing parts for four wheelers",
+   "verify_source_url": "https://bharatseats.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "stryker",
@@ -576,12 +576,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Purchasing Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://empirecovers.com",
+   "product_confirmed": true,
+   "product_evidence": "Patio Furniture Covers... Hot Tub Covers... Air Conditioner Covers... Fire Pit Covers... Outdoor Fountain Covers",
+   "verify_source_url": "https://www.empirecovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "loop-loc",
@@ -593,12 +593,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Materials Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://looploc.com",
+   "product_confirmed": true,
+   "product_evidence": "LOOP-LOC makes super-strong inground safety pool covers and high quality liners for any size pool.",
+   "verify_source_url": "https://www.looploc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "merlin-industries",
@@ -610,12 +610,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Strategic Sourcing",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://merlinindustries.com",
+   "product_confirmed": true,
+   "product_evidence": "Merlin pool safety covers are incredibly strong, and beautifully crafted to fit any size pool shape. Manufactured completely with U.S.A.-made materials and components that exceed industry standards.",
+   "verify_source_url": "https://merlinindustries.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "latham-pool-products",
@@ -627,12 +627,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Commodity Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://lathampool.com",
+   "product_confirmed": true,
+   "product_evidence": "Coverstar automatic pool covers offer reliable protection and streamlined operation with just the touch of a button. Custom-built to fit your pool, each cover is crafted from premium materials for durability, easy maintenance, safety and peace of mind.",
+   "verify_source_url": "https://www.lathampool.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "pool-cover-specialists",
@@ -644,12 +644,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Buyer",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://poolcoverspecialists.com",
+   "product_confirmed": true,
+   "product_evidence": "Infinity 4000™ Automatic Swimming Pool Covers ManualTrak™ Swimming Pool Cover Replacement Pool Cover Fabric Life-lock™ Solid Pool Covers",
+   "verify_source_url": "https://www.poolcoverspecialists.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "treasure-garden",
@@ -661,12 +661,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Procurement Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://treasuregarden.com",
+   "product_confirmed": true,
+   "product_evidence": "Protective Covers",
+   "verify_source_url": "https://treasuregarden.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "garden-leisure",
@@ -678,12 +678,12 @@
    "sourcing_model": "Direct fabric buying",
    "buyer_role": "Purchasing Lead",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://glshop.co.uk",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://glshop.co.uk/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "taylor-made",
@@ -863,14 +863,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "swimming pool retailers/dealers/builders/Service companies",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://glipoolproducts.com",
+   "product_confirmed": true,
+   "product_evidence": "A GLI Safety Cover not only protects your swimming pool from the elements, but more importantly, it acts as an off-season, full-time Lifeguard for your pool",
+   "verify_source_url": "https://www.glipoolproducts.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "anchor-industries",
@@ -882,12 +882,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://anchorinc.com",
+   "product_confirmed": true,
+   "product_evidence": "Pool Covers Keep pools safe and functional all year with custom covers designed for homes, clubs, and commercial spaces.",
+   "verify_source_url": "https://anchorinc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "meyco-pool-covers",
@@ -899,12 +899,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://meycocovers.com",
+   "product_confirmed": true,
+   "product_evidence": "Meyco Pool Covers, creators of the original safety pool cover, offer custom features to keep your pool safe and stylish all off-season.",
+   "verify_source_url": "https://meycocovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rayner-pool-covers",
@@ -916,12 +916,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://poolstore.com",
+   "product_confirmed": true,
+   "product_evidence": "Safety Covers GLI HPI Yard Guard Coverlon Rayner Freetime Fun Safety Covers",
+   "verify_source_url": "https://www.poolstore.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "cover-pools",
@@ -933,12 +933,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coverpools.com",
+   "product_confirmed": true,
+   "product_evidence": "The world's first and current leading manufacturer of automatic safety pool covers. For over 50 years, we custom fit any new or existing pool shape or size.",
+   "verify_source_url": "https://www.coverpools.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "aquamatic-cover-systems",
@@ -950,12 +950,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://aquamatic.com",
+   "product_confirmed": true,
+   "product_evidence": "Aquamatic Cover Systems manufactures the easiest to use manual system (EZ Cover) as well as the most advanced and adaptable automatic system (HydraLux)",
+   "verify_source_url": "https://www.aquamatic.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "coverstar",
@@ -967,12 +967,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coverstar.com",
+   "product_confirmed": true,
+   "product_evidence": "Coverstar swimming pool covers are the strongest way to prevent children and pets from getting into your swimming pool. View our selection of durable automatic covers",
+   "verify_source_url": "https://www.coverstar.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "automatic-pool-covers",
@@ -984,12 +984,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://automaticpoolcovers.com",
+   "product_confirmed": true,
+   "product_evidence": "Automatic Pool Covers, Inc. has set the standard in automatic pool cover innovation, quality, and reliability",
+   "verify_source_url": "https://automaticpoolcovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "coversafe",
@@ -1001,12 +1001,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coversafe.com",
+   "product_confirmed": true,
+   "product_evidence": "Discover top-quality automatic pool cover installation maintenance and repairs for peace of mind and reliable performance.",
+   "verify_source_url": "https://coversafe.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "pooltux",
@@ -1035,12 +1035,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://taramfg.com",
+   "product_confirmed": true,
+   "product_evidence": "we have applied the same innovative solutions to develop a pool safety cover that exceeds ASTM standards... our brand new 60,000 sq.ft., energy-efficient facility capable of handling large commercial pool covers",
+   "verify_source_url": "https://taramfg.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "hpi-pool-products",
@@ -1052,12 +1052,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://thepoolfactory.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.thepoolfactory.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "bioguard-covers",
@@ -1069,12 +1069,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://bioguard.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://bioguard.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "merlin-safety-covers",
@@ -1086,12 +1086,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://merlinindustries.com",
+   "product_confirmed": true,
+   "product_evidence": "Merlin pool safety covers are incredibly strong, and beautifully crafted to fit any size pool shape. Manufactured completely with U.S.A.-made materials and components that exceed industry standards.",
+   "verify_source_url": "https://merlinindustries.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "pool-warehouse-covers",
@@ -1103,12 +1103,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://poolwarehouse.com",
+   "product_confirmed": true,
+   "product_evidence": "Pool Covers Save $250 Instantly DON'T WAIT TO PROTECT YOUR POOL... Automatic Pool Covers... Inground Pool Covers... Above Ground Covers... Winter Covers... Solid Safety Covers Mesh Safety Covers",
+   "verify_source_url": "https://www.poolwarehouse.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "cover-care",
@@ -1120,12 +1120,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://covercare.com",
+   "product_confirmed": true,
+   "product_evidence": "Cover Care services and repairs all makes and models of automatic pool covers",
+   "verify_source_url": "https://covercare.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "big-duck-canvas",
@@ -1137,12 +1137,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://bigduckcanvas.com",
+   "product_confirmed": true,
+   "product_evidence": "Fabric for Grill Covers",
+   "verify_source_url": "https://www.bigduckcanvas.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "trivantage",
@@ -1154,12 +1154,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://trivantage.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://trivantage.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "miami-corporation",
@@ -1171,12 +1171,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://miamicorp.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://miamicorp.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rochford-supply",
@@ -1188,12 +1188,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rochfordsupply.com",
+   "product_confirmed": true,
+   "product_evidence": "Boat Cover Vents & Accessories",
+   "verify_source_url": "https://rochfordsupply.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sailrite",
@@ -1205,12 +1205,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://sailrite.com",
+   "product_confirmed": true,
+   "product_evidence": "Marine Covers",
+   "verify_source_url": "https://www.sailrite.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tarps-now",
@@ -1222,12 +1222,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tarpsnow.com",
+   "product_confirmed": true,
+   "product_evidence": "We're a national supplier actively supporting aerospace, trucking, aircraft, watercraft, heavy duty equipment, industrial machinery and construction coverings.",
+   "verify_source_url": "https://www.tarpsnow.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "a1-tarps",
@@ -1239,12 +1239,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://a1tarps.com",
+   "product_confirmed": true,
+   "product_evidence": "Pond Liners",
+   "verify_source_url": "https://a1tarps.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "chicago-canvas",
@@ -1256,12 +1256,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://chicagocanvas.com",
+   "product_confirmed": true,
+   "product_evidence": "Pool Tarps Tarps For Pool Covers",
+   "verify_source_url": "https://chicagocanvas.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "canvas-etc",
@@ -1273,12 +1273,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://canvasetc.com",
+   "product_confirmed": true,
+   "product_evidence": "A wall tent in Montana in the middle of winter would most likely be made of Sunforger army",
+   "verify_source_url": "https://www.canvasetc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ohio-awning",
@@ -1290,12 +1290,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://ohioawning.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://ohioawning.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "budge-industries",
@@ -1307,12 +1307,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://budgeindustries.com",
+   "product_confirmed": true,
+   "product_evidence": "Budge manufactures and distributes protective covers and film products for cars, trucks, RVs, motorcycles, utility terrain vehicles, all terrain vehicles, as well as for boats, snowmobiles, patio furniture and more.",
+   "verify_source_url": "https://www.budgeindustries.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "eevelle",
@@ -1324,12 +1324,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://eevelle.com",
+   "product_confirmed": true,
+   "product_evidence": "HOME & PATIO Outdoor Cover options for patio furniture, BBQ grills, firepits, log racks, and more.",
+   "verify_source_url": "https://eevelle.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "khomo-gear",
@@ -1341,12 +1341,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://khomogear.com",
+   "product_confirmed": true,
+   "product_evidence": "Premium all-weather covers built for rain, sun, wind and time. SHOP OUTDOOR COVERS",
+   "verify_source_url": "https://www.khomogear.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "veranda-covers",
@@ -1358,12 +1358,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://mightycovers.com",
+   "product_confirmed": false,
+   "product_evidence": "The website is for MightyCovers.com, not Veranda Covers. The text states 'Welcome to Mighty Covers ®' and 'Copyright 2009 - 2026 © by Mighty Covers ®'",
+   "verify_source_url": "https://mightycovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "arlmont-co",
@@ -1375,12 +1375,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://arlmontco.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://arlmontco.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "covers-all",
@@ -1392,12 +1392,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coversandall.com",
+   "product_confirmed": true,
+   "product_evidence": "swimming pool covers",
+   "verify_source_url": "https://www.coversandall.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "national-patio-covers",
@@ -1409,12 +1409,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://nationalpatiocovers.com",
+   "product_confirmed": true,
+   "product_evidence": "Patio furniture covers for outdoor patios featuring custom builds and waterproof materials from National Patio Covers",
+   "verify_source_url": "https://www.nationalpatiocovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "outdoor-cover-warehouse",
@@ -1426,12 +1426,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://outdoorcoverwarehouse.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://outdoorcoverwarehouse.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "creative-covers-inc",
@@ -1443,12 +1443,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://creativecoversinc.com",
+   "product_confirmed": true,
+   "product_evidence": "Protect your outdoor furniture, grills, and equipment with premium custom covers. Waterproof, UV-resistant, durable, and proudly made in the USA.",
+   "verify_source_url": "https://creativecoversinc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "protective-covers-inc",
@@ -1460,12 +1460,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://protectivepackaging.net",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://protectivepackaging.net",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "coverworld",
@@ -1477,12 +1477,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://cover.world",
+   "product_confirmed": false,
+   "product_evidence": "Marine Covers Boat Covers Pontoon Covers Jet Ski Covers Bimini Tops RV Covers",
+   "verify_source_url": "https://cover.world/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "patio-watcher",
@@ -1494,12 +1494,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://patiowatcher.worthepenny.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://patiowatcher.worthepenny.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "seasons-sentry",
@@ -1511,12 +1511,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://sentryusa.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://sentryusa.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "great-lakes-boat-top",
@@ -1579,12 +1579,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://commercialsewing.com",
+   "product_confirmed": true,
+   "product_evidence": "Outer Armor by Commercial Sewing®, is the leading brand in covers for recreational vehicles in the power sport and marine industries. Marine Products Mooring Covers Bimini Tops & Sunshades Self-Boot Power Biminis Dust Covers PWC Covers Outboard Motor Covers",
+   "verify_source_url": "https://commercialsewing.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "lippert-marine",
@@ -1596,12 +1596,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://lippert.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.lippert.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ameri-brand-products",
@@ -1613,12 +1613,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://websweeper.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://websweeper.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "oceansouth",
@@ -1630,12 +1630,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://oceansouth.com",
+   "product_confirmed": true,
+   "product_evidence": "OCEANSOUTH has been at the forefront of designing and manufacturing high-quality boating accessories and marine products... Boat Covers, Custom Fit Covers, Inflatable Boat Covers, Jet Ski / PWC Covers, Hatch Covers, Console Covers, Outboard Covers, Propeller Covers, Trolling Motor Covers",
+   "verify_source_url": "https://oceansouth.com/en-au",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rnr-marine",
@@ -1647,12 +1647,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rnr-marine.com",
+   "product_confirmed": true,
+   "product_evidence": "Factory Original-Equipment (OEM) and after-market boat Tops, Canvas, Curtains, Frames, Covers & Carpet",
+   "verify_source_url": "https://rnr-marine.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "boat-covers-direct",
@@ -1664,12 +1664,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://boatcoversdirect.com",
+   "product_confirmed": false,
+   "product_evidence": "We direct ship quality Carver and Shoretex custom boat covers and bimini tops",
+   "verify_source_url": "https://www.boatcoversdirect.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "covers-unlimited",
@@ -1681,12 +1681,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coversunlimited.net",
+   "product_confirmed": true,
+   "product_evidence": "Boat Covers For residential clients, our custom-fit boat covers provide unmatched protection from sun, rain, and wear.",
+   "verify_source_url": "https://www.coversunlimited.net/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "precision-boat-covers",
@@ -1698,12 +1698,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://worldsbestboatcover.com",
+   "product_confirmed": true,
+   "product_evidence": "Our custom boat covers are made from Aqualon® Edge marine-grade fabric, offering superior durability, waterproof protection, and UV resistance. Each boat cover is precision-cut and hand-sewn by our skilled team at our headquarters near the Lake of the Ozarks",
+   "verify_source_url": "https://www.worldsbestboatcover.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "atlantic-marine-canvas",
@@ -1715,12 +1715,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://atlanticmarinecanvas.com",
+   "product_confirmed": true,
+   "product_evidence": "From full enclosures to cockpit,mooring covers, boat tops and frames",
+   "verify_source_url": "https://atlanticmarinecanvas.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "canvas-designers",
@@ -1732,12 +1732,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://canvasdesigners.com",
+   "product_confirmed": true,
+   "product_evidence": "We create custom canvas boat covers, seats, tops, upholstery and enclosures to protect and enhance the functionality of your vessel.",
+   "verify_source_url": "https://canvasdesigners.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "marine-tops-unlimited",
@@ -1749,12 +1749,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://marinetops.com",
+   "product_confirmed": true,
+   "product_evidence": "Mooring and Travel Covers have a rope or a ratchet strap around the perimeter of the cover and come with tie downs or optional straps to secure them. These covers fully cover the boat down to the rubrail",
+   "verify_source_url": "https://marinetops.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "performance-marine-canvas",
@@ -1766,12 +1766,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://canvasusa.com",
+   "product_confirmed": true,
+   "product_evidence": "Canvas USA® manufactures marine-grade boat covers, bimini tops, and cushions",
+   "verify_source_url": "https://canvasusa.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "jsi-marine",
@@ -1783,12 +1783,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://jsi-alliance.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.jsi-alliance.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tumacs-covers",
@@ -1800,12 +1800,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tumacscovers.com",
+   "product_confirmed": true,
+   "product_evidence": "Tumacs Covers has been making custom made boat covers for the marine industry for over 50 years.",
+   "verify_source_url": "https://tumacscovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "o-sea-marine",
@@ -1817,12 +1817,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://oseamalibu.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://oseamalibu.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sattler-marine",
@@ -1834,12 +1834,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://sattler.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://sattler.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "taco-marine",
@@ -1851,12 +1851,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://tacomarine.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://tacomarine.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "canvas-craft",
@@ -1868,12 +1868,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://canvascraftinc.com",
+   "product_confirmed": true,
+   "product_evidence": "custom boat covers",
+   "verify_source_url": "https://www.canvascraftinc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sureshade",
@@ -1902,12 +1902,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://imarsales.com",
+   "product_confirmed": true,
+   "product_evidence": "premium, polymer-based cleaning/protective agents specifically designed for marine environments, Endorsed for maintaining yachts, vinyl, fiberglass, and clear vinyl enclosures",
+   "verify_source_url": "https://www.imarsales.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sea-ray-accessories",
@@ -1919,12 +1919,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://searay.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://searay.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "mastercraft-accessories",
@@ -1936,12 +1936,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://mastercraft.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.mastercraft.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "malibu-accessories",
@@ -1953,12 +1953,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://accessories.chevrolet.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://accessories.chevrolet.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "correct-craft-accessories",
@@ -1970,12 +1970,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://correctcraft.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://correctcraft.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ranger-boats-accessories",
@@ -1987,12 +1987,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://rangerboats.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://rangerboats.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "bennington-marine-accessories",
@@ -2004,12 +2004,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://benningtonmarine.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://benningtonmarine.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "harris-pontoon-accessories",
@@ -2021,12 +2021,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://harrisboats.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://harrisboats.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "yamaha-marine-accessories",
@@ -2038,12 +2038,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://yamahaoutboards.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://yamahaoutboards.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "brunswick-marine-accessories",
@@ -2055,12 +2055,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://brunswick.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.brunswick.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tracker-marine-accessories",
@@ -2072,12 +2072,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://trackermarineparts.com",
+   "product_confirmed": true,
+   "product_evidence": "Tracker Covers",
+   "verify_source_url": "https://trackermarineparts.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "crestliner-accessories",
@@ -2089,12 +2089,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://crestliner.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://crestliner.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "lund-boat-covers",
@@ -2106,12 +2106,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://nationalboatcovers.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.nationalboatcovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "princecraft-accessories",
@@ -2123,12 +2123,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://princecraft.com",
+   "product_confirmed": true,
+   "product_evidence": "Top and covers installation",
+   "verify_source_url": "https://www.princecraft.com/us/en/index.aspx?erreur=true",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sunbrella-marine-fabricators",
@@ -2140,12 +2140,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://sunbrella.com",
+   "product_confirmed": false,
+   "product_evidence": "Leader in performance fabrics for upholstery, awnings, and marine applications",
+   "verify_source_url": "https://www.sunbrella.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "bainbridge-marine",
@@ -2174,12 +2174,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://marinecanvascreationsva.com",
+   "product_confirmed": true,
+   "product_evidence": "Marine Canvas Creations is a Boat Cover Fabricator in Woodbridge, VA 22192",
+   "verify_source_url": "https://marinecanvascreationsva.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "fisher-canvas",
@@ -2191,12 +2191,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://fishercanvas.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://fishercanvas.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "boat-outfitters",
@@ -2208,12 +2208,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://boatoutfitters.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.boatoutfitters.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "marine-specialties",
@@ -2225,12 +2225,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://marinespecialties.net",
+   "product_confirmed": true,
+   "product_evidence": "Boat Covers",
+   "verify_source_url": "https://marinespecialties.net/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sailrite-marine-customers",
@@ -2242,12 +2242,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://sailrite.com",
+   "product_confirmed": true,
+   "product_evidence": "DIY Kits Shop All DIY Kits Bags & Totes Bimini & Dodger Marine Covers Sail Covers",
+   "verify_source_url": "https://www.sailrite.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "harken-canvas-solutions",
@@ -2259,12 +2259,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://harken.com",
    "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "product_evidence": "Harken Canvas",
+   "verify_source_url": "https://www.harken.com/en/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "marine-concepts",
@@ -2276,12 +2276,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://dcmc-us.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://dcmc-us.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ocean-dynamics",
@@ -2293,12 +2293,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://oceandynamics.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://oceandynamics.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ridgid",
@@ -2361,12 +2361,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://knipex.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://knipex.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "wiha",
@@ -2378,12 +2378,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://wiha.com",
+   "product_confirmed": true,
+   "product_evidence": "The Wiha Tool Backpack. Product details",
+   "verify_source_url": "https://wiha.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "gedore",
@@ -2395,12 +2395,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://gedore.com",
+   "product_confirmed": true,
+   "product_evidence": "GEDORE Werkzeugtaschen und Zubehör",
+   "verify_source_url": "https://www.gedore.com/de-de/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "facom",
@@ -2412,12 +2412,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://facom.com",
+   "product_confirmed": true,
+   "product_evidence": "Toolboxes - Cases and Chests",
+   "verify_source_url": "https://www.facom.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "proto",
@@ -2429,12 +2429,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://protoindustrial.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://protoindustrial.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "crescent-tools",
@@ -2446,12 +2446,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://crescenttool.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.crescenttool.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "matco-tools",
@@ -2461,14 +2461,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Mechanics & Technicians",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://matcotools.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.matcotools.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sk-tools",
@@ -2480,12 +2480,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://sktools.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://sktools.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "bahco",
@@ -2514,12 +2514,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://wera.de",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.wera.de/de/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tekton",
@@ -2529,14 +2529,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Commercial Purchasing",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tekton.com",
+   "product_confirmed": true,
+   "product_evidence": "Tool Rolls and Bags",
+   "verify_source_url": "https://www.tekton.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "gearwrench",
@@ -2546,14 +2546,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Auto Technicians",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://gearwrench.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.gearwrench.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "husky-tools",
@@ -2565,12 +2565,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://husky.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://husky.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "occidental-leather",
@@ -2582,12 +2582,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://occidentalleather.com",
+   "product_confirmed": true,
+   "product_evidence": "Tool Bags Fastener Bags Specialty Bags Utility Bags... Tool Totes & Cases",
+   "verify_source_url": "https://www.occidentalleather.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "toughbuilt",
@@ -2599,12 +2599,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://toughbuilt.com",
+   "product_confirmed": true,
+   "product_evidence": "Contractor Bags & Totes",
+   "verify_source_url": "https://toughbuilt.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "bucket-boss",
@@ -2616,12 +2616,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://bucketboss.com",
+   "product_confirmed": true,
+   "product_evidence": "Bucket Boss® offers premium quality tool belts, tool bags, jobsite apparel, work gear, and more",
+   "verify_source_url": "https://bucketboss.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "custom-leathercraft",
@@ -2633,12 +2633,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://goclc.com",
+   "product_confirmed": true,
+   "product_evidence": "Tool Carriers CLC Tech Gear™ Molded Base Bags Nail and Tool Bags Softside Tool Carriers Tool Pouches",
+   "verify_source_url": "https://goclc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "pelican-products",
@@ -2650,12 +2650,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://pelican.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://pelican.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "skb-cases",
@@ -2667,12 +2667,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://skbcases.com",
+   "product_confirmed": false,
+   "product_evidence": "The website describes 'Drum Cases & Bags' and various hard cases (injection molded, rotomolded, rack mount, vacuumed formed) for sports, music, photo/video, industrial and military applications, but does not specifically mention Tool & Equipment Bags.",
+   "verify_source_url": "https://www.skbcases.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "nanuk-cases",
@@ -2684,12 +2684,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://nanuk.com",
+   "product_confirmed": true,
+   "product_evidence": "TRAIL Gear Cases",
+   "verify_source_url": "https://nanuk.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "explorer-cases",
@@ -2701,12 +2701,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://explorercases.com",
+   "product_confirmed": true,
+   "product_evidence": "Waterproof Tool Boxes - Explorer Cases Waterproof Tool Boxes: Explorer Cases is a complete range of indestructible cases. The ideal solution in the most extreme conditions.",
+   "verify_source_url": "https://www.explorercases.com/en/home/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "zarges",
@@ -2718,12 +2718,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://zarges.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.zarges.com/en/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "bott-ltd",
@@ -2735,12 +2735,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://bott.uk",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://bott.uk",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sortimo",
@@ -2752,12 +2752,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://mysortimo.com",
+   "product_confirmed": true,
+   "product_evidence": "Tool Bags | ProClick",
+   "verify_source_url": "https://www.mysortimo.com/en/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "raaco",
@@ -2767,14 +2767,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Design Strategist",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://raaco.com",
+   "product_confirmed": true,
+   "product_evidence": "Soft Bags",
+   "verify_source_url": "https://www.raaco.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "montezuma",
@@ -2786,12 +2786,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://montezumacounty.gov",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://montezumacounty.gov/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "weather-guard",
@@ -2803,12 +2803,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://weatherguard.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://weatherguard.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "southwire-tools",
@@ -2820,12 +2820,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://southwire.com",
+   "product_confirmed": true,
+   "product_evidence": "Material Handling & Storage",
+   "verify_source_url": "https://www.southwire.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ideal-industries",
@@ -2837,12 +2837,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://idealindustries.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.idealindustries.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "gardner-bender",
@@ -2854,12 +2854,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://gardnerbender.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.gardnerbender.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "wernerco",
@@ -2871,12 +2871,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://wernerco.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://wernerco.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "testo",
@@ -2888,12 +2888,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://testo.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://testo.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "leica-geosystems",
@@ -2905,12 +2905,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://leica-geosystems.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://leica-geosystems.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "trimble",
@@ -2922,12 +2922,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://trimble.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.trimble.com/en",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "keysight-technologies",
@@ -2939,12 +2939,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://keysight.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://keysight.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "yokogawa-test-equipment",
@@ -2956,12 +2956,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://tmi.yokogawa.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://tmi.yokogawa.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "megger",
@@ -2973,12 +2973,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://megger.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://megger.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "medcotec",
@@ -3041,12 +3041,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://thomasems.com",
+   "product_confirmed": true,
+   "product_evidence": "Advanced Life Support Packs Basic Life Support Packs Support Pouches / Inserts Support Pouches Heating, Cooling, Temperature Control Products Cases Accessories Heating Pack Custom Bags Hard Cases Narcotics Storage Transportation & Immobilization Bariatric Transfer Flat Thomas Handles Mass Casualty & Fire Rehab Thomas Triage Pack IFAK KIT – Active Shooter Pack AlbacMat Rescue Mat Fully Loaded Pre-F",
+   "verify_source_url": "https://thomasems.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "north-american-rescue",
@@ -3058,12 +3058,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://narescue.com",
+   "product_confirmed": true,
+   "product_evidence": "North American Rescue provides the most effective and highest quality mission critical medical products, decreasing preventable deaths in the field.",
+   "verify_source_url": "https://www.narescue.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "conterra",
@@ -3073,14 +3073,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "EMS Professionals",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://conterra-inc.com",
+   "product_confirmed": true,
+   "product_evidence": "Dedicated to designing emergency gear that keeps getting better. Since 1990. EMS & Rescue Equipment",
+   "verify_source_url": "https://www.conterra-inc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "lightning-x-products",
@@ -3092,12 +3092,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://gearbags.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://gearbags.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "kemp-usa",
@@ -3109,12 +3109,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://kempusa.com",
+   "product_confirmed": true,
+   "product_evidence": "Browse our extensive selection of wholesale EMS equipment, lifeguard supplies, and swim gear. High-quality products for professional rescuers.",
+   "verify_source_url": "https://www.kempusa.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "galls",
@@ -3126,12 +3126,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://galls.com",
+   "product_confirmed": true,
+   "product_evidence": "EMS + Medical View All Medical Kits First Aid Supplies Medical Bags Medical Gloves Diagnostic EMS EMT Uniforms Infection Control",
+   "verify_source_url": "https://www.galls.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "iron-duck",
@@ -3143,12 +3143,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://ironduck.com",
+   "product_confirmed": true,
+   "product_evidence": "Trauma Bags Backpacks Oxygen Bags Gear Bags Opioid Kits Modules... Patient Packaging Spineboards Patient Packaging Immobilization Stretcher Straps",
+   "verify_source_url": "https://ironduck.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "prestige-medical",
@@ -3158,14 +3158,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "healthcare professionals",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://prestigemedical.com",
+   "product_confirmed": true,
+   "product_evidence": "Prestige Medical continually innovates stethoscopes, aneroid sphygmomanometers, and medical accessories for today's healthcare professionals. EMS Products",
+   "verify_source_url": "https://www.prestigemedical.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "emi-international",
@@ -3177,12 +3177,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://e-m-i.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.e-m-i.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "curaplex",
@@ -3209,14 +3209,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "first responders",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rescue-essentials.com",
+   "product_confirmed": true,
+   "product_evidence": "Emergency medical supplies trusted by first responders, military, and professionals. Shop trauma kits, IFAKs, bleeding control kits, tourniquets & other life-saving gear.",
+   "verify_source_url": "https://rescue-essentials.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "allied-medical",
@@ -3245,12 +3245,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://hartwellmedical.com",
+   "product_confirmed": true,
+   "product_evidence": "EMS Solutions for Spinal Splinting and Immobilization, Patient Transport, and Airway Management. CombiCarrierII, EVAC-U-SPLINT, FASPLINT",
+   "verify_source_url": "https://www.hartwellmedical.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "chinook-medical",
@@ -3262,12 +3262,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://chinookmed.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://chinookmed.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tactical-medical-solutions",
@@ -3277,14 +3277,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "First Responders",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tacmedsolutions.com",
+   "product_confirmed": true,
+   "product_evidence": "TacMed Solutions™ provides military-grade tourniquets, trauma kits, and bleeding control equipment trusted by professionals.",
+   "verify_source_url": "https://tacmedsolutions.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "combat-medical",
@@ -3296,12 +3296,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://safeguardmedical.com",
+   "product_confirmed": false,
+   "product_evidence": "Company name in text is 'Safeguard Medical' not 'Combat Medical'",
+   "verify_source_url": "https://safeguardmedical.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sam-medical",
@@ -3311,14 +3311,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "paramedics, military medics, EMT",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://sammedical.com",
+   "product_confirmed": true,
+   "product_evidence": "SAM Medical is an innovator in first aid, field treatment, and emergency medical supplies. We engineer products that preserve life while offering intuitive application.",
+   "verify_source_url": "https://www.sammedical.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "safeguard-medical",
@@ -3330,12 +3330,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://safeguardmedical.com",
+   "product_confirmed": true,
+   "product_evidence": "Safeguard Medical exists to bring together life-saving products and knowledge of emergency medical skills that preserve life. We empower responders at every skill level with world-class trauma medicine products",
+   "verify_source_url": "https://safeguardmedical.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tacmed-solutions",
@@ -3347,12 +3347,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tacmedaustralia.com.au",
+   "product_confirmed": true,
+   "product_evidence": "Australia's trauma and tactical medical specialist. Tourniquets, IFAKs, trauma kits and chest seals. TGA-compliant. Trusted by first responders and defence.",
+   "verify_source_url": "https://tacmedaustralia.com.au/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rescue-one",
@@ -3364,12 +3364,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rescue-one.com",
+   "product_confirmed": true,
+   "product_evidence": "We provide life safety products, training, and safety solutions to individuals, health care providers, and organizations of all sizes, and are one of the Mid-Atlantic's largest life safety training organizations and independent distributors of Automated External Defibrillators (AEDs) and supplies.",
+   "verify_source_url": "https://rescue-one.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "zoll",
@@ -3379,14 +3379,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Biomedical engineering",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://zoll.com",
+   "product_confirmed": true,
+   "product_evidence": "Medical & Emergency - AEDs, Automated CPR, Monitors/defibrillators, Ventilators, Emergency care, Critical care, EMS and fire solutions",
+   "verify_source_url": "https://www.zoll.com/en-us",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "stryker-ems",
@@ -3398,12 +3398,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://stryker.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.stryker.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "medsource-labs",
@@ -3415,12 +3415,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://medsourcelabs.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://medsourcelabs.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "pax-bags",
@@ -3432,12 +3432,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://pax-bags.com",
+   "product_confirmed": true,
+   "product_evidence": "PAX is a manufacturer of emergency backpacks, insert bags and accessories.",
+   "verify_source_url": "https://www.pax-bags.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "elite-bags",
@@ -3449,12 +3449,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://elitebags.es",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://elitebags.es",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "spencer-italia",
@@ -3466,12 +3466,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://spencer.it",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://spencer.it",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "karl-bollmann",
@@ -3500,12 +3500,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://weinmann-emergency.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://weinmann-emergency.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "ferno-uk",
@@ -3517,12 +3517,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://ferno.com",
+   "product_confirmed": true,
+   "product_evidence": "Emergency Patient Handling Immobilization Splinting Pediatrics Ambulance Systems... POWER X2 Ambulance Cot... Transcend Stair Chair... iNX Integrated Patient Transport & Loading System... Oxygen O2 Regulators & Flow Meters Demand Valves Administrators Resuscitators & Masks... Suction & Airway... Rescue Litters/Basket Stretchers",
+   "verify_source_url": "https://ferno.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "me-ber",
@@ -3534,12 +3534,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://meber.it",
+   "product_confirmed": true,
+   "product_evidence": "Me.Ber. progetta e produce barelle autocaricanti, sedie portantine e prodotti per soccorso ed emergenza medica",
+   "verify_source_url": "https://www.meber.it/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "oscar-boscarol",
@@ -3549,14 +3549,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "operatori professionali",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://boscarol.it",
+   "product_confirmed": true,
+   "product_evidence": "Tecnologie medicali MADE IN ITALY per il soccorso... aspiratori medicali di secreti... kit di somministrazione ossigeno per le ambulanze... Cassette di primo soccorso",
+   "verify_source_url": "https://www.boscarol.it/ita/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "junkin-safety",
@@ -3566,14 +3566,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "first responders",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://junkinsafety.com",
+   "product_confirmed": true,
+   "product_evidence": "Stretchers, basket stretchers, backboards, evacuation chairs, and accessories for EMS and fire departments. Shop Emergency & Rescue → 13 products Mortuary & Funeral Mortuary cots, lowering devices, funeral carts, and cemetery equipment for funeral homes and morgues. Shop Mortuary & Funeral → 15 products First Aid & Fire Safety First aid kits, immobilization tools, and fire blankets",
+   "verify_source_url": "https://www.junkinsafety.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "life-assist",
@@ -3585,12 +3585,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://life-assist.com",
+   "product_confirmed": false,
+   "product_evidence": "we have grown into one of the largest distributors of EMS products in the United States",
+   "verify_source_url": "https://www.life-assist.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "emergency-medical-products",
@@ -3600,14 +3600,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "paramedics, military medics",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://sammedical.com",
+   "product_confirmed": true,
+   "product_evidence": "SAM Medical Store Shop SAM Medical for tourniquets, splints, and EMS equipment. Emergency medical kits and ems gear trusted by paramedics, military medics, and civilians worldwide.",
+   "verify_source_url": "https://www.sammedical.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "first-rescue",
@@ -3619,12 +3619,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://firstrescueambulance.com",
+   "product_confirmed": false,
+   "product_evidence": "First Rescue Ambulance is an ambulance transport service located in Irwindale, California... we are dedicated to delivering the highest-quality care to our patients and the healthcare facilities we support",
+   "verify_source_url": "https://www.firstrescueambulance.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "blue-jay-medical",
@@ -3636,12 +3636,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://bluejayehb.com",
+   "product_confirmed": true,
+   "product_evidence": "We are a health product manufacturer. Explore our comprehensive product catalogs, available for online purchasing. SHOP ALL Diagnostic Select below from our variety of diagnostic equipment.",
+   "verify_source_url": "https://www.bluejayehb.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "reliance-medical",
@@ -3651,14 +3651,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "PURCHASING",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://reliancemedical.co.uk",
+   "product_confirmed": true,
+   "product_evidence": "World leading manufacturer and trade distributor of the highest quality surgical dressings, healthcare products, PPE, medical equipment and first aid supplies",
+   "verify_source_url": "https://reliancemedical.co.uk/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "timesco",
@@ -3670,12 +3670,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://timesco.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://timesco.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rothco-medical",
@@ -3687,12 +3687,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rothco.com",
+   "product_confirmed": false,
+   "product_evidence": "Rothco is the leading supplier of military, tactical, and outdoor gear",
+   "verify_source_url": "https://www.rothco.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "stat-medical-devices",
