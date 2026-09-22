@@ -1,0 +1,69 @@
+name: Research verify
+
+# Verifies curated Industry-Research target companies against their OWN websites — source-backed,
+# nothing invented (visits each site, records an evidence quote + the source URL). Manual (with a
+# `max` input) + weekly cron (Fridays). Commits only when research_targets.json changed.
+on:
+  workflow_dispatch:
+    inputs:
+      max:
+        description: 'Max unverified companies to check per run (cost cap)'
+        required: false
+        default: '40'
+  schedule:
+    - cron: '0 7 * * 5' # 07:00 UTC every Friday
+
+permissions:
+  contents: write
+
+concurrency:
+  group: research-refresh
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify research targets (graceful without keys)
+        env:
+          # Required secrets:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
+          # Optional (both default in code): AWS region + comma-separated model fallback chain.
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
+          MAX: ${{ github.event.inputs.max || '40' }}
+        run: node scripts/verify-research-targets.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/research_targets.json)" ]; then
+            echo "No changes to research_targets.json — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node scripts/update-meta.mjs
+          git add public/data/research_targets.json public/data/meta.json
+          git commit -m "chore(data): verify industry-research targets"
+
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1

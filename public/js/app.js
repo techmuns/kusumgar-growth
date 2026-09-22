@@ -49,6 +49,7 @@ const LEAD_SEGMENT_COLORS = {
   'Marine Covers': '#3b82f6',                // blue
   'Pool & Outdoor Covers': '#14b8a6',        // teal
   'Protective Covers & Industrial': '#f97316', // orange
+  'Protective & Industrial Covers': '#f97316', // orange (Industry-Research segment label)
   'Automotive Seating': '#8b5cf6',           // violet
 };
 // Resolve a color for any segment string across all maps.
@@ -110,6 +111,7 @@ const ENGAGED = new Set(['Exhibited', 'Visited', 'Attended']);
 
 const TABS = [
   { id: 'today', label: 'Home', icon: '🏠', live: true },
+  { id: 'research', label: 'Industry Research', icon: '🔬', live: true },   // curated target universe, verified vs each site
   { id: 'exhibitions', label: 'Exhibitions', icon: '🎪', live: true },
   { id: 'leads', label: 'Exhibitors', icon: '🏢', live: true },   // companies exhibiting at the shows
   { id: 'competitors', label: 'Competitors', icon: '🛡️', live: true },
@@ -182,6 +184,9 @@ const state = {
   composeId: null,             // lead currently open in the Pipeline compose panel
   pipeSearch: '',              // search box in the Pipeline "My leads" column
   prodModalSearch: '',         // search box in the Products catalog modal
+  research: [],                // curated target companies (research_targets.json)
+  researchFilters: { segment: 'all', search: '', country: 'all' },
+  researchSent: new Set(),     // target ids sent to the Growth Engine (localStorage)
 };
 
 const PIPE_KEY = (id) => `kgr.outreach.${id}`;
@@ -2300,6 +2305,146 @@ function renderTrackerHub() {
  * ------------------------------------------------------------------ */
 
 // Home — clean and minimal: just upcoming exhibitions + recently found leads. No charts.
+/* ------------------------------------------------------------------ *
+ * Industry Research tab — the curated target-company universe.
+ * Each company is verified against its OWN website by the weekly robot;
+ * nothing is invented. "Send to Growth Engine" activates it as a lead.
+ * ------------------------------------------------------------------ */
+
+const RESEARCH_SEGMENTS = ['Automotive Seating', 'Medical & Emergency', 'Tool & Equipment Bags', 'Pool & Outdoor Covers', 'Marine Covers', 'Protective & Industrial Covers'];
+const RSENT_KEY = 'kgr.research.sent';
+const RLEADS_KEY = 'kgr.research.leads';
+const urlHost = (u) => { try { return new URL(String(u)).hostname.replace(/^www\./, ''); } catch { return ''; } };
+const truncate = (s, n) => { const t = String(s || ''); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; };
+
+function loadResearchSent() { try { return new Set(JSON.parse(localStorage.getItem(RSENT_KEY) || '[]')); } catch { return new Set(); } }
+function saveResearchSent() { try { localStorage.setItem(RSENT_KEY, JSON.stringify([...state.researchSent])); } catch { /* storage unavailable */ } }
+const researchSent = (id) => state.researchSent.has(id);
+function loadResearchLeads() { try { const o = JSON.parse(localStorage.getItem(RLEADS_KEY) || '{}'); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; } catch { return {}; } }
+function saveResearchLeads(map) { try { localStorage.setItem(RLEADS_KEY, JSON.stringify(map)); } catch { /* storage unavailable */ } }
+
+// Build a Growth-Engine lead from a curated target (only used when the company isn't already a lead).
+function researchToLead(t) {
+  return {
+    id: t.id, company: t.company, segment: t.segment, country: t.country || null,
+    website: t.website || null, application: t.application || null, fabric_fit: null,
+    est_consumption: t.est_fabric_consumption || null, sourcing_model: t.sourcing_model || null,
+    contact_role: t.buyer_role || null, priority: 'Medium', detail: 'full',
+    source: 'industry-research', type: 'potential',
+  };
+}
+// "➕ Send to Growth Engine": activate the company as a lead (star + pipeline it as a potential deal)
+// so it shows in the Exhibitors tab + Outreach pipeline. Reuses the existing lead when one already
+// exists (no duplicate row); otherwise creates one and persists it for the boot-time merge.
+function sendResearchToEngine(id) {
+  const t = state.research.find((x) => x.id === id); if (!t) return;
+  let lead = state.leads.find((l) => l.id === id);
+  if (!lead) {
+    lead = researchToLead(t);
+    const map = loadResearchLeads(); map[id] = lead; saveResearchLeads(map);
+    state.leads.push(lead);
+  }
+  state.researchSent.add(id); saveResearchSent();
+  if (!isStarred(lead.id)) toggleStar(lead.id);          // ⭐ so it appears in "My leads" + Outreach Pipeline
+  setPipeline(lead.id, { stage: 'To contact', dealType: 'potential' }); // + Tracker, with a follow-up date
+  render();
+}
+
+function researchBadge(t) {
+  if (t.verified === true && t.product_confirmed === true) {
+    const dom = urlHost(t.verify_source_url) || urlHost(t.website) || 'source';
+    return `<a href="${escapeHtml(t.verify_source_url || t.website || '#')}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600 hover:underline" title="Confirmed on their website">✅ Verified · ${escapeHtml(dom)} ↗</a>`;
+  }
+  if (t.verified === true) {
+    return `<span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-600" title="We visited the site but couldn't confirm the product fit">⚠️ Checked — couldn't confirm</span>`;
+  }
+  return '<span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-400">⏳ Not checked yet</span>';
+}
+
+function researchFiltered() {
+  const f = state.researchFilters;
+  const q = f.search.trim().toLowerCase();
+  return state.research.filter((t) => {
+    if (f.segment !== 'all' && t.segment !== f.segment) return false;
+    if (f.country !== 'all' && (t.country || '') !== f.country) return false;
+    if (q && !`${t.company} ${t.segment} ${t.country || ''} ${t.application || ''}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function researchCard(t) {
+  const sent = researchSent(t.id);
+  const fact = (label, val) => `<div class="text-[12px] text-slate-600"><span class="font-semibold text-slate-500">${label}:</span> ${escapeHtml(val)} <span class="ml-0.5 rounded bg-slate-100 px-1 py-0.5 text-[10px] font-medium text-slate-400">from target list</span></div>`;
+  const evidence = t.product_evidence
+    ? `<div class="mt-2 rounded-lg bg-slate-50 p-2 text-[12px] italic leading-snug text-slate-600 ring-1 ring-slate-100" title="${escapeHtml(t.product_evidence)}">“${escapeHtml(truncate(t.product_evidence, 160))}”</div>` : '';
+  const facts = [
+    t.application ? fact('Application', t.application) : '',
+    t.buyer_role ? fact('Buyer role', t.buyer_role) : '',
+    t.est_fabric_consumption ? fact('Est. fabric use', t.est_fabric_consumption) : '',
+  ].filter(Boolean).join('');
+  const action = sent
+    ? '<span class="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-2 text-[13px] font-semibold text-emerald-600 ring-1 ring-emerald-100">✓ In Growth Engine</span>'
+    : `<button type="button" data-research-send="${escapeHtml(t.id)}" class="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-3 py-2 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700">➕ Send to Growth Engine</button>`;
+  return `<div class="flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 transition-shadow hover:shadow-md">
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0">
+        <div class="truncate text-sm font-bold text-slate-800" title="${escapeHtml(t.company)}">${escapeHtml(t.company)}</div>
+        <div class="mt-0.5 text-[12px] text-slate-500">${countryCell(t.country)}</div>
+      </div>
+      <div class="shrink-0">${coloredChip(t.segment, anyColor(t.segment))}</div>
+    </div>
+    <div class="mt-2">${researchBadge(t)}</div>
+    ${evidence}
+    ${facts ? `<div class="mt-2 space-y-1">${facts}</div>` : ''}
+    <div class="mt-3 pt-1">${action}</div>
+  </div>`;
+}
+
+function researchListHtml() {
+  const rows = researchFiltered();
+  if (!rows.length) return '<div class="col-span-full py-10 text-center text-sm text-slate-400">No companies match your filters.</div>';
+  return rows.map(researchCard).join('');
+}
+function refreshResearchList() {
+  const w = $('#researchList'); if (w) w.innerHTML = researchListHtml();
+  const c = $('#rCount'); if (c) c.textContent = researchFiltered().length;
+}
+
+function renderResearch() {
+  if (!state.research.length) {
+    return '<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No research targets loaded.</div>';
+  }
+  const f = state.researchFilters;
+  const total = state.research.length;
+  const verified = state.research.filter((t) => t.verified === true && t.product_confirmed === true).length;
+  const bySeg = {}; state.research.forEach((t) => { bySeg[t.segment] = (bySeg[t.segment] || 0) + 1; });
+  const countries = [...new Set(state.research.map((t) => t.country || 'Unknown'))].sort();
+
+  const chip = (key, label, n) => {
+    const on = f.segment === key;
+    return `<button type="button" data-rsub="${escapeHtml(key)}" aria-pressed="${on}" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold shadow-sm ring-1 transition-colors ${on ? 'bg-indigo-600 text-white ring-indigo-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}">${label} <span class="tnum ${on ? 'text-white/80' : 'text-slate-400'}">${n}</span></button>`;
+  };
+  const chips = [chip('all', 'All', total)].concat(RESEARCH_SEGMENTS.filter((s) => bySeg[s]).map((s) => chip(s, segLabel(s), bySeg[s]))).join('');
+
+  return `<div class="fade-in">
+    <div class="mb-3">
+      <h2 class="font-display text-lg font-extrabold text-slate-900">🔬 Industry Research</h2>
+      <p class="mt-0.5 text-sm text-slate-500">Your real target-company universe — each company gets verified against its own website. Nothing is invented.</p>
+      <p class="mt-1 text-[12px] text-slate-400"><span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified against their site</p>
+    </div>
+    <div class="mb-3 flex flex-wrap items-center gap-2">${chips}</div>
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <div class="relative min-w-[180px] flex-1">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+        <input id="r-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search companies…" class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+      </div>
+      ${selectHtml('r-country', 'All countries', f.country, countries)}
+    </div>
+    <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="rCount" class="tnum font-semibold text-slate-700">${researchFiltered().length}</span> shown</div>
+    <div id="researchList" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">${researchListHtml()}</div>
+  </div>`;
+}
+
 function renderToday() {
   const upcomingAll = state.exhibitions.filter(showUpcoming);
   const upcoming = exhibitionsByDate(upcomingAll).slice(0, 8);
@@ -2615,6 +2760,7 @@ function render() {
   syncOnlyFoundBtn();
   const tab = TABS.find((t) => t.id === state.tab);
   if (state.tab === 'today') view.innerHTML = renderToday();
+  else if (state.tab === 'research') view.innerHTML = renderResearch();
   else if (state.tab === 'exhibitions') view.innerHTML = renderExhibitions();
   else if (state.tab === 'products') view.innerHTML = renderProducts();
   else if (state.tab === 'leads') view.innerHTML = renderLeads();
@@ -2694,6 +2840,12 @@ function wireEvents() {
 
     const osub = e.target.closest('[data-osub]');
     if (osub) { state.outreachSub = osub.getAttribute('data-osub'); render(); return; }
+
+    // Industry Research: segment chip + "Send to Growth Engine".
+    const rsub = e.target.closest('[data-rsub]');
+    if (rsub) { state.researchFilters.segment = rsub.getAttribute('data-rsub'); render(); return; }
+    const rsend = e.target.closest('[data-research-send]');
+    if (rsend) { sendResearchToEngine(rsend.getAttribute('data-research-send')); return; }
 
     // Pipeline compose: pick a lead (left) → draft opens (right); action buttons read the live fields.
     const composeRow = e.target.closest('[data-compose-id]');
@@ -2791,6 +2943,7 @@ function wireEvents() {
     else if (e.target.id === 'l-search') { state.leadFilters.search = e.target.value; refreshLeadsTable(); }
     else if (e.target.id === 'o-search') { state.trackerFilters.search = e.target.value; refreshTrackerTable(); }
     else if (e.target.id === 'pipe-search') { state.pipeSearch = e.target.value; refreshPipeList(); }
+    else if (e.target.id === 'r-search') { state.researchFilters.search = e.target.value; refreshResearchList(); }
     else if (e.target.id === 'composeTo' || e.target.id === 'composeSubject' || e.target.id === 'composeBody') { updateComposeMailto(); }
   });
   view.addEventListener('change', (e) => {
@@ -2801,6 +2954,7 @@ function wireEvents() {
     else if (pMap[e.target.id]) { state.productFilters[pMap[e.target.id]] = e.target.value; refreshCatalog(); }
     else if (lMap[e.target.id]) { state.leadFilters[lMap[e.target.id]] = e.target.value; refreshLeadsTable(); }
     else if (e.target.id === 'o-stage') { state.trackerFilters.stage = e.target.value; refreshTrackerTable(); }
+    else if (e.target.id === 'r-country') { state.researchFilters.country = e.target.value; render(); }
     else {
       // Tracker inline pipeline selects
       const stageId = e.target.getAttribute('data-pl-stage');
@@ -2922,13 +3076,14 @@ async function boot() {
     // no-store: always pull the freshest data JSON (the background engines update these
     // files on every run) so the page never shows stale numbers from a cached copy.
     const NS = { cache: 'no-store' };
-    const [meta, exhibitions, products, leads, competitors, outreach] = await Promise.all([
+    const [meta, exhibitions, products, leads, competitors, outreach, research] = await Promise.all([
       fetch('data/meta.json', NS).then((r) => r.json()),
       fetch('data/exhibitions.json', NS).then((r) => r.json()),
       fetch('data/products.json', NS).then((r) => r.json()).catch(() => []),
       fetch('data/leads.json', NS).then((r) => r.json()).catch(() => []),
       fetch('data/competitors.json', NS).then((r) => r.json()).catch(() => []),
       fetch('data/outreach.json', NS).then((r) => r.json()).catch(() => ({})),
+      fetch('data/research_targets.json', NS).then((r) => r.json()).catch(() => ({})),
     ]);
     state.meta = meta;
     // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.
@@ -2938,6 +3093,13 @@ async function boot() {
     state.leads = unwrap(leads, 'leads').filter((l) => l && l.id && l.company);
     state.competitors = unwrap(competitors, 'competitors').filter((c) => c && c.id && c.company);
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
+    state.research = unwrap(research, 'targets').filter((t) => t && t.id && t.company);
+    state.researchSent = loadResearchSent();
+    // Merge any Industry-Research companies the user "sent to the Growth Engine" that aren't already leads.
+    try {
+      const rmap = loadResearchLeads();
+      Object.values(rmap).forEach((l) => { if (l && l.id && l.company && !state.leads.some((x) => x.id === l.id)) state.leads.push(l); });
+    } catch { /* ignore */ }
     loadRelevance(state.exhibitions.map((d) => d.id));
     loadPipeline(state.leads.map((l) => l.id));
     loadStars(state.leads.map((l) => l.id));   // ⭐ my-leads shortlist (localStorage)

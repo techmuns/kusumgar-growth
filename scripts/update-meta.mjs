@@ -55,6 +55,7 @@ async function main() {
   const competitors = arr(await load('competitors.json', []), 'competitors');
   const outreachRaw = await load('outreach.json', {});
   const outreach = (outreachRaw && typeof outreachRaw === 'object' && !Array.isArray(outreachRaw)) ? outreachRaw : {};
+  const research = arr(await load('research_targets.json', {}), 'targets');
   const ids = new Set(leads.map((l) => l && l.id).filter(Boolean));
 
   let drafted = 0, contacts = 0, personalVerified = 0, companyInbox = 0, needContact = 0;
@@ -86,6 +87,8 @@ async function main() {
     company_inbox_count: companyInbox,
     need_contact_count: needContact,
     sources_total: srcs.size,
+    research_targets_total: research.length,
+    research_verified_count: research.filter((t) => t && t.verified === true && t.product_confirmed === true).length,
   };
 
   await writeFile(path.join(DATA_DIR, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
