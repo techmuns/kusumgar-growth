@@ -56,6 +56,7 @@ async function main() {
   const outreachRaw = await load('outreach.json', {});
   const outreach = (outreachRaw && typeof outreachRaw === 'object' && !Array.isArray(outreachRaw)) ? outreachRaw : {};
   const research = arr(await load('research_targets.json', {}), 'targets');
+  const market = await load('market_intel.json', {});
   const ids = new Set(leads.map((l) => l && l.id).filter(Boolean));
 
   let drafted = 0, contacts = 0, personalVerified = 0, companyInbox = 0, needContact = 0;
@@ -89,6 +90,9 @@ async function main() {
     sources_total: srcs.size,
     research_targets_total: research.length,
     research_verified_count: research.filter((t) => t && t.verified === true && t.product_confirmed === true).length,
+    market_year: (market && market._meta && market._meta.year) || null,
+    market_updated_at: (market && market._meta && market._meta.updated_at) || null,
+    market_latest_month: (market && market._meta && market._meta.monthly_through) || null,
   };
 
   await writeFile(path.join(DATA_DIR, 'meta.json'), JSON.stringify(meta, null, 2) + '\n');
