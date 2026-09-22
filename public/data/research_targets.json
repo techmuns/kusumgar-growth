@@ -3704,12 +3704,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://statmedicaldevices.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://statmedicaldevices.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "elite-first-aid",
@@ -3721,12 +3721,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://elitefirstaidinc.com",
+   "product_confirmed": true,
+   "product_evidence": "Elite First Aid delivers innovative, adventure ready emergency supplies for real life... For over 30 years, we have equipped professionals, explorers, and self-reliant individuals with dependable trauma and first aid solutions.",
+   "verify_source_url": "https://elitefirstaidinc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rescue-tech",
@@ -3738,12 +3738,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rescuetech1.com",
+   "product_confirmed": true,
+   "product_evidence": "Technical Rescue Equipment and Gear NFPA Technical Rescue and training Equipment and Gear for Fire, Industrial, Military, and Tactical Rescue Teams",
+   "verify_source_url": "https://www.rescuetech1.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "dynamic-rescue-systems",
@@ -3755,12 +3755,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://dynamicrescue.com",
+   "product_confirmed": false,
+   "product_evidence": "Medical/First Aid, First Aid & Medical Training, Medical Response",
+   "verify_source_url": "https://www.dynamicrescue.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tarps-plus",
@@ -3823,12 +3823,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://cunningham.com",
+   "product_confirmed": true,
+   "product_evidence": "We manufacture clever protective covers to safeguard the world's most valuable assets... we are one of the world's leading manufacturers of clever protective tarpaulin covers",
+   "verify_source_url": "https://www.cunningham.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "cover-tech",
@@ -3840,12 +3840,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://cover-tech.com",
+   "product_confirmed": true,
+   "product_evidence": "COVER-TECH INC. manufactures & distributes high-quality Fabric Buildings & custom covers and tarps of all shapes, and sizes.",
+   "verify_source_url": "https://www.cover-tech.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "industrial-cover-systems",
@@ -3857,12 +3857,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://coversunlimited.net",
+   "product_confirmed": true,
+   "product_evidence": "we make it simple to protect what matters most. From industrial job sites to residential backyards, our team designs and manufactures high-quality tarps, covers, and containment systems",
+   "verify_source_url": "https://www.coversunlimited.net/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "machine-covers-usa",
@@ -3874,12 +3874,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://alcocovers.com",
+   "product_confirmed": true,
+   "product_evidence": "ALCO offers a large variety of industrial covers and Commercial Outdoor Curtains which are application driven... Custom made industrial covers for a wide range of applications.",
+   "verify_source_url": "https://www.alcocovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "national-covers",
@@ -3891,12 +3891,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://nationalcovers.com",
+   "product_confirmed": true,
+   "product_evidence": "Forklift covers featuring heavy-duty, weather-resistant fabric for all-season protection",
+   "verify_source_url": "https://www.nationalcovers.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "durabilt-covers",
@@ -3908,12 +3908,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://durabiltusa.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://durabiltusa.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "creative-covers",
@@ -3923,14 +3923,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Industrial & Medical Procurement",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://creativecoversinc.com",
+   "product_confirmed": true,
+   "product_evidence": "Custom Industrial Covers Equipment Covers Medical Equipment Covers Air Conditioner Covers Cart Covers Mobile Shelving Covers",
+   "verify_source_url": "https://creativecoversinc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "powerblanket",
@@ -3940,14 +3940,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Project Manager",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://powerblanket.com",
+   "product_confirmed": true,
+   "product_evidence": "Powerblanket manufactures industrial heated blankets built for rugged conditions",
+   "verify_source_url": "https://www.powerblanket.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "shade-beyond",
@@ -3959,12 +3959,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://shadeandbeyond.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://shadeandbeyond.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "fabric-structures-usa",
@@ -3976,12 +3976,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://fabricstructures-usa.com",
+   "product_confirmed": true,
+   "product_evidence": "Industrial Fabric Structures & Temporary Fabric Buildings Engineered industrial fabric structures and temporary fabric buildings",
+   "verify_source_url": "https://fabricstructures-usa.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "herculite-fabricators",
@@ -3993,12 +3993,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://herculite.com",
+   "product_confirmed": true,
+   "product_evidence": "Sure-Chek® brand medical fabrics are the original health care fabrics that were patented for use as protective covering fabrics",
+   "verify_source_url": "https://www.herculite.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "value-vinyls",
@@ -4010,12 +4010,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://valuevinyls.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://valuevinyls.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "adfors",
@@ -4027,12 +4027,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://adfors.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://adfors.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "industrial-netting",
@@ -4044,12 +4044,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://industrialnetting.com",
+   "product_confirmed": true,
+   "product_evidence": "Protective Sleeves Standard Duty Super Duty Work Grade FlexGuard III Heat Sealing Cut to Length Sleeves",
+   "verify_source_url": "https://www.industrialnetting.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "national-tent-shade",
@@ -4061,12 +4061,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://nationaltents.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://nationaltents.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "weathermax-fabricators",
@@ -4078,12 +4078,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://weathermax.com",
+   "product_confirmed": true,
+   "product_evidence": "WeatherMAX outdoor performance fabrics are built for demanding environments, markets and specifications",
+   "verify_source_url": "https://weathermax.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "rhino-covers",
@@ -4095,12 +4095,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://rhinoshelter.com",
+   "product_confirmed": false,
+   "product_evidence": "Rhino Shelter is committed to delivering the industry's best portable garages and shelters",
+   "verify_source_url": "https://rhinoshelter.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "versa-shield",
@@ -4112,12 +4112,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://versadesignedsurfaces.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.versadesignedsurfaces.com/north-america",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tmi-llc",
@@ -4129,12 +4129,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tmigroupllc.com",
+   "product_confirmed": false,
+   "product_evidence": "TMI Group LLC provides tax preparation services, client portal services, and professional accounting services",
+   "verify_source_url": "https://tmigroupllc.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "apex-mills-customers",
@@ -4146,12 +4146,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://apexmills.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://apexmills.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "heavy-duty-tarps",
@@ -4163,12 +4163,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://heavydutytarps.com",
+   "product_confirmed": true,
+   "product_evidence": "Heavy Duty Tarps manufactures and sells high quality custom tarps with free shipping throughout continental USA. Heavy Duty Tarps Custom Commercial Tarps & Industrial Covers",
+   "verify_source_url": "https://www.heavydutytarps.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "usa-canvas-shoppe",
@@ -4180,12 +4180,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://usacanvas.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.usacanvas.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "tarp-america",
@@ -4197,12 +4197,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://tarpamerica.net",
+   "product_confirmed": true,
+   "product_evidence": "We Offer Heavy-Duty Products, Made in the USA... high-quality tarps and covers for all purposes... protective boat, truck, and trailer covering... Our quality, heavy-duty tarps and coverings are made in the USA",
+   "verify_source_url": "https://tarpamerica.net/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "industrial-shadeports",
@@ -4214,12 +4214,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://shadeports.com",
+   "product_confirmed": true,
+   "product_evidence": "Industrial Shadeports has been Crafting Top Quality Sun Shades, Shade Sails, and Shade Structures since 1993... we have designed, engineered, manufactured and installed high quality Sun Shades and Sun Shade Sails... our Fort Lauderdale facility stands as a testament to our dedication. Here, we embrace a vertically integrated approach, executing all steel, aluminum, and fabric fabrication with prec",
+   "verify_source_url": "https://shadeports.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "fabri-tech-components",
@@ -4231,12 +4231,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://fabritech.net",
+   "product_confirmed": true,
+   "product_evidence": "Protective Films Fully customized protective plastic films provide temporary surface protection. Plastic films offer unsurpassed abrasion-resistant, chemical-resistant, and scratch-resistant properties and are used for a wide range of applications requiring advanced protection.",
+   "verify_source_url": "https://www.fabritech.net/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "custom-covers-central",
@@ -4248,12 +4248,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://customcovercentral.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://customcovercentral.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "cover-solutions",
@@ -4265,12 +4265,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://seatcoversolutions.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.seatcoversolutions.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "shelter-rite-fabricators",
@@ -4282,12 +4282,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://seamancorp.com",
+   "product_confirmed": true,
+   "product_evidence": "delivering high-performance industrial coated fabrics since 1949",
+   "verify_source_url": "https://www.seamancorp.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "sewn-products-inc",
@@ -4299,12 +4299,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://sewnproducts.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.sewnproducts.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "incord",
@@ -4316,12 +4316,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://incord.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://incord.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "fabtex",
@@ -4333,12 +4333,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://fabtex.com",
+   "product_confirmed": false,
+   "product_evidence": "We manufacture and install custom window treatments and bedding for the hospitality, healthcare & other industries.",
+   "verify_source_url": "https://www.fabtex.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "pacific-tent",
@@ -4350,12 +4350,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://pacifictentandevents.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://pacifictentandevents.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "jensen-outdoor-covers",
@@ -4367,12 +4367,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
+   "verified": true,
+   "website": "https://jensenoutdoor.com",
+   "product_confirmed": false,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://www.jensenoutdoor.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "cover-it-inc",
@@ -4384,12 +4384,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
+   "verified": true,
+   "website": "https://coveritcanada.com",
    "product_confirmed": null,
    "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verify_source_url": "https://coveritcanada.com",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "american-tarping",
@@ -4401,12 +4401,12 @@
    "sourcing_model": "",
    "buyer_role": "",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://americantarping.com",
+   "product_confirmed": true,
+   "product_evidence": "American Tarping is a family-owned and operated distributor of truck tarp systems, motors, tarps, and replacement parts.",
+   "verify_source_url": "https://americantarping.com/",
+   "verified_at": "2026-09-22"
   },
   {
    "id": "dtr-fabricators",
@@ -4433,14 +4433,14 @@
    "application": "",
    "est_fabric_consumption": "",
    "sourcing_model": "",
-   "buyer_role": "",
+   "buyer_role": "Director of Parks and Recreation, Superintendent of Parks & Planning",
    "source": "Kusumgar curated target list",
-   "verified": false,
-   "website": "",
-   "product_confirmed": null,
-   "product_evidence": "",
-   "verify_source_url": "",
-   "verified_at": ""
+   "verified": true,
+   "website": "https://shadesystemsinc.com",
+   "product_confirmed": true,
+   "product_evidence": "manufacturer of outdoor fabric shade covers, sun shade structures, canopies, tents, commercial umbrellas, and shade shelters",
+   "verify_source_url": "https://shadesystemsinc.com/",
+   "verified_at": "2026-09-22"
   }
  ]
 }
