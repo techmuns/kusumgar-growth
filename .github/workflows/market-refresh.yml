@@ -1,0 +1,59 @@
+name: Market intel
+
+# Pulls the real global coated-fabric trade market from UN Comtrade (free, keyless) and commits
+# public/data/market_intel.json. Every figure is a value the API returned, with its query URL kept
+# as the source — nothing modeled. Manual + weekly cron (Saturdays). Commits only when data changed.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 6' # 08:00 UTC every Saturday
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Pull UN Comtrade market intel (keyless; graceful on error)
+        env:
+          # Optional: lifts the 500-row preview cap. NOT required — keyless is the default.
+          COMTRADE_KEY: ${{ secrets.COMTRADE_KEY }}
+        run: node scripts/market-intel.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/market_intel.json)" ]; then
+            echo "No changes to market_intel.json — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node scripts/update-meta.mjs
+          git add public/data/market_intel.json public/data/meta.json
+          git commit -m "chore(data): refresh UN Comtrade market intel"
+
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1

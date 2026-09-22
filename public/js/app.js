@@ -152,6 +152,28 @@ function flagImg(country) {
 // Flag + country name for a table/detail cell.
 const countryCell = (country) => `${flagImg(country)}${escapeHtml(dash(country))}`;
 
+// Flag image straight from an ISO alpha-2 (the UN Comtrade market data already carries ISO2).
+function flagImgIso(iso2) {
+  const iso = String(iso2 || '').toLowerCase();
+  if (!/^[a-z]{2}$/.test(iso)) return '';
+  return `<img src="https://flagcdn.com/32x24/${iso}.png" srcset="https://flagcdn.com/64x48/${iso}.png 2x" width="20" height="15" alt="" loading="lazy" class="mr-1.5 inline-block h-3.5 w-auto rounded-[2px] align-[-2px] ring-1 ring-slate-200/70" />`;
+}
+// Real-money + volume formatters for the UN Comtrade market view (values are USD / kg, exactly as reported).
+function fmtUSD(v) {
+  const n = Number(v) || 0;
+  if (n >= 1e9) return '$' + (n / 1e9).toFixed(n >= 1e10 ? 0 : 1).replace(/\.0$/, '') + 'B';
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(n >= 1e8 ? 0 : 1).replace(/\.0$/, '') + 'M';
+  if (n >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+  return '$' + Math.round(n);
+}
+function fmtTonnes(kg) {
+  const t = (Number(kg) || 0) / 1000;
+  if (t >= 1e6) return (t / 1e6).toFixed(1).replace(/\.0$/, '') + ' Mt';
+  if (t >= 1e3) return (t / 1e3).toFixed(t >= 1e4 ? 0 : 1).replace(/\.0$/, '') + ' kt';
+  if (t >= 1) return Math.round(t) + ' t';
+  return t > 0 ? '<1 t' : '—';
+}
+
 const MONTHS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /* ------------------------------------------------------------------ *
@@ -185,8 +207,11 @@ const state = {
   pipeSearch: '',              // search box in the Pipeline "My leads" column
   prodModalSearch: '',         // search box in the Products catalog modal
   research: [],                // curated target companies (research_targets.json)
+  researchSub: 'market',       // 'market' | 'targets'  (Market shown first — the industry-mapping step)
   researchFilters: { segment: 'all', search: '', country: 'all' },
   researchSent: new Set(),     // target ids sent to the Growth Engine (localStorage)
+  market: null,                // UN Comtrade market intel (market_intel.json)
+  marketCommodity: 'hs5903',   // 'hs5903' | 'hs590320'
 };
 
 const PIPE_KEY = (id) => `kgr.outreach.${id}`;
@@ -421,6 +446,75 @@ function buildBars(items, { unit = 'show' } = {}) {
     </g>`;
   }).join('');
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Top countries by number of shows">${rows}</svg>`;
+}
+
+// Money horizontal bars — items: [{key,label,short,iso2,value,valueText,tipSub,color}].
+// Same hand-built style as buildBars (flag + name + track + reveal-scale fill + value); NO chart library.
+function buildValueBars(items) {
+  if (!items || !items.length) return '<div class="py-6 text-center text-[12px] text-slate-400">No data.</div>';
+  const W = 460, x0 = 150, valReserve = 58;
+  const barMax = W - x0 - valReserve;
+  const rowH = 30, padTop = 6, barH = 14;
+  const H = items.length * rowH + padTop;
+  const max = Math.max(...items.map((i) => i.value), 1);
+  const rows = items.map((i, idx) => {
+    const y = padTop + idx * rowH;
+    const cy = y + rowH / 2;
+    const w = Math.max((i.value / max) * barMax, 4);
+    const iso = String(i.iso2 || '').toLowerCase();
+    const flag = /^[a-z]{2}$/.test(iso)
+      ? `<image href="https://flagcdn.com/32x24/${iso}.png" x="0" y="${(cy - 7).toFixed(1)}" width="18" height="13" preserveAspectRatio="xMidYMid slice"></image>`
+      : '';
+    return `<g class="hovable" data-key="${escapeHtml(i.key)}" data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}" data-tip-sub="${escapeHtml(i.tipSub || i.valueText)}">
+      <rect x="0" y="${y}" width="${W}" height="${rowH}" fill="transparent"></rect>
+      ${flag}
+      <text x="24" y="${cy}" dominant-baseline="central" style="font-size:11.5px;font-weight:600;fill:#475569;">${escapeHtml(i.short || i.label)}</text>
+      <rect x="${x0}" y="${(cy - barH / 2).toFixed(1)}" width="${barMax}" height="${barH}" rx="7" fill="#f1f5f9"></rect>
+      <rect class="reveal-scale" x="${x0}" y="${(cy - barH / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${barH}" rx="7" fill="${i.color}" style="transition-delay:${idx * 55}ms"></rect>
+      <text x="${W - 4}" y="${cy}" text-anchor="end" dominant-baseline="central" class="tnum" style="font-size:11.5px;font-weight:700;fill:#0f172a;">${escapeHtml(i.valueText)}</text>
+    </g>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Top countries by trade value">${rows}</svg>`;
+}
+
+// Money donut — items: [{key,label,value,valueText,pct,tipSub,color}] (mirrors buildDonut, currency tooltip).
+function buildValueDonut(items, { centerNum, centerLabel }) {
+  const total = items.reduce((s, i) => s + i.value, 0) || 1;
+  const cx = 80, cy = 80, r = 56, sw = 22;
+  const C = 2 * Math.PI * r;
+  const gap = 2.5;
+  let accum = 0;
+  const arcs = items.filter((i) => i.value > 0).map((i) => {
+    const len = (i.value / total) * C;
+    const drawLen = Math.max(len - gap, 0.6);
+    const offset = -accum;
+    accum += len;
+    return `<circle class="arc-seg reveal-arc hovable" data-key="${escapeHtml(i.key)}"
+        cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${i.color}" stroke-width="${sw}"
+        stroke-dasharray="0 ${C.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"
+        data-arc="${drawLen.toFixed(2)} ${(C - drawLen).toFixed(2)}"
+        data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}"
+        data-tip-sub="${escapeHtml(i.tipSub || '')}"></circle>`;
+  }).join('');
+  return `
+    <svg viewBox="0 0 160 160" width="132" height="132" class="h-32 w-32 shrink-0" role="img" aria-label="${escapeHtml(centerLabel)}">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="${sw}"></circle>
+      <g transform="rotate(-90 ${cx} ${cy})" style="transform-box:view-box;">${arcs}</g>
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" class="tnum" style="font-size:19px;font-weight:800;fill:#0f172a;font-family:'Plus Jakarta Sans',sans-serif;">${escapeHtml(centerNum)}</text>
+      <text x="${cx}" y="${cy + 15}" text-anchor="middle" style="font-size:11px;font-weight:600;fill:#94a3b8;">${escapeHtml(centerLabel)}</text>
+    </svg>`;
+}
+
+// Money legend — items: [{key,label,valueText,pct,tipSub,color}] (mirrors buildLegend, shows $ + %).
+function buildValueLegend(items) {
+  return `<ul class="flex-1 space-y-1.5 min-w-0">` + items.map((i) => `
+    <li class="hovable flex items-center gap-2 rounded-lg px-1.5 py-0.5" data-key="${escapeHtml(i.key)}"
+        data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}" data-tip-sub="${escapeHtml(i.tipSub || '')}">
+      <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${i.color}"></span>
+      <span class="min-w-0 flex-1 truncate text-[13px] font-medium text-slate-600">${escapeHtml(i.label)}</span>
+      <span class="tnum text-[13px] font-bold text-slate-900">${escapeHtml(i.valueText)}</span>
+      <span class="tnum w-9 text-right text-[11px] font-medium text-slate-400">${escapeHtml(String(i.pct))}%</span>
+    </li>`).join('') + `</ul>`;
 }
 
 // Stacked bar — items: [{label, value, color, key}]
@@ -2411,8 +2505,114 @@ function refreshResearchList() {
 }
 
 function renderResearch() {
+  const sub = state.researchSub === 'targets' ? 'targets' : 'market';
+  const subBtn = (key, label) => {
+    const on = sub === key;
+    return `<button type="button" data-researchsub="${key}" aria-pressed="${on}" class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${on ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">${label}</button>`;
+  };
+  const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('market', '📈 Market')}${subBtn('targets', '🎯 Targets')}</div>`;
+  return `<div class="fade-in">
+    <div class="mb-3">
+      <h2 class="font-display text-lg font-extrabold text-slate-900">🔬 Industry Research</h2>
+      <p class="mt-0.5 text-sm text-slate-500">First map the market with real UN trade data, then work your target companies. Nothing is invented.</p>
+    </div>
+    <div class="mb-4">${toggle}</div>
+    ${sub === 'market' ? renderMarketView() : renderResearchTargets()}
+  </div>`;
+}
+
+// A market-size stat card (real number + source link).
+function sizeCard(label, big, sub, url, tone) {
+  const tones = { indigo: 'text-indigo-600', sky: 'text-sky-600', emerald: 'text-emerald-600' };
+  return `<div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+    <div class="text-[12px] font-semibold text-slate-500">${escapeHtml(label)}</div>
+    <div class="mt-1 font-display text-2xl font-extrabold tnum ${tones[tone] || 'text-slate-900'}">${escapeHtml(big)}</div>
+    <div class="mt-1 flex items-center justify-between gap-2">
+      <span class="text-[11px] text-slate-400">${escapeHtml(sub)}</span>
+      <a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="shrink-0 text-[11px] font-semibold text-indigo-500 hover:underline">UN Comtrade ↗</a>
+    </div>
+  </div>`;
+}
+
+// 📈 Market — real UN Comtrade coated-fabric trade. Every figure carries its query URL; nothing modeled.
+function renderMarketView() {
+  const m = state.market;
+  if (!m || !m.hs5903) {
+    return '<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">Market data hasn’t been pulled yet — the weekly UN Comtrade engine will fill this in.</div>';
+  }
+  const cmd = m[state.marketCommodity] ? state.marketCommodity : 'hs5903';
+  const b = m[cmd];
+  const year = (m._meta && m._meta.year) || '';
+  const impUrl = (b.query_urls && b.query_urls.imports) || '#';
+  const expUrl = (b.query_urls && b.query_urls.exports) || '#';
+  const srcLink = (url, text = 'UN Comtrade ↗') => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="shrink-0 text-[11px] font-semibold text-indigo-500 hover:underline">${escapeHtml(text)}</a>`;
+
+  const cmdBtn = (key, label) => {
+    const on = cmd === key;
+    return `<button type="button" data-mktcmd="${key}" aria-pressed="${on}" class="rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors ${on ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">${label}</button>`;
+  };
+  const cmdToggle = `<div class="inline-flex flex-wrap rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${cmdBtn('hs5903', 'All coated fabric (5903)')}${cmdBtn('hs590320', 'PU-coated (5903.20)')}</div>`;
+
+  const PALETTE = ['#6366f1', '#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#22c55e', '#eab308', '#3b82f6'];
+  const barItems = (rows, prefix, verb) => (rows || []).slice(0, 12).map((r, i) => ({
+    key: prefix + r.code, label: r.country, short: truncate(r.country, 16), iso2: r.iso2, value: r.value,
+    valueText: fmtUSD(r.value), tipSub: `${fmtUSD(r.value)} · ${fmtTonnes(r.netWgt)} ${verb}`, color: PALETTE[i % PALETTE.length],
+  }));
+  const impItems = barItems(b.top_importers, 'imp', 'imported');
+  const expItems = barItems(b.top_exporters, 'exp', 'exported');
+
+  const REGION_COLORS = { Asia: '#6366f1', Europe: '#0ea5e9', 'North America': '#f59e0b', 'South America': '#10b981', Africa: '#ef4444', Oceania: '#8b5cf6', Other: '#94a3b8' };
+  const regItems = (b.region_split || []).map((r) => ({
+    key: 'reg' + r.region, label: r.region, value: r.value, valueText: fmtUSD(r.value), pct: r.pct,
+    tipSub: `${fmtUSD(r.value)} · ${r.pct}% of imports`, color: REGION_COLORS[r.region] || '#94a3b8',
+  }));
+
+  const hsLabel = cmd === 'hs5903' ? 'HS 5903' : 'HS 5903.20';
+
+  return `
+    <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
+      <div class="min-w-0">
+        <h3 class="font-display text-base font-extrabold text-slate-900">Global coated-fabric market — real UN trade data (${escapeHtml(hsLabel)}, ${escapeHtml(String(year))})</h3>
+        <p class="mt-0.5 text-[12px] text-slate-500">Source: ${srcLink(impUrl)} — every figure below is a value UN Comtrade actually reported, not a model.</p>
+      </div>
+      ${cmdToggle}
+    </div>
+
+    <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      ${sizeCard('World import value', fmtUSD(b.world_import_value), `${b.reporting_importers || b.top_importers.length} countries buying · ${year}`, impUrl, 'indigo')}
+      ${sizeCard('World import volume', fmtTonnes(b.world_import_netWgt), 'net weight reported', impUrl, 'sky')}
+      ${sizeCard('World export value', fmtUSD(b.world_export_value), `${b.reporting_exporters || b.top_exporters.length} countries supplying`, expUrl, 'emerald')}
+    </div>
+
+    <div class="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
+      <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+        <div class="mb-1 flex items-center justify-between gap-2"><h4 class="text-sm font-bold text-slate-800">Where the demand is — top importers</h4>${srcLink(impUrl)}</div>
+        <p class="mb-2 text-[12px] text-slate-500">Who buys coated fabric, by import value (${year}).</p>
+        ${buildValueBars(impItems)}
+      </div>
+      <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+        <div class="mb-1 flex items-center justify-between gap-2"><h4 class="text-sm font-bold text-slate-800">Demand by region</h4>${srcLink(impUrl)}</div>
+        <p class="mb-2 text-[12px] text-slate-500">Imports grouped by world region.</p>
+        <div class="flex flex-wrap items-center gap-4">
+          ${buildValueDonut(regItems, { centerNum: fmtUSD(b.world_import_value), centerLabel: 'imports' })}
+          ${buildValueLegend(regItems)}
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+      <div class="mb-1 flex items-center justify-between gap-2"><h4 class="text-sm font-bold text-slate-800">Who makes it — supply chain (top exporters)</h4>${srcLink(expUrl)}</div>
+      <p class="mb-2 text-[12px] text-slate-500">Where coated fabric is produced &amp; shipped from, by export value (${year}).</p>
+      ${buildValueBars(expItems)}
+    </div>
+
+    <p class="mt-3 text-center text-[11px] text-slate-400">Real UN Comtrade annual trade (HS classification), partner = World. ${srcLink(impUrl, 'View the exact query ↗')}</p>
+  `;
+}
+
+function renderResearchTargets() {
   if (!state.research.length) {
-    return '<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No research targets loaded.</div>';
+    return '<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No research targets loaded.</div>';
   }
   const f = state.researchFilters;
   const total = state.research.length;
@@ -2426,12 +2626,8 @@ function renderResearch() {
   };
   const chips = [chip('all', 'All', total)].concat(RESEARCH_SEGMENTS.filter((s) => bySeg[s]).map((s) => chip(s, segLabel(s), bySeg[s]))).join('');
 
-  return `<div class="fade-in">
-    <div class="mb-3">
-      <h2 class="font-display text-lg font-extrabold text-slate-900">🔬 Industry Research</h2>
-      <p class="mt-0.5 text-sm text-slate-500">Your real target-company universe — each company gets verified against its own website. Nothing is invented.</p>
-      <p class="mt-1 text-[12px] text-slate-400"><span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified against their site</p>
-    </div>
+  return `<div>
+    <p class="mb-3 text-[12px] text-slate-400">Your real target-company universe — each company gets verified against its own website. <span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified against their site.</p>
     <div class="mb-3 flex flex-wrap items-center gap-2">${chips}</div>
     <div class="mb-3 flex flex-wrap items-center gap-2">
       <div class="relative min-w-[180px] flex-1">
@@ -2774,6 +2970,7 @@ function render() {
   else if (state.tab === 'products' && state.productsSub === 'coverage') revealCharts();
   else if (state.tab === 'leads' && state.leadsSub === 'overview') revealCharts();
   else if (state.tab === 'competitors' && state.competitorsSub === 'landscape') revealCharts();
+  else if (state.tab === 'research' && state.researchSub === 'market') revealCharts();
 }
 
 // Kick chart entrance animations after the DOM paints (idempotent, so a
@@ -2840,6 +3037,12 @@ function wireEvents() {
 
     const osub = e.target.closest('[data-osub]');
     if (osub) { state.outreachSub = osub.getAttribute('data-osub'); render(); return; }
+
+    // Industry Research: Market/Targets sub-view toggle + Market commodity toggle.
+    const researchSub = e.target.closest('[data-researchsub]');
+    if (researchSub) { state.researchSub = researchSub.getAttribute('data-researchsub'); render(); return; }
+    const mktCmd = e.target.closest('[data-mktcmd]');
+    if (mktCmd) { state.marketCommodity = mktCmd.getAttribute('data-mktcmd'); render(); return; }
 
     // Industry Research: segment chip + "Send to Growth Engine".
     const rsub = e.target.closest('[data-rsub]');
@@ -3076,7 +3279,7 @@ async function boot() {
     // no-store: always pull the freshest data JSON (the background engines update these
     // files on every run) so the page never shows stale numbers from a cached copy.
     const NS = { cache: 'no-store' };
-    const [meta, exhibitions, products, leads, competitors, outreach, research] = await Promise.all([
+    const [meta, exhibitions, products, leads, competitors, outreach, research, market] = await Promise.all([
       fetch('data/meta.json', NS).then((r) => r.json()),
       fetch('data/exhibitions.json', NS).then((r) => r.json()),
       fetch('data/products.json', NS).then((r) => r.json()).catch(() => []),
@@ -3084,6 +3287,7 @@ async function boot() {
       fetch('data/competitors.json', NS).then((r) => r.json()).catch(() => []),
       fetch('data/outreach.json', NS).then((r) => r.json()).catch(() => ({})),
       fetch('data/research_targets.json', NS).then((r) => r.json()).catch(() => ({})),
+      fetch('data/market_intel.json', NS).then((r) => r.json()).catch(() => null),
     ]);
     state.meta = meta;
     // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.
@@ -3094,6 +3298,7 @@ async function boot() {
     state.competitors = unwrap(competitors, 'competitors').filter((c) => c && c.id && c.company);
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
     state.research = unwrap(research, 'targets').filter((t) => t && t.id && t.company);
+    state.market = (market && typeof market === 'object' && market.hs5903) ? market : null;
     state.researchSent = loadResearchSent();
     // Merge any Industry-Research companies the user "sent to the Growth Engine" that aren't already leads.
     try {
