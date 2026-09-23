@@ -216,7 +216,7 @@ const state = {
   researchSub: 'market',       // 'market' | 'targets'  (Market shown first — the industry-mapping step)
   researchProduct: '600d-pu-polyester', // which product's target map is showing
   productsModalKind: 'existing', // Products modal tab: 'existing' | 'new'
-  researchFilters: { segment: 'all', search: '', country: 'all' },
+  researchFilters: { segment: 'all', search: '', country: 'all', tierA: false },
   researchSent: new Set(),     // target ids sent to the Growth Engine (localStorage)
   market: null,                // UN Comtrade market intel (market_intel.json)
   reportContent: {},           // per-product strategy narrative (report_content.json)
@@ -1399,8 +1399,9 @@ function leadContactCell(l) {
     ? `<div class="truncate text-sm text-slate-700" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</div>`
     : '<div class="text-sm text-slate-400">—</div>';
   const role = c.title ? `<div class="truncate text-[11px] text-slate-400" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>` : '';
+  const tier = c.name ? `<div class="mt-0.5">${personBadge(c)}</div>` : '';
   const li = c.linkedin_url ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="mt-0.5 inline-block text-[11px] font-semibold text-[#0a66c2] hover:underline">in ↗</a>` : '';
-  return `<div class="max-w-[150px]">${name}${role}${li}</div>`;
+  return `<div class="max-w-[160px]">${name}${role}${tier}${li}</div>`;
 }
 function leadLinkedinCell(l) {
   const c = displayContact(l.id);
@@ -1769,6 +1770,55 @@ function emailClassBadge(c, big = false) {
   return `<span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:${color}1f;color:${darken(color, 0.3)}">✉ ${label}</span>`;
 }
 
+/* ---- Right-person role tier (technical/R&D decision-maker, not purchasing) ----
+ * A = technical / R&D decision-maker (best), B = operations, C = purchasing-only (weak),
+ * none = still searching / not identified yet. */
+const ROLE_TIER = {
+  A: ['#10b981', '🟢', 'Technical / R&D'],
+  B: ['#f59e0b', '🟡', 'Operations'],
+  C: ['#f97316', '🟠', 'Purchasing only'],
+};
+function roleTierBadge(tier, reason) {
+  if (!tier || !ROLE_TIER[tier]) return '<span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-400">⏳ Searching</span>';
+  const [color, dot, label] = ROLE_TIER[tier];
+  const tip = reason ? ` title="Matched keyword: ${escapeHtml(reason)}"` : '';
+  return `<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold" style="background:${color}1f;color:${darken(color, 0.3)}"${tip}>${dot} ${escapeHtml(label)}</span>`;
+}
+// Badge for a resolved contact: tiered role when we know it; a neutral "contact on file" when we have
+// a person but no tier yet (e.g. a legacy contact); "⏳ Searching" when no person at all.
+function personBadge(c) {
+  if (!c || !c.name) return roleTierBadge(null);
+  if (c.role_tier) return roleTierBadge(c.role_tier, c.match_reason);
+  return '<span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">• Contact on file</span>';
+}
+// LinkedIn people-search for the technical decision-maker at a company (used when we have no profile URL).
+const linkedinTechSearch = (company) => `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(`${company} (R&D OR "technical director" OR "head of technology" OR operations)`.trim())}`;
+
+// The right-person block for a Targets card: role badge + name + title + LinkedIn + email (honest limits).
+function rightPersonCard(id, company) {
+  const c = displayContact(id);
+  const has = c && c.name;
+  const head = `<div class="flex items-center justify-between gap-2"><span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Right person</span>${personBadge(c)}</div>`;
+  if (!has) {
+    return `<div class="mt-2 rounded-lg bg-slate-50/70 p-2 ring-1 ring-slate-100">${head}
+      <div class="mt-1 text-[12px] text-slate-400">Not identified yet — <a href="${escapeHtml(linkedinTechSearch(company))}" target="_blank" rel="noopener" class="text-[#0a66c2] hover:underline">search LinkedIn ↗</a></div>
+    </div>`;
+  }
+  const li = c.linkedin_url
+    ? `<a href="${escapeHtml(c.linkedin_url)}" target="_blank" rel="noopener" class="font-semibold text-[#0a66c2] hover:underline">in ↗ LinkedIn</a>`
+    : `<a href="${escapeHtml(linkedinTechSearch(company))}" target="_blank" rel="noopener" class="text-[#0a66c2] hover:underline">search LinkedIn ↗</a>`;
+  const em = c.email
+    ? `<a href="mailto:${escapeHtml(c.email)}" class="text-indigo-600 hover:underline" title="${escapeHtml(c.email)}">${escapeHtml(truncate(c.email, 24))}</a> ${emailClassBadge(c)}`
+    : '<span class="text-slate-400">✉️ email needs a paid finder</span>';
+  return `<div class="mt-2 rounded-lg bg-slate-50/70 p-2 ring-1 ring-slate-100">${head}
+    <div class="mt-1 text-[13px] font-bold text-slate-800">${escapeHtml(c.name)}</div>
+    ${c.title ? `<div class="text-[11px] leading-snug text-slate-500">${escapeHtml(c.title)}</div>` : ''}
+    <div class="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px]">${li}${em}</div>
+  </div>`;
+}
+// Is this target/lead served by a Tier-A technical/R&D decision-maker?
+function hasTierA(id) { const c = displayContact(id); return !!(c && c.name && c.role_tier === 'A'); }
+
 /* ---- Two-layer contacts: manual (localStorage, Layer B) wins over auto (outreach.json, Layer A) ---- */
 const MANUAL_KEY = (id) => `kgr.contact.${id}`;
 function manualContact(id) {
@@ -1787,6 +1837,8 @@ function resolvedContact(id) {
     email_status: m.email_status || (a && a.email_status) || null,
     source: m.source || (a && a.source) || '',
     confidence: (a && a.confidence) || 'manual',
+    role_tier: (a && a.role_tier) || null,
+    match_reason: (a && a.match_reason) || '',
   };
 }
 
@@ -1808,6 +1860,8 @@ function displayContact(id) {
     email: realEmail ? c.email : null,
     email_status: realEmail ? c.email_status : null,
     source: c.source, confidence: c.confidence,
+    role_tier: c.role_tier || null,
+    match_reason: c.match_reason || '',
   };
 }
 // Draft: engine draft (outreach.json) wins; else a manual template draft.
@@ -1818,7 +1872,7 @@ function resolvedEmail(id) {
   return (m && m.draft) ? m.draft : null;
 }
 const hasDraftFor = (id) => !!resolvedEmail(id);
-const linkedinSearchUrl = (lead) => `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(`${lead.company} procurement purchasing sourcing`.trim())}`;
+const linkedinSearchUrl = (lead) => linkedinTechSearch(lead.company);
 
 // Client-side Nishad-style template fill (Layer B — no LLM needed).
 function draftFromTemplate(lead) {
@@ -1971,14 +2025,16 @@ function openModalHtml(html) {
 
 // One exhibitor row inside the exhibition modal — ☆ toggles it straight into "my leads".
 function exhibitorMiniRow(l) {
-  const c = displayContact(l.id) || {};
-  const who = c.name ? escapeHtml(c.name) : '';
+  const c = displayContact(l.id);
+  const who = c && c.name ? escapeHtml(c.name) : '';
+  const badges = c && c.name ? `${personBadge(c)}${c.email ? emailClassBadge(c) : ''}` : '';
   const on = isStarred(l.id);
   return `<div class="flex items-center gap-2 border-t border-slate-100 py-2 first:border-t-0">
     <button type="button" data-star="${escapeHtml(l.id)}" aria-pressed="${on}" title="${on ? 'Remove from my leads' : 'Add to my leads'}" class="shrink-0 text-lg leading-none ${on ? 'text-amber-400' : 'text-slate-300 hover:text-amber-400'}">${on ? '★' : '☆'}</button>
     <div class="min-w-0 flex-1">
       <div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(l.company)}${isRecommended(l) ? ' <span class="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">★ Rec</span>' : ''}</div>
       <div class="truncate text-[12px] text-slate-500">${escapeHtml(dash(l.segment))}${who ? ' · ' + who : ''}</div>
+      ${badges ? `<div class="mt-0.5 flex flex-wrap items-center gap-1">${badges}</div>` : ''}
     </div>
     <div class="shrink-0">${priorityChip(l.priority)}</div>
   </div>`;
@@ -2547,6 +2603,7 @@ function researchFiltered() {
   return researchProductTargets(state.researchProduct).filter((t) => {
     if (f.segment !== 'all' && t.segment !== f.segment) return false;
     if (f.country !== 'all' && (t.country || '') !== f.country) return false;
+    if (f.tierA && !hasTierA(t.id)) return false;
     if (q && !`${t.company} ${t.segment} ${t.country || ''} ${t.application || ''}`.toLowerCase().includes(q)) return false;
     return true;
   });
@@ -2574,6 +2631,7 @@ function researchCard(t) {
       <div class="shrink-0">${coloredChip(t.segment, anyColor(t.segment))}</div>
     </div>
     <div class="mt-2">${researchBadge(t)}</div>
+    ${rightPersonCard(t.id, t.company)}
     ${evidence}
     ${facts ? `<div class="mt-2 space-y-1">${facts}</div>` : ''}
     <div class="mt-3 pt-1">${action}</div>
@@ -3086,6 +3144,7 @@ function renderResearchTargets() {
   const f = state.researchFilters;
   const total = rows.length;
   const verified = rows.filter((t) => t.verified === true && t.product_confirmed === true).length;
+  const tierACount = rows.filter((t) => hasTierA(t.id)).length;
   const bySeg = {}; rows.forEach((t) => { bySeg[t.segment] = (bySeg[t.segment] || 0) + 1; });
   const countries = [...new Set(rows.map((t) => t.country || 'Unknown'))].sort();
   const segOrder = state.researchProduct === '600d-pu-polyester' ? RESEARCH_SEGMENTS : Object.keys(bySeg).sort();
@@ -3096,14 +3155,17 @@ function renderResearchTargets() {
   };
   const chips = [chip('all', 'All', total)].concat(segOrder.filter((s) => bySeg[s]).map((s) => chip(s, segLabel(s), bySeg[s]))).join('');
 
+  const tierABtn = `<button type="button" data-rtiera aria-pressed="${f.tierA}" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${f.tierA ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}">🟢 Technical decision-maker <span class="tnum ${f.tierA ? 'text-white/80' : 'text-emerald-600'}">${tierACount}</span></button>`;
   return `<div>
-    <p class="mb-3 text-[12px] text-slate-400">Real companies for <span class="font-semibold text-slate-600">${escapeHtml(prodName)}</span>, each verified against its own website. <span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified against their site.</p>
+    <p class="mb-1 text-[12px] text-slate-400">Real companies for <span class="font-semibold text-slate-600">${escapeHtml(prodName)}</span>, each verified against its own website. <span class="tnum font-semibold text-slate-600">${total}</span> companies · <span class="tnum font-semibold text-emerald-600">${verified}</span> verified · <span class="tnum font-semibold text-emerald-600">${tierACount}</span> with a technical decision-maker identified.</p>
+    <p class="mb-3 text-[11px] text-slate-400">The engine hunts the R&D / technical / operations decision-maker (not purchasing). Finding the person + LinkedIn is free; a verified personal email at scale needs a paid finder, so some rows show “LinkedIn ready — email needs a paid finder”.</p>
     <div class="mb-3 flex flex-wrap items-center gap-2">${chips}</div>
     <div class="mb-3 flex flex-wrap items-center gap-2">
       <div class="relative min-w-[180px] flex-1">
         <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
         <input id="r-search" type="search" value="${escapeHtml(f.search)}" placeholder="Search companies…" class="w-full rounded-xl border-0 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
       </div>
+      ${tierABtn}
       ${selectHtml('r-country', 'All countries', f.country, countries)}
     </div>
     <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="rCount" class="tnum font-semibold text-slate-700">${researchFiltered().length}</span> shown</div>
@@ -3520,6 +3582,7 @@ function wireEvents() {
     // Industry Research: segment chip + "Send to Growth Engine".
     const rsub = e.target.closest('[data-rsub]');
     if (rsub) { state.researchFilters.segment = rsub.getAttribute('data-rsub'); render(); return; }
+    if (e.target.closest('[data-rtiera]')) { state.researchFilters.tierA = !state.researchFilters.tierA; render(); return; }
     const rsend = e.target.closest('[data-research-send]');
     if (rsend) { sendResearchToEngine(rsend.getAttribute('data-research-send')); return; }
 
