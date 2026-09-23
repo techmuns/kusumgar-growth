@@ -1,0 +1,90 @@
+{
+ "_meta": {
+  "note": "STRATEGY NARRATIVE — this file is Kusumgar's own strategic view and illustrative estimates. It is NOT market data. Every real market number in the deck comes from market_intel.json (UN Comtrade) and research_targets.json (verified companies). Edit freely.",
+  "source": "Kusumgar strategy"
+ },
+ "600d-pu-polyester": {
+  "exec_summary": {
+   "source": "Kusumgar strategy",
+   "headline": "600D PU-coated polyester is a large, China-concentrated global market — a clear China+1 opening for a proven Indian technical-textile maker.",
+   "points": [
+    "The world coated-fabric trade is real and sizeable (see market slide) and heavily supplied by China.",
+    "Buyers across bags, medical, marine and covers want a credible non-China supplier for resilience.",
+    "Kusumgar already runs the exact coating, lamination and finishing lines these products need.",
+    "We win on service, technical capability and flexibility — not on being the cheapest."
+   ]
+  },
+  "product_overview": {
+   "source": "Kusumgar strategy",
+   "summary": "600 denier polyester base fabric with polyurethane (PU) coating — the workhorse fabric for tough, water-resistant bags, covers and protective goods.",
+   "properties": ["High tensile & tear strength", "Water-resistant / waterproof (PU)", "Abrasion resistant", "UV stabilised options", "Colour-fast, printable"],
+   "coatings": ["PU (single / double side)", "PVC option", "Acrylic", "Fire-retardant finish", "Anti-microbial finish"]
+  },
+  "why_kusumgar_wins": {
+   "source": "Kusumgar strategy",
+   "strengths": [
+    "50+ years of technical-textile manufacturing",
+    "Deep coating & lamination capability (the core process for this product)",
+    "Aerospace & parachute-grade heritage (precision, QC discipline)",
+    "Aramid / flame-retardant fabric know-how for premium variants",
+    "Vertically integrated weaving-to-coating control"
+   ],
+   "certifications": ["AS9100D (aerospace)", "IATF 16949 (automotive)", "ISO 9001"],
+   "positioning": "China+1: a reliable, audited non-China source as global buyers de-risk supply.",
+   "customer_pain_points": [
+    "Over-concentration on Chinese supply (resilience risk)",
+    "Long lead times from incumbent suppliers",
+    "High minimum order quantities (MOQ)",
+    "Limited willingness to customise specs / small runs"
+   ]
+  },
+  "competitive_positioning": {
+   "source": "Kusumgar strategy",
+   "statement": "Compete on service and technical capability, not on price.",
+   "points": [
+    "Faster, more responsive communication and sampling than large incumbents",
+    "Willingness to customise specifications and run smaller lots",
+    "Audited quality (AS9100D / IATF 16949 / ISO 9001) as a trust anchor",
+    "India base = tariff / geopolitical diversification for Western buyers"
+   ]
+  },
+  "market_entry_phases": {
+   "source": "Kusumgar strategy",
+   "phases": [
+    { "phase": "Phase 1 — Land", "segments": ["Tool & Equipment Bags", "Medical & Emergency", "Marine Covers"], "rationale": "Closest fit to current lines; fragmented buyers actively seeking a China+1 source." },
+    { "phase": "Phase 2 — Expand", "segments": ["Protective & Industrial Covers", "Automotive Seating"], "rationale": "Larger volumes and longer qualification, but strong margin once specified in." },
+    { "phase": "Phase 3 — Elevate", "segments": ["Military & Defence", "Aviation"], "rationale": "Highest margin and longest certification — where our AS9100D heritage is a moat." }
+   ]
+  },
+  "revenue_scenarios": {
+   "type": "estimate",
+   "basis": "world HS 5903 annual import value (UN Comtrade)",
+   "assumption": "Illustrative capture of the real world coated-fabric import market at three share levels. This is a scenario, not a forecast — actual results depend on qualification, capacity and pricing.",
+   "shares": [0.1, 0.25, 0.5]
+  }
+ },
+ "carbon-fibre": {
+  "exec_summary": {
+   "source": "Kusumgar strategy",
+   "headline": "Carbon Fibre / Composites is an exploratory growth line — we are first mapping the real supply chain (fibre makers, chemicals, end-users) before committing.",
+   "points": [
+    "Early-stage: the target-company map is being built and verified against company websites.",
+    "Live market sizing (UN Comtrade) for this line is a later brick — no market numbers are shown yet.",
+    "Kusumgar's coating, lamination and technical-textile heritage is adjacent to composite reinforcements."
+   ]
+  },
+  "product_overview": {
+   "source": "Kusumgar strategy",
+   "summary": "Carbon fibre and composite reinforcements — an exploratory new line spanning aerospace, automotive lightweighting, wind, sporting goods and pressure vessels.",
+   "properties": ["Very high strength-to-weight", "Stiffness", "Fatigue & corrosion resistance"],
+   "coatings": []
+  },
+  "why_kusumgar_wins": {
+   "source": "Kusumgar strategy",
+   "strengths": ["Technical-textile & reinforcement heritage", "Coating / lamination adjacency", "Audited quality systems"],
+   "certifications": ["AS9100D (aerospace)", "ISO 9001"],
+   "positioning": "Exploratory — validating fit before commitment.",
+   "customer_pain_points": []
+  }
+ }
+}

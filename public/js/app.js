@@ -219,6 +219,7 @@ const state = {
   researchFilters: { segment: 'all', search: '', country: 'all' },
   researchSent: new Set(),     // target ids sent to the Growth Engine (localStorage)
   market: null,                // UN Comtrade market intel (market_intel.json)
+  reportContent: {},           // per-product strategy narrative (report_content.json)
   marketCommodity: 'hs5903',   // 'hs5903' | 'hs590320'
 };
 
@@ -2586,6 +2587,212 @@ function refreshResearchList() {
   const c = $('#rCount'); if (c) c.textContent = researchFiltered().length;
 }
 
+/* ------------------------------------------------------------------ *
+ * Market Deck — one-click, print-to-PDF management presentation built
+ * client-side from the LIVE data. Real slides carry a source link; strategy
+ * / estimate slides are clearly tagged. No fabricated market numbers.
+ * ------------------------------------------------------------------ */
+let DECK_TOTAL = 0;
+const TAG_STRATEGY = '<span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-500">Strategy view</span>';
+const TAG_ESTIMATE = '<span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-600">Estimate — assumptions shown</span>';
+const TAG_LIVE = '<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">Live data</span>';
+const DECK_REGION_COLORS = { Asia: '#6366f1', Europe: '#0ea5e9', 'North America': '#f59e0b', 'South America': '#10b981', Africa: '#ef4444', Oceania: '#8b5cf6', Other: '#94a3b8' };
+const DECK_PALETTE = ['#6366f1', '#0ea5e9', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#22c55e'];
+
+const deckSrc = (text, url) => (url
+  ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="text-[11px] font-semibold text-indigo-500 hover:underline">Source: ${escapeHtml(text)} ↗</a>`
+  : `<span class="text-[11px] font-semibold text-slate-400">Source: ${escapeHtml(text)}</span>`);
+
+function deckSlide(n, kicker, title, bodyHtml, tagHtml) {
+  return `<section class="deck-slide flex flex-col">
+    <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+      <div class="flex items-center gap-2.5">
+        <div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-[10px] font-display font-extrabold text-white">KGR</div>
+        <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">${escapeHtml(kicker)}</div>
+      </div>
+      ${tagHtml || ''}
+    </div>
+    <div class="flex-1 pt-4">
+      <h2 class="text-xl font-extrabold text-slate-900">${title}</h2>
+      <div class="mt-3">${bodyHtml}</div>
+    </div>
+    <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-[10px] text-slate-400">
+      <span>Kusumgar Growth Engine — Market Deck · Confidential</span><span class="tnum">${n} / ${DECK_TOTAL}</span>
+    </div>
+  </section>`;
+}
+
+function buildDeck(productId) {
+  const prod = researchProductList().find((p) => p.id === productId) || { id: productId, name: productId };
+  const rc = (state.reportContent && state.reportContent[productId]) || {};
+  const isExisting = productId === '600d-pu-polyester';
+  const targets = researchProductTargets(productId);
+  const confirmed = targets.filter((t) => t.product_confirmed === true);
+  const m = state.market || {};
+  const hasMarket = isExisting && m && m.hs5903;
+  const year = hasMarket ? (m._meta && m._meta.year) : null;
+  const b = hasMarket ? m.hs5903 : null;
+  const bPU = hasMarket ? m.hs590320 : null;
+  const chips = (arr) => (arr || []).map((x) => `<span class="rounded-full bg-slate-100 px-2.5 py-1 text-[12px] font-medium text-slate-600">${escapeHtml(x)}</span>`).join(' ');
+  const marketComingNote = `<div class="rounded-xl bg-amber-50 p-3 text-[13px] leading-snug text-amber-800 ring-1 ring-amber-100">Live market data (UN Comtrade) for <span class="font-semibold">${escapeHtml(prod.name)}</span> is coming next — per-product sizing needs an HS-code mapping. No market number is shown here (we never fabricate one).</div>`;
+
+  const S = [];
+
+  // 1 — Title + executive summary
+  const ex = rc.exec_summary || {};
+  const execHead = hasMarket
+    ? `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100"><div class="text-[12px] text-slate-500">World coated-fabric import market (HS 5903, ${year})</div><div class="font-display text-3xl font-extrabold tnum text-indigo-600">${fmtUSD(b.world_import_value)}</div><div class="mt-0.5">${deckSrc('UN Comtrade, ' + year, b.query_urls.imports)}</div></div>`
+    : marketComingNote;
+  S.push({ kicker: 'Executive summary', title: `Market Deck — ${escapeHtml(prod.name)}`, tag: TAG_STRATEGY, body:
+    `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>${execHead}<p class="mt-3 text-[13px] leading-relaxed text-slate-600">${escapeHtml(ex.headline || '')}</p></div>
+      <ul class="space-y-2 text-[13px] text-slate-700">${(ex.points || []).map((p) => `<li class="flex gap-2"><span class="text-indigo-400">▸</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul>
+    </div>` });
+
+  // 2 — Product overview
+  if (rc.product_overview) {
+    const po = rc.product_overview;
+    S.push({ kicker: 'Product', title: 'Product overview', tag: TAG_STRATEGY, body:
+      `<p class="text-[13px] text-slate-600">${escapeHtml(po.summary || '')}</p>
+      ${(po.properties && po.properties.length) ? `<div class="mt-3 text-[12px] font-semibold text-slate-500">Key properties</div><div class="mt-1 flex flex-wrap gap-1.5">${chips(po.properties)}</div>` : ''}
+      ${(po.coatings && po.coatings.length) ? `<div class="mt-3 text-[12px] font-semibold text-slate-500">Coating / finish options</div><div class="mt-1 flex flex-wrap gap-1.5">${chips(po.coatings)}</div>` : ''}` });
+  }
+
+  // 3 — Application universe (REAL verified counts per segment)
+  if (targets.length) {
+    const bySeg = {}; confirmed.forEach((t) => { bySeg[t.segment] = (bySeg[t.segment] || 0) + 1; });
+    const segItems = Object.entries(bySeg).sort((a, b2) => b2[1] - a[1]).map(([seg, n]) => ({ key: 'seg' + seg, label: segLabel(seg), short: segLabel(seg), value: n, color: anyColor(seg) }));
+    S.push({ kicker: 'Applications', title: 'Application universe', tag: TAG_LIVE, body:
+      `<p class="text-[13px] text-slate-600">Verified target companies by application segment — each checked against its own website.</p>
+      <div class="mt-2">${segItems.length ? buildBars(segItems, { unit: 'company' }) : '<div class="text-sm text-slate-400">No verified companies yet.</div>'}</div>
+      <div class="mt-1">${deckSrc('Kusumgar verified target list')}</div>` });
+  }
+
+  // 4 — Market size (REAL)
+  S.push({ kicker: 'Market size', title: 'Global market — real trade data', tag: hasMarket ? TAG_LIVE : '', body: (() => {
+    if (!hasMarket) return marketComingNote;
+    const card = (label, bb, url) => `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+      <div class="text-[12px] font-bold text-slate-700">${label}</div>
+      <div class="mt-1 grid grid-cols-2 gap-2">
+        <div><div class="text-[11px] text-slate-400">World imports</div><div class="font-display text-xl font-extrabold tnum text-indigo-600">${fmtUSD(bb.world_import_value)}</div></div>
+        <div><div class="text-[11px] text-slate-400">World exports</div><div class="font-display text-xl font-extrabold tnum text-emerald-600">${fmtUSD(bb.world_export_value)}</div></div>
+      </div>
+      <div class="mt-1 text-[11px] text-slate-400">Import volume ${fmtTonnes(bb.world_import_netWgt)}</div>
+      <div class="mt-1">${deckSrc('UN Comtrade, ' + year, url)}</div></div>`;
+    return `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">${card('All coated fabric (HS 5903)', b, b.query_urls.imports)}${card('PU-coated (HS 5903.20) — closest to 600D PU', bPU, bPU.query_urls.imports)}</div>`;
+  })() });
+
+  // 5 — Geography (REAL region split)
+  if (hasMarket && b.region_split && b.region_split.length) {
+    const regItems = b.region_split.map((r) => ({ key: 'dg' + r.region, label: r.region, value: r.value, valueText: fmtUSD(r.value), pct: r.pct, tipSub: `${fmtUSD(r.value)} · ${r.pct}%`, color: DECK_REGION_COLORS[r.region] || '#94a3b8' }));
+    S.push({ kicker: 'Geography', title: 'Where the demand is', tag: TAG_LIVE, body:
+      `<div class="flex flex-wrap items-center gap-4">${buildValueDonut(regItems, { centerNum: fmtUSD(b.world_import_value), centerLabel: 'imports' })}${buildValueLegend(regItems)}</div>
+      <div class="mt-2">${deckSrc('UN Comtrade, ' + year, b.query_urls.imports)}</div>` });
+  }
+
+  // 6 — Supply chain (REAL top exporters)
+  if (hasMarket && b.top_exporters && b.top_exporters.length) {
+    const expItems = b.top_exporters.slice(0, 10).map((r, i) => ({ key: 'de' + r.code, label: r.country, short: truncate(r.country, 16), iso2: r.iso2, value: r.value, valueText: fmtUSD(r.value), tipSub: `${fmtUSD(r.value)} · ${fmtTonnes(r.netWgt)} exported`, color: DECK_PALETTE[i % DECK_PALETTE.length] }));
+    S.push({ kicker: 'Supply chain', title: 'Who makes it today', tag: TAG_LIVE, body:
+      `<p class="text-[13px] text-slate-600">Global coated-fabric exports are concentrated — the “China dominates” picture the China+1 thesis rests on.</p>
+      <div class="mt-2">${buildValueBars(expItems)}</div><div class="mt-1">${deckSrc('UN Comtrade, ' + year, b.query_urls.exports)}</div>` });
+  }
+
+  // 7 — Recent monthly trend (REAL, provisional)
+  if (hasMarket && m.monthly && m.monthly.series && m.monthly.series.length) {
+    S.push({ kicker: 'Recent trend', title: 'Recent monthly activity', tag: TAG_LIVE, body:
+      `<p class="text-[13px] text-slate-600">World monthly trade (HS 5903) through <span class="font-semibold">${escapeHtml(monthLabel(m.monthly.through))}</span> — <span class="font-semibold text-amber-600">provisional</span> (recent months are revised up as more countries report; China does not report monthly).</p>
+      <div class="mt-2">${buildMonthlyTrend(m.monthly.series)}</div>
+      <div class="mt-1 flex items-center justify-between"><span class="text-[11px] text-slate-500">Last ${m.monthly.months_count} mo imports: <span class="font-bold tnum text-slate-700">${fmtUSD(m.monthly.last12_import_value)}</span></span>${deckSrc('UN Comtrade (monthly)', m.monthly.query_urls && m.monthly.query_urls.imports)}</div>` });
+  }
+
+  // 8 — Competition
+  const cp = rc.competitive_positioning || {};
+  const comps = state.competitors || [];
+  S.push({ kicker: 'Competition', title: 'Competitive landscape', tag: isExisting ? TAG_STRATEGY : '', body: (() => {
+    if (!isExisting || !comps.length) return `<div class="rounded-xl bg-amber-50 p-3 text-[13px] text-amber-800 ring-1 ring-amber-100">Competitor mapping for ${escapeHtml(prod.name)} is in progress.</div>`;
+    const rows = comps.slice(0, 9).map((c) => `<div class="flex items-center justify-between gap-2 border-t border-slate-100 py-1.5 first:border-t-0"><span class="min-w-0 truncate text-[13px] font-medium text-slate-700">${escapeHtml(c.company)}</span><span class="shrink-0 text-[11px] text-slate-400">${countryCell(c.country)} · ${escapeHtml(c.positioning || '')}</span></div>`).join('');
+    return `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div><div class="mb-1 text-[12px] font-semibold text-slate-500">Who we’re up against (${comps.length} mapped)</div>${rows}</div>
+      <div class="rounded-xl bg-indigo-50/60 p-3 ring-1 ring-indigo-100"><div class="text-[12px] font-bold text-indigo-700">${escapeHtml(cp.statement || 'Compete on service and technical capability, not price.')}</div><ul class="mt-2 space-y-1 text-[12px] text-slate-600">${(cp.points || []).map((p) => `<li>• ${escapeHtml(p)}</li>`).join('')}</ul></div>
+    </div><div class="mt-2">${deckSrc('Kusumgar competitor map')}</div>`;
+  })() });
+
+  // 9 — Why Kusumgar can win
+  if (rc.why_kusumgar_wins) {
+    const w = rc.why_kusumgar_wins;
+    S.push({ kicker: 'Advantage', title: 'Why Kusumgar can win', tag: TAG_STRATEGY, body:
+      `<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div><div class="text-[12px] font-semibold text-slate-500">Our strengths</div><ul class="mt-1 space-y-1 text-[12px] text-slate-700">${(w.strengths || []).map((s) => `<li>✓ ${escapeHtml(s)}</li>`).join('')}</ul></div>
+        <div><div class="text-[12px] font-semibold text-slate-500">Buyer pain points we solve</div><ul class="mt-1 space-y-1 text-[12px] text-slate-700">${(w.customer_pain_points || []).map((s) => `<li>• ${escapeHtml(s)}</li>`).join('') || '<li class="text-slate-400">—</li>'}</ul></div>
+        <div><div class="text-[12px] font-semibold text-slate-500">Certifications</div><div class="mt-1 flex flex-wrap gap-1">${(w.certifications || []).map((c) => `<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">${escapeHtml(c)}</span>`).join(' ')}</div>${w.positioning ? `<div class="mt-3 text-[12px] font-semibold text-slate-500">Positioning</div><p class="mt-1 text-[12px] text-slate-700">${escapeHtml(w.positioning)}</p>` : ''}</div>
+      </div>` });
+  }
+
+  // 10 — Target customers (REAL)
+  if (confirmed.length) {
+    const rows = confirmed.slice(0, 12).map((t) => `<div class="flex items-center justify-between gap-2 border-t border-slate-100 py-1.5 first:border-t-0"><span class="min-w-0 truncate text-[13px] font-medium text-slate-700">${escapeHtml(t.company)}</span><span class="shrink-0 text-[11px] text-slate-400">${countryCell(t.country)} · ✅</span></div>`).join('');
+    S.push({ kicker: 'Target customers', title: 'Real target companies', tag: TAG_LIVE, body:
+      `<p class="text-[13px] text-slate-600"><span class="font-semibold text-emerald-600">${confirmed.length}</span> companies verified against their own website${targets.length > confirmed.length ? ` (of ${targets.length} mapped)` : ''}. A sample:</p>
+      <div class="mt-2 grid grid-cols-1 gap-x-8 sm:grid-cols-2">${rows}</div><div class="mt-2">${deckSrc('Kusumgar verified target list')}</div>` });
+  }
+
+  // 11 — Market entry strategy
+  if (rc.market_entry_phases && rc.market_entry_phases.phases) {
+    const ph = rc.market_entry_phases.phases;
+    S.push({ kicker: 'Go-to-market', title: 'Market entry strategy', tag: TAG_STRATEGY, body:
+      `<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">${ph.map((p) => `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100"><div class="text-[13px] font-extrabold text-slate-800">${escapeHtml(p.phase)}</div><div class="mt-1 flex flex-wrap gap-1">${(p.segments || []).map((s) => `<span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200">${escapeHtml(segLabel(s))}</span>`).join(' ')}</div><p class="mt-2 text-[11px] leading-snug text-slate-500">${escapeHtml(p.rationale || '')}</p></div>`).join('')}</div>` });
+  }
+
+  // 12 — Revenue potential & action plan (ESTIMATE)
+  const rs = rc.revenue_scenarios;
+  S.push({ kicker: 'Revenue & actions', title: 'Revenue potential & next steps', tag: TAG_ESTIMATE, body: (() => {
+    const nextSteps = `<div class="mt-3 text-[12px] font-semibold text-slate-500">Next steps</div><ul class="mt-1 space-y-1 text-[12px] text-slate-700"><li>1 — Prioritise Phase-1 verified targets and open sampling conversations.</li><li>2 — Lead with China+1 resilience + audited quality (AS9100D / IATF 16949).</li><li>3 — Offer flexible MOQ &amp; customisation to displace incumbents.</li></ul>`;
+    if (rs && hasMarket) {
+      const base = b.world_import_value;
+      const rows = rs.shares.map((sh) => `<div class="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100"><span class="text-[13px] font-semibold text-slate-700">${sh}% of world import market</span><span class="font-display text-xl font-extrabold tnum text-indigo-600">${fmtUSD(base * (sh / 100))}</span></div>`).join('');
+      return `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div class="space-y-2">${rows}</div><div><div class="rounded-xl bg-amber-50 p-3 text-[12px] leading-snug text-amber-800 ring-1 ring-amber-100"><span class="font-bold">Estimate — how to read this:</span> ${escapeHtml(rs.assumption)} Base = ${fmtUSD(base)} (${escapeHtml(rs.basis)}, UN Comtrade ${year}).</div>${nextSteps}</div></div>`;
+    }
+    return `<div class="rounded-xl bg-amber-50 p-3 text-[13px] leading-snug text-amber-800 ring-1 ring-amber-100">Revenue scenarios need the live market size for this product — a later brick — so no USD figure is shown yet.</div>${nextSteps}`;
+  })() });
+
+  DECK_TOTAL = S.length;
+  const pages = S.map((s, i) => deckSlide(i + 1, s.kicker, s.title, s.body, s.tag)).join('');
+  return `<div class="deck-toolbar">
+      <div class="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-slate-600"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-[10px] font-display font-extrabold text-white">KGR</span> <span class="truncate">Market Deck — ${escapeHtml(prod.name)} · ${DECK_TOTAL} pages</span></div>
+      <div class="flex shrink-0 items-center gap-2">
+        <button type="button" data-deck-print class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700">🖨️ Download PDF</button>
+        <button type="button" data-deck-close class="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50">✕ Close</button>
+      </div>
+    </div>
+    <div class="deck-pages">${pages}</div>`;
+}
+
+// Reveal the deck's SVG charts (scoped to #deck, since revealCharts only touches #view).
+function revealDeck() {
+  const d = $('#deck'); if (!d) return;
+  const go = () => {
+    d.querySelectorAll('.reveal-arc').forEach((el) => { const a = el.getAttribute('data-arc'); if (a) el.setAttribute('stroke-dasharray', a); });
+    d.querySelectorAll('.reveal-scale').forEach((el) => { el.style.transform = 'scaleX(1)'; });
+    d.querySelectorAll('.reveal-pill,.reveal-pop').forEach((el) => el.classList.add('in'));
+  };
+  requestAnimationFrame(() => requestAnimationFrame(go));
+  setTimeout(go, 80);
+}
+function openDeck() {
+  const d = $('#deck'); if (!d) return;
+  d.innerHTML = buildDeck(state.researchProduct);
+  d.classList.add('open');
+  try { document.body.style.overflow = 'hidden'; } catch { /* noop */ }
+  revealDeck();
+}
+function closeDeck() {
+  const d = $('#deck'); if (!d) return;
+  d.classList.remove('open'); d.innerHTML = '';
+  try { document.body.style.overflow = ''; } catch { /* noop */ }
+}
+function printDeck() { try { window.print(); } catch { /* noop */ } }
+
 function renderResearch() {
   const sub = state.researchSub === 'targets' ? 'targets' : 'market';
   const isExisting = state.researchProduct === '600d-pu-polyester';
@@ -2610,7 +2817,10 @@ function renderResearch() {
       <p class="mt-0.5 text-sm text-slate-500">Pick a product, then map its market and its real target companies. Nothing is invented.</p>
     </div>
     ${selector}
-    <div class="mb-4">${toggle}</div>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+      ${toggle}
+      <button type="button" data-gen-deck class="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800">📊 Generate Deck</button>
+    </div>
     ${body}
   </div>`;
 }
@@ -3188,6 +3398,7 @@ function wireEvents() {
     if (mktCmd) { state.marketCommodity = mktCmd.getAttribute('data-mktcmd'); render(); return; }
     const rprod = e.target.closest('[data-rproduct]');
     if (rprod) { state.researchProduct = rprod.getAttribute('data-rproduct'); state.researchFilters.segment = 'all'; render(); return; }
+    if (e.target.closest('[data-gen-deck]')) { openDeck(); return; }
 
     // Industry Research: segment chip + "Send to Growth Engine".
     const rsub = e.target.closest('[data-rsub]');
@@ -3348,6 +3559,14 @@ function wireEvents() {
   const bP = $('#btnProducts'); if (bP) bP.addEventListener('click', openProductsModal);
   const bE = $('#btnExport'); if (bE) bE.addEventListener('click', openExportModal);
 
+  // Market Deck overlay (stable #deck): Download PDF / Close.
+  const deck = $('#deck');
+  if (deck) deck.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    if (e.target.closest('[data-deck-print]')) { printDeck(); return; }
+    if (e.target.closest('[data-deck-close]')) { closeDeck(); return; }
+  });
+
   // Centered modals (email, exhibition detail, products, export) — stable #modal outside #view.
   const modal = $('#modal');
   modal.addEventListener('click', (e) => {
@@ -3387,7 +3606,8 @@ function wireEvents() {
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if ($('#modal').classList.contains('open')) closeModal();
+    if ($('#deck').classList.contains('open')) closeDeck();
+    else if ($('#modal').classList.contains('open')) closeModal();
     else closeDrawer();
   });
 
@@ -3427,7 +3647,7 @@ async function boot() {
     // no-store: always pull the freshest data JSON (the background engines update these
     // files on every run) so the page never shows stale numbers from a cached copy.
     const NS = { cache: 'no-store' };
-    const [meta, exhibitions, products, leads, competitors, outreach, research, market] = await Promise.all([
+    const [meta, exhibitions, products, leads, competitors, outreach, research, market, reportContent] = await Promise.all([
       fetch('data/meta.json', NS).then((r) => r.json()),
       fetch('data/exhibitions.json', NS).then((r) => r.json()),
       fetch('data/products.json', NS).then((r) => r.json()).catch(() => []),
@@ -3436,6 +3656,7 @@ async function boot() {
       fetch('data/outreach.json', NS).then((r) => r.json()).catch(() => ({})),
       fetch('data/research_targets.json', NS).then((r) => r.json()).catch(() => ({})),
       fetch('data/market_intel.json', NS).then((r) => r.json()).catch(() => null),
+      fetch('data/report_content.json', NS).then((r) => r.json()).catch(() => ({})),
     ]);
     state.meta = meta;
     // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.
@@ -3447,6 +3668,7 @@ async function boot() {
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
     state.research = unwrap(research, 'targets').filter((t) => t && t.id && t.company);
     state.market = (market && typeof market === 'object' && market.hs5903) ? market : null;
+    state.reportContent = (reportContent && typeof reportContent === 'object' && !Array.isArray(reportContent)) ? reportContent : {};
     state.researchSent = loadResearchSent();
     // Merge any Industry-Research companies the user "sent to the Growth Engine" that aren't already leads.
     try {
