@@ -74,6 +74,20 @@ function isCompanyInbox(email) {
   const base = lp.replace(/[._+-].*$/, '').replace(/\d+$/, '');
   return GENERIC_INBOX.has(lp) || GENERIC_INBOX.has(base);
 }
+// Strip HTML to readable text (keeps <title> + meta description), for the free website-first path.
+function htmlToText(html) {
+  return String(html || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
+    .replace(/<title[^>]*>([\s\S]*?)<\/title>/gi, ' $1 ')
+    .replace(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["'][^>]*>/gi, ' $1 ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/&#39;|&rsquo;|&apos;/g, "'").replace(/&quot;/g, '"')
+    .replace(/&[a-z]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+}
+const asUrl = (v) => { const s = String(v || '').trim(); if (!s) return ''; return s.startsWith('http') ? s : 'https://' + s; };
+// Circuit breakers — the paid boosters run out of credits (402); once dead, stop hammering them.
+let fcDead = false, pdlDead = false;
 
 /* ---------------- Role tiers (the heart of this brick) ---------------- */
 // Ordered keyword → human label. First match wins within a tier.
@@ -109,12 +123,14 @@ async function loadLeads() {
 
 /* ---------------- Person finders ---------------- */
 // Gather REAL result snippets for the tiered query — free search first, Firecrawl as a booster.
+let fcNullStreak = 0;
 async function personSnippets(company, debug) {
   let rows = [];
   try { rows = await freeSearch(PERSON_QUERY(company)); } catch { rows = []; }
-  if ((!rows || rows.length < 3) && firecrawlKey()) {
+  if ((!rows || rows.length < 3) && firecrawlKey() && !fcDead) {
     const fc = await firecrawlSearch(PERSON_QUERY(company), debug);
-    if (Array.isArray(fc)) rows = rows.concat(fc);
+    if (Array.isArray(fc) && fc.length) { rows = rows.concat(fc); fcNullStreak = 0; }
+    else if (++fcNullStreak >= 2) { fcDead = true; console.log('[find-contacts] Firecrawl search unavailable (credits?) — disabling for this run.'); }
   }
   // de-dupe by url, keep only real result rows
   const seen = new Set(); const out = [];
@@ -154,7 +170,7 @@ async function pickFromSnippets(company, snippets) {
 
 // PDL person search (accuracy booster) — returns the highest-tier person at the company, or null.
 async function pdlPerson(company) {
-  if (!PDL) return null;
+  if (!PDL || pdlDead) return null;
   try {
     const res = await fetch('https://api.peopledatalabs.com/v5/person/search', {
       method: 'POST',
@@ -162,6 +178,7 @@ async function pdlPerson(company) {
       body: JSON.stringify({ query: { bool: { must: [{ match: { job_company_name: company } }] } }, size: 10 }),
       signal: AbortSignal.timeout(30_000),
     });
+    if ([402, 403, 429].includes(res.status)) { pdlDead = true; console.log(`[find-contacts] PDL unavailable (${res.status}) — disabling for this run.`); return null; }
     if (!res.ok) { console.error(`[find-contacts] PDL ${res.status}`); return null; }
     const data = await res.json();
     const people = (data && data.data) || [];
@@ -182,25 +199,64 @@ async function pdlPerson(company) {
   } catch (e) { console.error(`[find-contacts] PDL failed (ok): ${e.message}`); return null; }
 }
 
-// Find the best right-person for a company. Returns { name,title,linkedin_url,tier,reason,source,pdlEmail } or null.
-async function findPerson(company, debug) {
-  const snippets = fakeSnippets(company) || await personSnippets(company, debug);
-  let web = await pickFromSnippets(company, snippets);
-  let webTier = web ? roleTier(web.title) : { tier: null };
-  let pdlEmail = null;
-
-  // PDL booster only to UPGRADE a weak (no A/B) or empty web result.
-  if (PDL && (!web || !(webTier.tier === 'A' || webTier.tier === 'B'))) {
-    const pdl = await pdlPerson(company);
-    if (pdl) {
-      const pdlTier = roleTier(pdl.title);
-      const webRank = web && webTier.tier ? TIER_RANK[webTier.tier] : (web ? 0.5 : 0);
-      const pdlRank = pdlTier.tier ? TIER_RANK[pdlTier.tier] : (pdl ? 0.5 : 0);
-      if (pdlRank >= webRank) { web = { name: pdl.name, title: pdl.title, linkedin_url: pdl.linkedin_url }; webTier = pdlTier; pdlEmail = pdl.email; return { ...web, tier: webTier.tier, reason: webTier.reason, source: 'pdl', pdlEmail }; }
+// FREE website-first person: read the company's own leadership / team / about pages (no search
+// credits) and let Bedrock extract the most senior technical/ops person NAMED in the text. Mirrors
+// verify-research-targets.mjs. Source-backed — uses only names/titles on the page, never invented.
+async function websitePerson(company, website, debug) {
+  if (!haveBedrock()) return null;
+  const base = asUrl(website).replace(/\/$/, ''); if (!base) return null;
+  let origin; try { origin = new URL(base).origin; } catch { return null; }
+  const paths = ['/leadership', '/leadership-team', '/our-team', '/team', '/management', '/about/leadership', '/about-us', '/about', '/company', '/who-we-are', '/our-company', ''];
+  let text = '';
+  for (const pth of paths) {
+    const html = await freeFetchText(origin + pth);
+    if (!html) continue;
+    const t = htmlToText(html);
+    if (/chief|officer|\bvp\b|vice president|president|director|head of|manager|leadership|management|founder/i.test(t)) {
+      text += ' ' + t; if (debug) debug.push({ reader: 'website-people', url: origin + pth, len: t.length });
     }
+    if (text.length > 9000) break;
   }
-  if (!web) return null;
-  return { ...web, tier: webTier.tier, reason: webTier.reason, source: 'web', pdlEmail };
+  text = text.slice(0, 9000).trim();
+  if (!text) return null;
+  const pick = await askClaude({
+    system: 'From the company website text, identify the SINGLE most senior TECHNICAL / R&D / OPERATIONS decision-maker who is NAMED in the text. Prefer, best→worst: R&D / Technology / Technical / Product Development / Engineering leaders; then Operations / Manufacturing / Plant leaders; then, only if no such person is named, any senior executive (e.g. CEO/President). Ignore pure Sales, Marketing, HR and Finance people when a technical/ops person is named. Use ONLY names and titles present in the text — never invent. Return STRICT JSON {"name","title"} or {} if no person is named.',
+    user: `Company: ${company}\nWebsite: ${origin}\n\nWEBSITE TEXT (the only source you may use):\n${text}`,
+    json: true, maxTokens: 250,
+  });
+  if (pick && pick.name && String(pick.name).trim()) return { name: String(pick.name).trim(), title: String(pick.title || '').trim(), linkedin_url: null };
+  return null;
+}
+
+// Find the best right-person for a company, keeping the HIGHEST tier across sources.
+// Order (cost-aware): FREE website-first → free web search + Firecrawl booster → PDL booster.
+// Returns { name,title,linkedin_url,tier,reason,source,pdlEmail } or null.
+async function findPerson(company, website, debug) {
+  let best = null, bestTier = { tier: null }, source = '', pdlEmail = null;
+  const rankOf = (tierObj) => (tierObj.tier ? TIER_RANK[tierObj.tier] : 0.5);
+  const consider = (cand, tierObj, src) => {
+    if (!cand || !cand.name) return;
+    const cur = best ? rankOf(bestTier) : -1;
+    const r = rankOf(tierObj);
+    if (r > cur || (r === cur && best && !best.linkedin_url && cand.linkedin_url)) { best = cand; bestTier = tierObj; source = src; }
+  };
+  const haveAB = () => best && (bestTier.tier === 'A' || bestTier.tier === 'B');
+
+  // 0) FREE website-first (no search credits).
+  if (website && haveBedrock()) { const wp = await websitePerson(company, website, debug); if (wp) consider(wp, roleTier(wp.title), 'website'); }
+  // 1) free web search + Firecrawl booster snippets.
+  if (!haveAB()) {
+    const snippets = fakeSnippets(company) || await personSnippets(company, debug);
+    const web = await pickFromSnippets(company, snippets);
+    if (web) consider(web, roleTier(web.title), 'web');
+  }
+  // 2) PDL booster (accuracy) — only to upgrade a weak/empty result.
+  if (PDL && !pdlDead && !haveAB()) {
+    const pdl = await pdlPerson(company);
+    if (pdl) { const before = best; consider({ name: pdl.name, title: pdl.title, linkedin_url: pdl.linkedin_url }, roleTier(pdl.title), 'pdl'); if (best !== before && source === 'pdl') pdlEmail = pdl.email; }
+  }
+  if (!best) return null;
+  return { ...best, tier: bestTier.tier, reason: bestTier.reason, source, pdlEmail };
 }
 
 /* ---------------- Email finders (real, verified where possible) ---------------- */
@@ -303,7 +359,7 @@ async function main() {
   // then leads already in the outreach pipeline, then broader leads. Cap at MAX.
   const tRank = (t) => (t.product_confirmed === true ? 0 : t.verified ? 1 : 2);
   const targetQueue = targets
-    .filter((t) => t && t.company && !t.person_checked_at)
+    .filter((t) => t && t.company && !t.person_name)   // no right-person yet (retries prior blanks)
     .filter((t) => !PRIORITY_ONLY || t.product_confirmed === true)
     .sort((a, b) => tRank(a) - tRank(b) || String(a.company).localeCompare(String(b.company)))
     .map((t) => ({ kind: 'target', id: t.id, company: t.company, website: t.website || (leadById.get(t.id) || {}).website || '', target: t }));
@@ -325,7 +381,7 @@ async function main() {
   try {
     for (const item of queue) {
       const domain = domainOf(item);
-      const person = await findPerson(item.company, debug);
+      const person = await findPerson(item.company, item.website, debug);
       const nowISO = new Date().toISOString().slice(0, 10);
 
       if (item.target) { item.target.person_checked_at = nowISO; changedResearch = true; }
