@@ -1,15 +1,17 @@
 name: Outreach refresh
 
-# Fills missing lead websites, drafts Nishad-style emails, then finds contacts.
-# Writes public/data/leads.json (websites) + public/data/outreach.json (drafts & contacts).
+# Fills missing lead websites, drafts Nishad-style emails, then finds the RIGHT PERSON
+# (technical / R&D / operations decision-maker) + a real verified email where free tools can.
+# Writes public/data/leads.json (websites) + public/data/outreach.json (drafts & contacts)
+# + public/data/research_targets.json (the right-person on each curated target row).
 # Manual (with inputs) + weekly cron (Thursdays). Commits only when that data changed.
 on:
   workflow_dispatch:
     inputs:
       max:
-        description: 'Max leads to process per run (cost cap)'
+        description: 'Max companies to process per run (cost cap)'
         required: false
-        default: '25'
+        default: '30'
       priority_only:
         description: 'Only High-priority leads (true/false)'
         required: false
@@ -42,7 +44,7 @@ jobs:
       SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
       PROSPEO_API_KEY: ${{ secrets.PROSPEO_API_KEY }}
       REOON_API_KEY: ${{ secrets.REOON_API_KEY }}
-      MAX: ${{ github.event.inputs.max || '25' }}
+      MAX: ${{ github.event.inputs.max || '30' }}
       PRIORITY_ONLY: ${{ github.event.inputs.priority_only || 'false' }}
     steps:
       - name: Checkout
@@ -56,23 +58,24 @@ jobs:
       - name: Find missing websites (graceful without Firecrawl)
         run: node scripts/find-websites.mjs
 
+      # Find the right person FIRST so the drafted email greets them (not a stale/old contact).
+      - name: Find the right person + email (graceful without provider keys)
+        run: node scripts/find-contacts.mjs
+
       - name: Draft emails (graceful without Bedrock)
         run: node scripts/draft-emails.mjs
 
-      - name: Find contacts (graceful without provider keys)
-        run: node scripts/find-contacts.mjs
-
       - name: Commit & push if changed
         run: |
-          if [ -z "$(git status --porcelain public/data/leads.json public/data/outreach.json)" ]; then
-            echo "No changes to leads/outreach data — nothing to commit."
+          if [ -z "$(git status --porcelain public/data/leads.json public/data/outreach.json public/data/research_targets.json)" ]; then
+            echo "No changes to leads/outreach/research data — nothing to commit."
             exit 0
           fi
           git config user.name "kgr-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           node scripts/update-meta.mjs
-          git add public/data/leads.json public/data/outreach.json public/data/meta.json
-          git commit -m "chore(data): refresh websites, outreach drafts & contacts"
+          git add public/data/leads.json public/data/outreach.json public/data/research_targets.json public/data/meta.json
+          git commit -m "chore(data): refresh websites, drafts & right-person contacts"
 
           branch="${GITHUB_REF_NAME}"
           for i in 1 2 3 4; do
