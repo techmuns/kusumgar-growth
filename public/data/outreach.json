@@ -242,13 +242,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Cord G.",
-      "title": "Global Sourcing Manager",
-      "linkedin_url": "https://www.linkedin.com/in/cord-g-b7a91510a",
-      "email": null,
-      "email_status": null,
-      "source": "web",
-      "confidence": "medium"
+      "name": "Jonathan Low",
+      "title": "Director Product Engineering",
+      "linkedin_url": "https://www.linkedin.com/in/jonathan-low-4967366a",
+      "email": "customerservice@kleintools.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Engineering"
     }
   },
   "laerdal": {
@@ -1320,6 +1322,17 @@
       "drafted_at": "2026-09-15T12:48:49.334Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Manoj Gaba",
+      "title": "Head of Operations and R&D",
+      "linkedin_url": "https://in.linkedin.com/in/manoj-gaba",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "bluesky-innovations": {
@@ -1457,13 +1470,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "harry durt",
-      "title": "warehouse specialist",
-      "linkedin_url": "https://linkedin.com/in/harry-durt-5b00b4159",
+      "name": "Richard Gillespie",
+      "title": "Chief of Design Innovation at Studio X",
+      "linkedin_url": "https://www.linkedin.com/in/richardgillespie",
       "email": null,
       "email_status": "none",
-      "source": "pdl",
-      "confidence": "high"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Innovation"
     }
   },
   "canvas-craft": {
@@ -1493,13 +1508,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Michael C.W. Bruner",
-      "title": "Purchasing Agent at Travis County",
-      "linkedin_url": "https://www.linkedin.com/in/michael-c-w-bruner-802113183",
+      "name": "Tim Meehan",
+      "title": "Operations Manager",
+      "linkedin_url": "https://www.linkedin.com/in/tim-meehan-82688017b",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "centurion": {
@@ -1610,13 +1627,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Gregory Perosino",
-      "title": "President at Commercial Sewing, Inc",
-      "linkedin_url": "https://www.linkedin.com/in/gregory-perosino-6b2b741a",
+      "name": "David Kronengold",
+      "title": "Vice President of Product Development and Engineering",
+      "linkedin_url": "https://www.linkedin.com/in/david-kronengold",
       "email": "sales@CommercialSewing.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "condor": {
@@ -1635,6 +1654,17 @@
       "drafted_at": "2026-09-15T12:50:43.542Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Christopher Harris, P.E.",
+      "title": "Chief Network & Cyber Security Officer",
+      "linkedin_url": "https://www.linkedin.com/in/christopher-harris-p-e-aa94a47",
+      "email": "info@conterra-inc.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "convergence-paragliding": {
@@ -1680,6 +1710,17 @@
       "drafted_at": "2026-09-15T12:51:01.951Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Adam Corbett",
+      "title": "Supply Chain Director",
+      "linkedin_url": "https://www.linkedin.com/in/adamwcorbett",
+      "email": "info@coversunlimited.net",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "C",
+      "match_reason": "Supply Chain"
     }
   },
   "crescent-tools": {
@@ -1880,13 +1921,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "David Mickey",
-      "title": "Purchasing Manager at Elite First Aid",
-      "linkedin_url": "https://www.linkedin.com/in/david-mickey-73099572",
-      "email": null,
-      "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Evan Sweere",
+      "title": "Operations & Brand Director",
+      "linkedin_url": "https://www.linkedin.com/in/evan-sweere-a65910132",
+      "email": "Sales@elitefirstaidinc.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "emergency-medical-products": {
@@ -1898,13 +1941,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/david-mccandless-c-p-m-40aa828",
-      "email": "information@sammedical.com",
-      "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Dr. Sam Scheinberg",
+      "title": "Founder, C.E.O",
+      "linkedin_url": null,
+      "email": null,
+      "email_status": "none",
+      "source": "website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "emi-international": {
@@ -1952,13 +1997,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Joanna Chambers",
-      "title": "Procurement at Henchman Aerospace",
-      "linkedin_url": "https://au.linkedin.com/in/joanna-chambers-577389117",
+      "name": "Massimo Tonelli",
+      "title": "Owner, GT Line Srl",
+      "linkedin_url": "https://it.linkedin.com/in/massimo-tonelli-9a043314",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "facom": {
@@ -1970,13 +2017,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Stuart Clansey",
-      "title": "Category Direct at Morgan Advanced Materials",
-      "linkedin_url": "https://uk.linkedin.com/in/stuart-clansey-29137234",
-      "email": null,
-      "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Jocelyn Vecchio",
+      "title": "Directeur R&D et Innovation",
+      "linkedin_url": "https://fr.linkedin.com/in/jocelyn-vecchio/fr",
+      "email": "joe@facom.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "faun-trackway-usa-inc": {
@@ -1997,13 +2046,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Chelsea France",
-      "title": "Buyer at Ferno UK",
-      "linkedin_url": "https://uk.linkedin.com/in/chelsea-france-96152020a",
+      "name": "Shahid Saleem",
+      "title": "Engineering & Design Manager",
+      "linkedin_url": "https://uk.linkedin.com/in/shahid-saleem-40017449",
       "email": "info@ferno.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Engineering"
     }
   },
   "ferro-concepts": {
@@ -2094,6 +2145,17 @@
       "drafted_at": "2026-09-15T12:54:01.090Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Katherine Pesik",
+      "title": "Lead technology strategies and former Merchandiser, Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/katherine-pesik",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "gardner-bender": {
@@ -2132,13 +2194,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Joshua Govender",
-      "title": "Company Buyer at GEDORE Group",
-      "linkedin_url": "https://za.linkedin.com/in/joshua-govender-721852252",
-      "email": null,
-      "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Patrick Mau",
+      "title": "Managing Director, GEDORE Automotive GmbH",
+      "linkedin_url": "https://de.linkedin.com/in/patrick-mau-561b7b167/en",
+      "email": "info@gedore.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "general-dynamics-land-systems": {
@@ -2222,13 +2286,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Holly Sexton",
-      "title": "Purchasing/Procurement Buyer",
-      "linkedin_url": "https://www.linkedin.com/in/holly-sexton-14b37311a",
-      "email": "info@greatlakesboattop.com",
-      "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Gary Lewelling",
+      "title": "Design Engineer/New Product Development Engineer",
+      "linkedin_url": "https://www.linkedin.com/in/gary-lewelling-705166128",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "greenlee": {
@@ -2546,13 +2612,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://ca.linkedin.com/in/danielle-kemp-83686965",
+      "name": "Robert Bonnevie",
+      "title": "Operations Manager",
+      "linkedin_url": "https://www.linkedin.com/in/robert-bonnevie-963236202",
       "email": "sales@kempusa.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "keysight-technologies": {
@@ -2753,13 +2821,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/deborah-smith-54829513",
-      "email": "david@marinecanvascreations.com",
-      "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Michael Sieber",
+      "title": "Director of Advanced Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/michael-sieber-b2695513",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "marine-concepts": {
@@ -2789,13 +2859,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Nicolas Chase Patrick",
-      "title": "Director at Marine Specialties, Inc.",
-      "linkedin_url": "https://www.linkedin.com/in/nicolas-chase-patrick-345bb619a",
+      "name": "James Smith",
+      "title": "Founder and President of Marine Specialties Limited",
+      "linkedin_url": "https://www.linkedin.com/in/james-smith-b6590713",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "marine-tops-unlimited": {
@@ -2807,13 +2879,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/ivis-m-shammami",
+      "name": "Kyle Van Damme",
+      "title": "Owner",
+      "linkedin_url": "https://www.linkedin.com/in/kyle-van-damme-mfc-ab282aa7",
       "email": "kylevandamme@gmail.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "mastercraft-accessories": {
@@ -2877,6 +2951,17 @@
       "drafted_at": "2026-09-15T14:59:08.236Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Rania Abou Samra PhD MSc",
+      "title": "Chief R&D and Innovation Officer",
+      "linkedin_url": "https://fr.linkedin.com/in/rania-abou-samra-phd-msc-1b93833",
+      "email": "contact@meber.it",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "medcotec": {
@@ -2969,13 +3054,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/asa-borquist-81a280107",
-      "email": "info@meretusa.com",
+      "name": "Revere Greist",
+      "title": "Chief Operating Officer and Co-Founder",
+      "linkedin_url": "https://www.linkedin.com/in/revere-greist-94576813",
+      "email": "awargojolp@gmail.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "montezuma": {
@@ -4472,13 +4559,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Razzaaq McConner",
-      "title": "Vice President Purchasing - Americas",
-      "linkedin_url": "https://www.linkedin.com/in/razzaaq-mcconner-6a05559",
+      "name": "Scott Scheytt",
+      "title": "Director of Engineering",
+      "linkedin_url": "https://www.linkedin.com/in/scott-scheytt-65734bb",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Engineering"
     }
   },
   "bharat-seats": {
@@ -4490,13 +4579,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://in.linkedin.com/in/jogender-kumar-1982-yadav",
-      "email": "seats@bharatseats.net",
+      "name": "Debasish Dash",
+      "title": "Associate Vice President R&D",
+      "linkedin_url": "https://in.linkedin.com/in/debasish-dash-3105918",
+      "email": "marketing@bharatseats.net",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "classic-accessories": {
@@ -4506,6 +4597,17 @@
       "drafted_at": "2026-09-15T15:09:25.696Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Laura Honeysett",
+      "title": "Product Development at Classic Accessories",
+      "linkedin_url": "https://www.linkedin.com/in/laura-honeysett-2201204",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "coverstore": {
@@ -4517,13 +4619,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/christine-ford-0178b043",
+      "name": "Jana Kennedy",
+      "title": "Senior Merchandising/Product Development Manager",
+      "linkedin_url": "https://www.linkedin.com/in/jana-kennedy-49ba054",
       "email": "support@coverstore.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "duck-covers": {
@@ -4533,6 +4637,17 @@
       "drafted_at": "2026-09-15T15:09:38.920Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Kenny Dang",
+      "title": "R&D Leader in Innovation and Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/kennydang",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "empirecovers": {
@@ -4542,6 +4657,17 @@
       "drafted_at": "2026-09-15T15:09:45.388Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Lauren Foster",
+      "title": "Senior Technical",
+      "linkedin_url": "https://www.linkedin.com/in/lauren-foster-lf12",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Technical"
     }
   },
   "forvia-faurecia": {
@@ -4571,13 +4697,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/marc-caruso-48b58617",
+      "name": "Will O'Connor",
+      "title": "Lead Engineer of New Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/will-o-connor-9979ab37",
       "email": "john.mienik@lci1.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "garden-leisure": {
@@ -4607,13 +4735,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Brett Gilman, MBA",
-      "title": "Procurement Executive",
-      "linkedin_url": "https://de.linkedin.com/in/brett-gilman-mba-0670516",
-      "email": null,
-      "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Rahul Bendale",
+      "title": "Research And Development Manager",
+      "linkedin_url": "https://in.linkedin.com/in/rahul-bendale-b518a1239",
+      "email": "info@grammer.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "harita-seating": {
@@ -4641,6 +4771,17 @@
       "drafted_at": "2026-09-15T15:10:22.678Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Tony Ryan",
+      "title": "Plant manager latham pool products",
+      "linkedin_url": "https://www.linkedin.com/in/tony-ryan-b72a8b5a",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Plant Manager"
     }
   },
   "lear-corporation": {
@@ -4652,13 +4793,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Jeff Zimmerman",
-      "title": "Global Purchasing Manager",
-      "linkedin_url": "https://www.linkedin.com/in/jeff-zimmerman-8bb6944",
+      "name": "Phil Beauchamp",
+      "title": "Principal Engineer - Global Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/phil-beauchamp-4a61747",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "loop-loc": {
@@ -4670,13 +4813,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/dianaclements",
-      "email": "Consumers@LoopLoc.com",
-      "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Mike Sofia",
+      "title": "Vice President of Manufacturing",
+      "linkedin_url": "https://www.linkedin.com/in/mike-sofia-9b7a3520",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Manufacturing"
     }
   },
   "magna-seating": {
@@ -4688,13 +4833,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Amanda Feaver, CSCMP",
-      "title": "Senior Purchasing Manager",
-      "linkedin_url": "https://ca.linkedin.com/in/amanda-feaver-cscmp-aab7b7200",
+      "name": "Craig Prasatek",
+      "title": "R&D Design Studio Manager",
+      "linkedin_url": "https://www.linkedin.com/in/craig-prasatek-b6858016",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "merlin-industries": {
@@ -4706,13 +4853,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Eric Pfeiffer",
-      "title": "Senior Procurement Manager at Merlin Entertainments",
-      "linkedin_url": "https://www.linkedin.com/in/pfeife",
+      "name": "Alexander Lazeration",
+      "title": "Mechanical Engineer (B.S) & Materials",
+      "linkedin_url": "https://www.linkedin.com/in/lazeration",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "pool-cover-specialists": {
@@ -6459,6 +6608,17 @@
       "drafted_at": "2026-09-15T17:12:42.353Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Anthony Brown",
+      "title": "Operations Manager",
+      "linkedin_url": "https://za.linkedin.com/in/anthony-brown-50315736",
+      "email": "anchorad@anchorinc.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "anci-inc": {
@@ -6576,6 +6736,17 @@
       "drafted_at": "2026-09-15T17:13:51.470Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Daniel Hardin",
+      "title": "Research And Development Specialist",
+      "linkedin_url": "https://www.linkedin.com/in/daniel-hardin-b86b1914b",
+      "email": "info@aquamatic.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "aquavista-watersides": {
@@ -6749,13 +6920,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Scott Hall",
-      "title": "Senior Buyer",
-      "linkedin_url": "https://www.linkedin.com/in/scott-hall-b7634910",
+      "name": "Mike Shadoan",
+      "title": "Vice President at Automatic Pool Covers, Inc.",
+      "linkedin_url": "https://www.linkedin.com/in/mike-shadoan-43756013",
       "email": "sales@APC-Mfg.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "automotive-international-inc": {
@@ -6830,13 +7003,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Shawn Mitchell",
-      "title": "Founder & CEO",
-      "linkedin_url": "https://www.linkedin.com/in/shawn-mitchell-2a293114",
+      "name": "Mike Wallace",
+      "title": "Chief Operations Officer",
+      "linkedin_url": null,
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "bioguard-covers": {
@@ -6983,13 +7158,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Sean Preston",
-      "title": "Supply Chain Leader",
-      "linkedin_url": "https://www.linkedin.com/in/sean-preston-38603734",
+      "name": "Daniel Simon",
+      "title": "Director Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/daniel-b-simon",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "busch-protective": {
@@ -7091,13 +7268,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/nckgbb",
+      "name": "Cheryl Warren",
+      "title": "President at Chicago Canvas & Supply",
+      "linkedin_url": "https://www.linkedin.com/in/cheryl-warren-a7b9a37a",
       "email": "email@chicagocanvas.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "chiciricki": {
@@ -7208,13 +7387,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Adam Wohlfeill",
-      "title": "Purchasing Buyer at Quality Pool Supply",
-      "linkedin_url": "https://www.linkedin.com/in/adam-wohlfeill-183052201",
-      "email": "cover-pools.sales@fluidra.com",
-      "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Nathan Dewyea",
+      "title": "Product Development Supervisor",
+      "linkedin_url": "https://www.linkedin.com/in/nathan-dewyea-a6827b30",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "cover-tech": {
@@ -7244,6 +7425,17 @@
       "drafted_at": "2026-09-15T18:07:01.427Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Viral Jhaveri",
+      "title": "Head New Product Development",
+      "linkedin_url": "https://in.linkedin.com/in/viral-zaveri-cov",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "coversafe": {
@@ -7255,13 +7447,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Mike Fisher",
-      "title": "National Sales Manager",
-      "linkedin_url": "https://au.linkedin.com/in/mike-fisher-3302b420",
-      "email": null,
-      "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Karen LeMontagne",
+      "title": "Operations Manager",
+      "linkedin_url": "https://www.linkedin.com/in/karen-lemontagne-b7608a31",
+      "email": "info@coversafe.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "coverstar": {
@@ -7273,13 +7467,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Jessica Luppino",
-      "title": "Purchasing Agent/Shipping and Receiving Clerk",
-      "linkedin_url": "https://www.linkedin.com/in/jessica-l-newton",
+      "name": "Peter Moser",
+      "title": "Co-Founder & CTO",
+      "linkedin_url": "https://ch.linkedin.com/in/ptmoser",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "CTO"
     }
   },
   "coverworld": {
@@ -7327,13 +7523,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/brandstatter-amy",
-      "email": "sales@creativecoversinc.com",
+      "name": "Ethan Calderon",
+      "title": "Marketing and Operations Manager",
+      "linkedin_url": "https://www.linkedin.com/in/ethan-calderon-5335691b4",
+      "email": "johndoe@email.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "crisis-intelligent-co-ltd": {
@@ -7381,13 +7579,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://uk.linkedin.com/in/dawnelainecunningham",
+      "name": "Andrew Crooks",
+      "title": "Manufacturing Engineer",
+      "linkedin_url": "https://uk.linkedin.com/in/andrew-crooks-65a23a138",
       "email": "info@cunningham.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Manufacturing"
     }
   },
   "custom-covers-central": {
@@ -7739,6 +7939,17 @@
       "drafted_at": "2026-09-15T18:10:27.174Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Kayne Umali",
+      "title": "Senior Buyer / Planner / Product Developer",
+      "linkedin_url": "https://www.linkedin.com/in/kayne-umali-59947478",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "C",
+      "match_reason": "Buyer"
     }
   },
   "eger-cz-s-r-o-x-armor-s-r-o": {
@@ -7786,13 +7997,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Davitt Cunningham",
-      "title": "Experienced Global Business Development Manager",
-      "linkedin_url": "https://www.linkedin.com/in/davitt-cunningham-70869861",
+      "name": "Sonny Por",
+      "title": "Operations / QA / R&D / NPI Manager",
+      "linkedin_url": "https://sg.linkedin.com/in/sonny-por-a3b8637",
       "email": "sales@fabritech.net",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "fabric-structures-usa": {
@@ -7948,13 +8161,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Corey Rauschenbach",
-      "title": "Purchasing Manager",
-      "linkedin_url": "https://www.linkedin.com/in/corey-rauschenbach-6a35a2109",
+      "name": "Cory Bradley",
+      "title": "Product development, market research, and R&D",
+      "linkedin_url": "https://www.linkedin.com/in/cory-bradley-0b406358",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "harod-associates": {
@@ -8011,13 +8226,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "John Barajas",
-      "title": "Commercial Heavy Glass & Aluminum Storefronts",
-      "linkedin_url": "https://www.linkedin.com/in/john-barajas-3b57a872",
-      "email": "customercare@herculite.com",
+      "name": "Saad Arif",
+      "title": "Product Development and Manufacturing Engineer",
+      "linkedin_url": "https://de.linkedin.com/in/saadarif493",
+      "email": "%20customercare@herculite.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "hifraser": {
@@ -8099,6 +8316,17 @@
       "drafted_at": "2026-09-15T18:13:19.184Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Andrew Thoen",
+      "title": "Product Development Engineer",
+      "linkedin_url": "https://www.linkedin.com/in/andrew-thoen-30161a1b",
+      "email": "info@industrialnetting.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "industrial-shadeports": {
@@ -8110,13 +8338,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://ug.linkedin.com/in/regan-abenaitwe-621396104",
-      "email": "sales@shadeports.com",
-      "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "name": "Ellie Salehi",
+      "title": "Manufacturing/Process Manager",
+      "linkedin_url": "https://www.linkedin.com/in/elliejs",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Manufacturing"
     }
   },
   "jensen-outdoor-covers": {
@@ -8162,6 +8392,17 @@
       "drafted_at": "2026-09-15T18:13:45.788Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Donovan Mangold",
+      "title": "Director of Operations",
+      "linkedin_url": "https://uk.linkedin.com/in/donovan-mangold-67034621",
+      "email": "customerservice@onixventuregroup.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "knight-shield": {
@@ -8198,6 +8439,17 @@
       "drafted_at": "2026-09-15T18:14:07.406Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Merlin Milner",
+      "title": "Product Management Manager High Density Liquid",
+      "linkedin_url": "https://uk.linkedin.com/in/merlin-milner-b2147216",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "meyco-pool-covers": {
@@ -8207,6 +8459,17 @@
       "drafted_at": "2026-09-15T18:14:13.876Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Mark Isbell",
+      "title": "Operations Manager",
+      "linkedin_url": "https://www.linkedin.com/in/mark-isbell-902594105",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "miami-corporation": {
@@ -8236,13 +8499,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Mark Delos Angeles",
-      "title": "Purchasing Manager",
-      "linkedin_url": "https://www.linkedin.com/in/mark-delos-angeles-8aa44b133",
+      "name": "Keith Amdahl",
+      "title": "VP of Product Design & Development",
+      "linkedin_url": "https://www.linkedin.com/in/keith-amdahl",
       "email": "customerservice@myteeproducts.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "national-covers": {
@@ -8855,6 +9120,58 @@
       "drafted_at": "2026-09-15T18:21:12.949Z",
       "model": "bedrock-converse",
       "voice": 2
+    }
+  },
+  "carbon-conversions": {
+    "contact": {
+      "name": "Mark Janney",
+      "title": "Consultant (Former R&D Director at Carbon Conversions, Inc. 2007-2019)",
+      "linkedin_url": "https://www.linkedin.com/in/mark-janney-79a73611",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
+    }
+  },
+  "chomarat": {
+    "contact": {
+      "name": "Jérôme Maupetit",
+      "title": "Directeur R&D chez CHOMARAT",
+      "linkedin_url": "https://fr.linkedin.com/in/j%C3%A9r%C3%B4me-maupetit-1baa65aa",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
+    }
+  },
+  "hexcel": {
+    "contact": {
+      "name": "Peter Ferrin",
+      "title": "R & T Director - Carbon Fiber",
+      "linkedin_url": "https://www.linkedin.com/in/peter-ferrin-29b3048",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
+    }
+  },
+  "mitsubishi-carbon-fiber": {
+    "contact": {
+      "name": "Marjan K.",
+      "title": "Director of Process & Quality Improvement | Operations",
+      "linkedin_url": "https://www.linkedin.com/in/mkb954679",
+      "email": "Fibercfd-orders@mccfc.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   }
 }

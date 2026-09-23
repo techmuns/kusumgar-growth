@@ -11,10 +11,11 @@
 //                  and flagged as weaker.
 //
 // FREE-FIRST + SOURCE-BACKED (mirrors verify-research-targets.mjs), Firecrawl is a booster:
-//   PERSON: free web search (DuckDuckGo) for "<company> (R&D OR technical director OR …)
-//           site:linkedin.com/in" → then Firecrawl search as a booster → askClaude picks the
-//           highest-tier person from the REAL result snippets (snippet text ONLY, never invented).
-//           PDL person search is an accuracy booster used only to upgrade a weak/empty result.
+//   PERSON: free website-first (leadership/team pages) → web search for "<company> (R&D OR
+//           technical director OR …) site:linkedin.com/in" + a general leadership query, with the
+//           search provider tried PRIMARY→fallback: Serper.dev (real Google) → free DuckDuckGo →
+//           Firecrawl search → askClaude picks the highest-tier person from the REAL result snippets
+//           (snippet text ONLY, never invented). PDL person search upgrades a weak/empty result.
 //   EMAIL (only a real "@", verified where possible; NEVER a boolean/placeholder/guess-unverified):
 //           Hunter (verified) → Prospeo finder (verified) → PDL work email IF a real "@" → published
 //           address on the company site → guess common patterns kept ONLY if Reoon marks it "safe".
@@ -42,6 +43,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { firecrawlScrape, firecrawlSearch, freeSearch, freeFetchText, scrapedoGet, apiKey as firecrawlKey, haveScrapedo } from './lib/firecrawl.mjs';
+import { serperSearch, haveSerper } from './lib/serper.mjs';
 import { askClaude, haveBedrock } from './lib/llm.mjs';
 
 const p = (env, rel) => process.env[env] || fileURLToPath(new URL(rel, import.meta.url));
@@ -87,7 +89,7 @@ function htmlToText(html) {
 }
 const asUrl = (v) => { const s = String(v || '').trim(); if (!s) return ''; return s.startsWith('http') ? s : 'https://' + s; };
 // Circuit breakers — the paid boosters run out of credits (402); once dead, stop hammering them.
-let fcDead = false, pdlDead = false, fcScrapeDead = false;
+let fcDead = false, pdlDead = false, fcScrapeDead = false, serperDead = false;
 
 /* ---------------- Role tiers (the heart of this brick) ---------------- */
 // Ordered keyword → human label. First match wins within a tier.
@@ -113,6 +115,9 @@ function roleTier(title) {
   return { tier: null, reason: '' };
 }
 const PERSON_QUERY = (company) => `"${company}" (R&D OR "research and development" OR "technical director" OR "head of technology" OR "technology manager" OR "R&D manager" OR "product development" OR "operations manager" OR "operations director" OR "head of operations") site:linkedin.com/in`;
+// A general leadership/team query (no site: restriction) — catches company leadership pages, press
+// and profiles the linkedin.com/in query misses. Used as a second Serper query when the first is thin.
+const LEADERSHIP_QUERY = (company) => `"${company}" (leadership OR "management team" OR "our team" OR "R&D" OR "technical director" OR "head of technology" OR "operations director")`;
 
 /* ---------------- Data IO ---------------- */
 async function loadJson(path, fallback) { try { return JSON.parse(await readFile(path, 'utf8')); } catch { return fallback; } }
@@ -122,22 +127,45 @@ async function loadLeads() {
 }
 
 /* ---------------- Person finders ---------------- */
-// Gather REAL result snippets for the tiered query — free search first, Firecrawl as a booster.
-let fcNullStreak = 0;
+// Gather REAL result snippets for the tiered query. Search provider order:
+//   Serper.dev (real Google, PRIMARY) → free DuckDuckGo (fallback) → Firecrawl search (booster).
+// `lastSearchVia` records which provider actually produced the rows, for an honest person_source.
+let fcNullStreak = 0, serperNullStreak = 0, lastSearchVia = 'web';
 async function personSnippets(company, debug) {
-  let rows = [];
-  try { rows = await freeSearch(PERSON_QUERY(company)); } catch { rows = []; }
-  if ((!rows || rows.length < 3) && firecrawlKey() && !fcDead) {
+  const rows = [];
+  const asRow = (r) => ({ title: r.title || '', url: r.url || r.link || '', description: r.description || r.snippet || '' });
+  const add = (arr) => { for (const r of (arr || [])) { const m = asRow(r); if (m.url) rows.push(m); } };
+  let usedSerper = false, usedDDG = false, usedFC = false;
+
+  // 1) Serper.dev (PRIMARY). LinkedIn/in decision-maker query first; add a general leadership query if thin.
+  if (haveSerper() && !serperDead) {
+    const r1 = await serperSearch(PERSON_QUERY(company), debug);
+    if (r1 === null) {
+      if (++serperNullStreak >= 2) { serperDead = true; console.log('[find-contacts] Serper unavailable (key/credits?) — disabling for this run.'); }
+    } else {
+      serperNullStreak = 0;
+      if (r1.length) { add(r1); usedSerper = true; }
+    }
+    if (!serperDead && rows.length < 3) {
+      const r2 = await serperSearch(LEADERSHIP_QUERY(company), debug);
+      if (Array.isArray(r2) && r2.length) { add(r2); usedSerper = true; }
+    }
+  }
+  // 2) FREE DuckDuckGo (fallback — often bot-walled on CI, so no longer primary).
+  if (rows.length < 3) {
+    let ddg = []; try { ddg = await freeSearch(PERSON_QUERY(company)); } catch { ddg = []; }
+    if (ddg && ddg.length) { add(ddg); usedDDG = true; }
+  }
+  // 3) Firecrawl search (booster; only while its key still has credits).
+  if (rows.length < 3 && firecrawlKey() && !fcDead) {
     const fc = await firecrawlSearch(PERSON_QUERY(company), debug);
-    if (Array.isArray(fc) && fc.length) { rows = rows.concat(fc); fcNullStreak = 0; }
+    if (Array.isArray(fc) && fc.length) { add(fc); usedFC = true; fcNullStreak = 0; }
     else if (++fcNullStreak >= 2) { fcDead = true; console.log('[find-contacts] Firecrawl search unavailable (credits?) — disabling for this run.'); }
   }
+  lastSearchVia = usedSerper ? 'serper' : usedDDG ? 'web' : usedFC ? 'firecrawl' : 'web';
   // de-dupe by url, keep only real result rows
   const seen = new Set(); const out = [];
-  for (const r of (rows || [])) {
-    const url = (r && r.url) || ''; if (!url || seen.has(url)) continue; seen.add(url);
-    out.push({ title: r.title || '', url, description: r.description || '' });
-  }
+  for (const r of rows) { if (!r.url || seen.has(r.url)) continue; seen.add(r.url); out.push(r); }
   return out.slice(0, 12);
 }
 
@@ -254,11 +282,15 @@ async function findPerson(company, website, debug) {
 
   // 0) FREE website-first (no search credits).
   if (website && haveBedrock()) { const wp = await websitePerson(company, website, debug); if (wp) consider(wp, roleTier(wp.title), 'website'); }
-  // 1) free web search + Firecrawl booster snippets.
-  if (!haveAB()) {
-    const snippets = fakeSnippets(company) || await personSnippets(company, debug);
+  // 1) web search (Serper PRIMARY → DDG → Firecrawl) → LLM picks the highest-tier person from real
+  //    snippets. Also runs when we already have an A/B person but no LinkedIn yet, to attach a
+  //    source-backed profile URL.
+  if (!haveAB() || (best && !best.linkedin_url)) {
+    const fake = fakeSnippets(company);
+    const snippets = fake || await personSnippets(company, debug);
+    const via = fake ? 'web' : lastSearchVia;
     const web = await pickFromSnippets(company, snippets);
-    if (web) consider(web, roleTier(web.title), 'web');
+    if (web) consider(web, roleTier(web.title), via);
   }
   // 2) PDL booster (accuracy) — only to upgrade a weak/empty result.
   if (PDL && !pdlDead && !haveAB()) {
@@ -356,7 +388,7 @@ async function main() {
     console.log('[find-contacts] needs BEDROCK_API_KEY or PDL_API_KEY to select the right person — writing nothing. Exiting 0.');
     return;
   }
-  console.log(`[find-contacts] readers: free=yes firecrawl=${firecrawlKey() ? 'yes' : 'no'} scrapedo=${haveScrapedo() ? 'yes' : 'no'} | person: bedrock=${haveBedrock() ? 'yes' : 'no'} pdl=${PDL ? 'yes' : 'no'} | email: hunter=${HUNTER ? 'yes' : 'no'} prospeo=${PROSPEO ? 'yes' : 'no'} reoon=${REOON ? 'yes' : 'no'}`);
+  console.log(`[find-contacts] search: serper=${haveSerper() ? 'yes' : 'no'} (primary) ddg=free firecrawl=${firecrawlKey() ? 'yes' : 'no'} | readers: free=yes scrapedo=${haveScrapedo() ? 'yes' : 'no'} | person: bedrock=${haveBedrock() ? 'yes' : 'no'} pdl=${PDL ? 'yes' : 'no'} | email: hunter=${HUNTER ? 'yes' : 'no'} prospeo=${PROSPEO ? 'yes' : 'no'} reoon=${REOON ? 'yes' : 'no'}`);
 
   const leads = await loadLeads();
   const outreach = await loadJson(OUTREACH_PATH, {});
