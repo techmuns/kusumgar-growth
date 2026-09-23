@@ -35,6 +35,9 @@ jobs:
       # Required for drafting; Firecrawl also powers the website contact fallback.
       BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
       FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+      # PRIMARY person-search provider (real Google) — unlocks right-person discovery on CI where
+      # DuckDuckGo is bot-walled. find-contacts falls back to DDG → Firecrawl when this is absent.
+      SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
       # Optional (defaulted in code): region + model fallback chain.
       AWS_REGION: ${{ secrets.AWS_REGION }}
       BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
