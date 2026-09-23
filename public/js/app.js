@@ -430,10 +430,9 @@ function buildLegend(items, { total, unit = 'show' } = {}) {
 }
 
 // Horizontal bars — items: [{label, value, color, key, flag}]
-function buildBars(items, { unit = 'show' } = {}) {
-  const W = 460, x0 = 132, valW = 28;    // wide viewBox keeps bars from magnifying vertically
-  const barMax = W - x0 - valW;
-  const rowH = 30, padTop = 6, barH = 14;
+function buildBars(items, { unit = 'show', rowH = 30, barH = 14, fontPx = 11.5, x0 = 132, valW = 28, W = 460 } = {}) {
+  const barMax = W - x0 - valW;    // wide viewBox keeps bars from magnifying vertically
+  const padTop = 6;
   const H = items.length * rowH + padTop;
   const max = Math.max(...items.map((i) => i.value), 1);
   const rows = items.map((i, idx) => {
@@ -446,12 +445,12 @@ function buildBars(items, { unit = 'show' } = {}) {
         data-tip-sub="${plural(i.value, unit)}">
       <rect x="0" y="${y}" width="${W}" height="${rowH}" fill="transparent"></rect>
       <text x="${x0 - 8}" y="${cy}" text-anchor="end" dominant-baseline="central"
-        style="font-size:11.5px;font-weight:600;fill:#475569;">${escapeHtml(flag + (i.short || i.label))}</text>
-      <rect x="${x0}" y="${cy - barH / 2}" width="${barMax}" height="${barH}" rx="7" fill="#f1f5f9"></rect>
-      <rect class="reveal-scale" x="${x0}" y="${cy - barH / 2}" width="${w.toFixed(1)}" height="${barH}" rx="7"
+        style="font-size:${fontPx}px;font-weight:600;fill:#475569;">${escapeHtml(flag + (i.short || i.label))}</text>
+      <rect x="${x0}" y="${cy - barH / 2}" width="${barMax}" height="${barH}" rx="${(barH / 2).toFixed(1)}" fill="#f1f5f9"></rect>
+      <rect class="reveal-scale" x="${x0}" y="${cy - barH / 2}" width="${w.toFixed(1)}" height="${barH}" rx="${(barH / 2).toFixed(1)}"
         fill="${i.color}" style="transition-delay:${idx * 55}ms"></rect>
       <text x="${x0 + w + 6}" y="${cy}" dominant-baseline="central" class="tnum"
-        style="font-size:11.5px;font-weight:700;fill:#0f172a;">${i.value}</text>
+        style="font-size:${fontPx}px;font-weight:700;fill:#0f172a;">${i.value}</text>
     </g>`;
   }).join('');
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Top countries by number of shows">${rows}</svg>`;
@@ -459,11 +458,12 @@ function buildBars(items, { unit = 'show' } = {}) {
 
 // Money horizontal bars — items: [{key,label,short,iso2,value,valueText,tipSub,color}].
 // Same hand-built style as buildBars (flag + name + track + reveal-scale fill + value); NO chart library.
-function buildValueBars(items) {
+function buildValueBars(items, opts = {}) {
   if (!items || !items.length) return '<div class="py-6 text-center text-[12px] text-slate-400">No data.</div>';
-  const W = 460, x0 = 150, valReserve = 58;
+  const { rowH = 30, barH = 14, fontPx = 11.5, x0 = 150, valReserve = 58, W = 460, flagW = 18 } = opts;
+  const flagH = Math.round(flagW * 0.72);
   const barMax = W - x0 - valReserve;
-  const rowH = 30, padTop = 6, barH = 14;
+  const padTop = 6;
   const H = items.length * rowH + padTop;
   const max = Math.max(...items.map((i) => i.value), 1);
   const rows = items.map((i, idx) => {
@@ -472,22 +472,22 @@ function buildValueBars(items) {
     const w = Math.max((i.value / max) * barMax, 4);
     const iso = String(i.iso2 || '').toLowerCase();
     const flag = /^[a-z]{2}$/.test(iso)
-      ? `<image href="https://flagcdn.com/32x24/${iso}.png" x="0" y="${(cy - 7).toFixed(1)}" width="18" height="13" preserveAspectRatio="xMidYMid slice"></image>`
+      ? `<image href="https://flagcdn.com/32x24/${iso}.png" x="0" y="${(cy - flagH / 2).toFixed(1)}" width="${flagW}" height="${flagH}" preserveAspectRatio="xMidYMid slice"></image>`
       : '';
     return `<g class="hovable" data-key="${escapeHtml(i.key)}" data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}" data-tip-sub="${escapeHtml(i.tipSub || i.valueText)}">
       <rect x="0" y="${y}" width="${W}" height="${rowH}" fill="transparent"></rect>
       ${flag}
-      <text x="24" y="${cy}" dominant-baseline="central" style="font-size:11.5px;font-weight:600;fill:#475569;">${escapeHtml(i.short || i.label)}</text>
-      <rect x="${x0}" y="${(cy - barH / 2).toFixed(1)}" width="${barMax}" height="${barH}" rx="7" fill="#f1f5f9"></rect>
-      <rect class="reveal-scale" x="${x0}" y="${(cy - barH / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${barH}" rx="7" fill="${i.color}" style="transition-delay:${idx * 55}ms"></rect>
-      <text x="${W - 4}" y="${cy}" text-anchor="end" dominant-baseline="central" class="tnum" style="font-size:11.5px;font-weight:700;fill:#0f172a;">${escapeHtml(i.valueText)}</text>
+      <text x="${flagW + 6}" y="${cy}" dominant-baseline="central" style="font-size:${fontPx}px;font-weight:600;fill:#475569;">${escapeHtml(i.short || i.label)}</text>
+      <rect x="${x0}" y="${(cy - barH / 2).toFixed(1)}" width="${barMax}" height="${barH}" rx="${(barH / 2).toFixed(1)}" fill="#f1f5f9"></rect>
+      <rect class="reveal-scale" x="${x0}" y="${(cy - barH / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${barH}" rx="${(barH / 2).toFixed(1)}" fill="${i.color}" style="transition-delay:${idx * 55}ms"></rect>
+      <text x="${W - 4}" y="${cy}" text-anchor="end" dominant-baseline="central" class="tnum" style="font-size:${fontPx}px;font-weight:700;fill:#0f172a;">${escapeHtml(i.valueText)}</text>
     </g>`;
   }).join('');
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Top countries by trade value">${rows}</svg>`;
 }
 
 // Money donut — items: [{key,label,value,valueText,pct,tipSub,color}] (mirrors buildDonut, currency tooltip).
-function buildValueDonut(items, { centerNum, centerLabel }) {
+function buildValueDonut(items, { centerNum, centerLabel, size = 132 } = {}) {
   const total = items.reduce((s, i) => s + i.value, 0) || 1;
   const cx = 80, cy = 80, r = 56, sw = 22;
   const C = 2 * Math.PI * r;
@@ -506,7 +506,7 @@ function buildValueDonut(items, { centerNum, centerLabel }) {
         data-tip-sub="${escapeHtml(i.tipSub || '')}"></circle>`;
   }).join('');
   return `
-    <svg viewBox="0 0 160 160" width="132" height="132" class="h-32 w-32 shrink-0" role="img" aria-label="${escapeHtml(centerLabel)}">
+    <svg viewBox="0 0 160 160" width="${size}" height="${size}" style="width:${size}px;height:${size}px" class="shrink-0" role="img" aria-label="${escapeHtml(centerLabel)}">
       <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="${sw}"></circle>
       <g transform="rotate(-90 ${cx} ${cy})" style="transform-box:view-box;">${arcs}</g>
       <text x="${cx}" y="${cy - 4}" text-anchor="middle" class="tnum" style="font-size:19px;font-weight:800;fill:#0f172a;font-family:'Plus Jakarta Sans',sans-serif;">${escapeHtml(centerNum)}</text>
@@ -515,14 +515,17 @@ function buildValueDonut(items, { centerNum, centerLabel }) {
 }
 
 // Money legend — items: [{key,label,valueText,pct,tipSub,color}] (mirrors buildLegend, shows $ + %).
-function buildValueLegend(items) {
-  return `<ul class="flex-1 space-y-1.5 min-w-0">` + items.map((i) => `
-    <li class="hovable flex items-center gap-2 rounded-lg px-1.5 py-0.5" data-key="${escapeHtml(i.key)}"
+function buildValueLegend(items, { big = false } = {}) {
+  const cls = big
+    ? { ul: 'flex-1 space-y-2.5 min-w-0', li: 'hovable flex items-center gap-3 rounded-lg px-2 py-1', dot: 'h-3.5 w-3.5', label: 'min-w-0 flex-1 truncate text-[16px] font-medium text-slate-700', val: 'tnum text-[16px] font-bold text-slate-900', pct: 'tnum w-12 text-right text-[13px] font-medium text-slate-400' }
+    : { ul: 'flex-1 space-y-1.5 min-w-0', li: 'hovable flex items-center gap-2 rounded-lg px-1.5 py-0.5', dot: 'h-2.5 w-2.5', label: 'min-w-0 flex-1 truncate text-[13px] font-medium text-slate-600', val: 'tnum text-[13px] font-bold text-slate-900', pct: 'tnum w-9 text-right text-[11px] font-medium text-slate-400' };
+  return `<ul class="${cls.ul}">` + items.map((i) => `
+    <li class="${cls.li}" data-key="${escapeHtml(i.key)}"
         data-tip-title="${escapeHtml(i.label)}" data-tip-color="${i.color}" data-tip-sub="${escapeHtml(i.tipSub || '')}">
-      <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background:${i.color}"></span>
-      <span class="min-w-0 flex-1 truncate text-[13px] font-medium text-slate-600">${escapeHtml(i.label)}</span>
-      <span class="tnum text-[13px] font-bold text-slate-900">${escapeHtml(i.valueText)}</span>
-      <span class="tnum w-9 text-right text-[11px] font-medium text-slate-400">${escapeHtml(String(i.pct))}%</span>
+      <span class="${cls.dot} shrink-0 rounded-full" style="background:${i.color}"></span>
+      <span class="${cls.label}">${escapeHtml(i.label)}</span>
+      <span class="${cls.val}">${escapeHtml(i.valueText)}</span>
+      <span class="${cls.pct}">${escapeHtml(String(i.pct))}%</span>
     </li>`).join('') + `</ul>`;
 }
 
@@ -531,9 +534,9 @@ function monthLabel(p) { const s = String(p); const m = +s.slice(4, 6); return `
 function monthShort(p) { const s = String(p); const m = +s.slice(4, 6); return m === 1 ? `Jan '${s.slice(2, 4)}` : (MONTHS[m] || '?'); }
 
 // Recent-monthly dual-line trend (imports vs exports). Hand-built SVG, wipe-reveal, hover per point.
-function buildMonthlyTrend(series) {
+function buildMonthlyTrend(series, { H = 160 } = {}) {
   if (!series || series.length < 2) return '';
-  const W = 520, H = 160, PADL = 8, PADR = 8, PADT = 12, PADB = 22;
+  const W = 520, PADL = 8, PADR = 8, PADT = 12, PADB = 22;
   const n = series.length;
   const xs = (i) => PADL + (i * (W - PADL - PADR)) / (n - 1);
   const maxV = Math.max(...series.flatMap((s) => [s.import_value, s.export_value]), 1);
@@ -2604,19 +2607,17 @@ const deckSrc = (text, url) => (url
   : `<span class="text-[11px] font-semibold text-slate-400">Source: ${escapeHtml(text)}</span>`);
 
 function deckSlide(n, kicker, title, bodyHtml, tagHtml) {
-  return `<section class="deck-slide flex flex-col">
+  return `<section class="deck-slide">
     <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
       <div class="flex items-center gap-2.5">
-        <div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-[10px] font-display font-extrabold text-white">KGR</div>
-        <div class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">${escapeHtml(kicker)}</div>
+        <div class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-[11px] font-display font-extrabold text-white">KGR</div>
+        <div class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">${escapeHtml(kicker)}</div>
       </div>
       ${tagHtml || ''}
     </div>
-    <div class="flex-1 pt-4">
-      <h2 class="text-xl font-extrabold text-slate-900">${title}</h2>
-      <div class="mt-3">${bodyHtml}</div>
-    </div>
-    <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-[10px] text-slate-400">
+    <h2 class="mt-4 text-[28px] font-extrabold leading-tight text-slate-900">${title}</h2>
+    <div class="deck-body mt-4">${bodyHtml}</div>
+    <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-[11px] text-slate-400">
       <span>Kusumgar Growth Engine — Market Deck · Confidential</span><span class="tnum">${n} / ${DECK_TOTAL}</span>
     </div>
   </section>`;
@@ -2635,27 +2636,58 @@ function buildDeck(productId) {
   const bPU = hasMarket ? m.hs590320 : null;
   const chips = (arr) => (arr || []).map((x) => `<span class="rounded-full bg-slate-100 px-2.5 py-1 text-[12px] font-medium text-slate-600">${escapeHtml(x)}</span>`).join(' ');
   const marketComingNote = `<div class="rounded-xl bg-amber-50 p-3 text-[13px] leading-snug text-amber-800 ring-1 ring-amber-100">Live market data (UN Comtrade) for <span class="font-semibold">${escapeHtml(prod.name)}</span> is coming next — per-product sizing needs an HS-code mapping. No market number is shown here (we never fabricate one).</div>`;
+  // Deck-scale helpers (large, page-filling)
+  const bigPills = (arr) => (arr || []).map((x) => `<span class="rounded-full bg-white px-3.5 py-2 text-[15px] font-medium text-slate-700 ring-1 ring-slate-200">${escapeHtml(x)}</span>`).join(' ');
+  const kpi = (label, value, sub, valClass = 'text-indigo-600') => `<div class="flex flex-col justify-center rounded-2xl bg-slate-50 p-5 text-center ring-1 ring-slate-100"><div class="font-display text-3xl font-extrabold tnum ${valClass}">${value}</div><div class="mt-1.5 text-[13px] font-semibold text-slate-600">${label}</div>${sub ? `<div class="mt-0.5 text-[12px] text-slate-400">${escapeHtml(sub)}</div>` : ''}</div>`;
 
   const S = [];
 
   // 1 — Title + executive summary
   const ex = rc.exec_summary || {};
-  const execHead = hasMarket
-    ? `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100"><div class="text-[12px] text-slate-500">World coated-fabric import market (HS 5903, ${year})</div><div class="font-display text-3xl font-extrabold tnum text-indigo-600">${fmtUSD(b.world_import_value)}</div><div class="mt-0.5">${deckSrc('UN Comtrade, ' + year, b.query_urls.imports)}</div></div>`
-    : marketComingNote;
+  const execLeft = hasMarket
+    ? `<div class="flex h-full flex-col justify-between rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-white p-6 ring-1 ring-indigo-100">
+        <div>
+          <div class="text-[13px] font-semibold uppercase tracking-wide text-slate-500">World coated-fabric import market</div>
+          <div class="text-[12px] text-slate-400">HS 5903 · ${year}</div>
+          <div class="mt-3 font-display text-[52px] font-extrabold leading-none tnum text-indigo-600">${fmtUSD(b.world_import_value)}</div>
+        </div>
+        <div class="mt-5 grid grid-cols-2 gap-4">
+          <div><div class="text-[12px] text-slate-400">World exports</div><div class="font-display text-2xl font-extrabold tnum text-emerald-600">${fmtUSD(b.world_export_value)}</div></div>
+          <div><div class="text-[12px] text-slate-400">Import volume</div><div class="font-display text-2xl font-extrabold tnum text-slate-700">${fmtTonnes(b.world_import_netWgt)}</div></div>
+        </div>
+        <div class="mt-4">${deckSrc('UN Comtrade, ' + year, b.query_urls.imports)}</div>
+      </div>`
+    : `<div class="flex h-full flex-col justify-center">${marketComingNote}</div>`;
   S.push({ kicker: 'Executive summary', title: `Market Deck — ${escapeHtml(prod.name)}`, tag: TAG_STRATEGY, body:
-    `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div>${execHead}<p class="mt-3 text-[13px] leading-relaxed text-slate-600">${escapeHtml(ex.headline || '')}</p></div>
-      <ul class="space-y-2 text-[13px] text-slate-700">${(ex.points || []).map((p) => `<li class="flex gap-2"><span class="text-indigo-400">▸</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul>
+    `<div class="grid h-full grid-cols-1 gap-8 sm:grid-cols-5">
+      <div class="sm:col-span-2">${execLeft}</div>
+      <div class="sm:col-span-3 flex h-full flex-col justify-center">
+        <p class="text-[21px] font-semibold leading-snug text-slate-800">${escapeHtml(ex.headline || '')}</p>
+        <ul class="mt-6 space-y-4 text-[16px] leading-relaxed text-slate-700">${(ex.points || []).map((p) => `<li class="flex gap-3"><span class="mt-1 shrink-0 text-indigo-500">▸</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul>
+      </div>
     </div>` });
 
   // 2 — Product overview
   if (rc.product_overview) {
     const po = rc.product_overview;
+    const specCard = (label, arr) => `<div class="flex flex-col justify-center rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-100"><div class="text-[13px] font-semibold uppercase tracking-wide text-slate-500">${label}</div><div class="mt-3 flex flex-wrap gap-2.5">${bigPills(arr)}</div></div>`;
+    const specCards = [];
+    if (po.properties && po.properties.length) specCards.push(specCard('Key properties', po.properties));
+    if (po.coatings && po.coatings.length) specCards.push(specCard('Coating / finish options', po.coatings));
+    const rightCol = specCards.length
+      ? `<div class="sm:col-span-3 grid h-full gap-5" style="grid-template-rows:repeat(${specCards.length},minmax(0,1fr))">${specCards.join('')}</div>`
+      : '';
     S.push({ kicker: 'Product', title: 'Product overview', tag: TAG_STRATEGY, body:
-      `<p class="text-[13px] text-slate-600">${escapeHtml(po.summary || '')}</p>
-      ${(po.properties && po.properties.length) ? `<div class="mt-3 text-[12px] font-semibold text-slate-500">Key properties</div><div class="mt-1 flex flex-wrap gap-1.5">${chips(po.properties)}</div>` : ''}
-      ${(po.coatings && po.coatings.length) ? `<div class="mt-3 text-[12px] font-semibold text-slate-500">Coating / finish options</div><div class="mt-1 flex flex-wrap gap-1.5">${chips(po.coatings)}</div>` : ''}` });
+      `<div class="grid h-full grid-cols-1 gap-8 ${specCards.length ? 'sm:grid-cols-5' : ''}">
+        <div class="${specCards.length ? 'sm:col-span-2 justify-between' : 'justify-center'} flex h-full flex-col gap-6">
+          <p class="text-[19px] font-medium leading-relaxed text-slate-700">${escapeHtml(po.summary || '')}</p>
+          <div class="rounded-2xl bg-indigo-50/70 p-5 ring-1 ring-indigo-100">
+            <div class="text-[14px] font-bold text-indigo-700">The China+1 workhorse fabric</div>
+            <p class="mt-1.5 text-[15px] leading-snug text-slate-600">Tough, water-resistant and printable — the base fabric behind bags, covers, medical and marine goods worldwide.</p>
+          </div>
+        </div>
+        ${rightCol}
+      </div>` });
   }
 
   // 3 — Application universe (REAL verified counts per segment)
@@ -2663,97 +2695,182 @@ function buildDeck(productId) {
     const bySeg = {}; confirmed.forEach((t) => { bySeg[t.segment] = (bySeg[t.segment] || 0) + 1; });
     const segItems = Object.entries(bySeg).sort((a, b2) => b2[1] - a[1]).map(([seg, n]) => ({ key: 'seg' + seg, label: segLabel(seg), short: segLabel(seg), value: n, color: anyColor(seg) }));
     S.push({ kicker: 'Applications', title: 'Application universe', tag: TAG_LIVE, body:
-      `<p class="text-[13px] text-slate-600">Verified target companies by application segment — each checked against its own website.</p>
-      <div class="mt-2">${segItems.length ? buildBars(segItems, { unit: 'company' }) : '<div class="text-sm text-slate-400">No verified companies yet.</div>'}</div>
-      <div class="mt-1">${deckSrc('Kusumgar verified target list')}</div>` });
+      `<div class="flex h-full flex-col justify-between gap-4">
+        <p class="text-[16px] leading-relaxed text-slate-600">Verified target companies by application segment — <span class="font-semibold text-slate-800">${confirmed.length} companies</span> across <span class="font-semibold text-slate-800">${segItems.length} segments</span>, each checked against its own website.</p>
+        <div class="mx-auto w-full max-w-4xl">${segItems.length ? buildBars(segItems, { unit: 'company', rowH: 40, barH: 18, fontPx: 13.5, x0: 262, valW: 34, W: 592 }) : '<div class="text-sm text-slate-400">No verified companies yet.</div>'}</div>
+        <div>${deckSrc('Kusumgar verified target list')}</div>
+      </div>` });
   }
 
   // 4 — Market size (REAL)
   S.push({ kicker: 'Market size', title: 'Global market — real trade data', tag: hasMarket ? TAG_LIVE : '', body: (() => {
-    if (!hasMarket) return marketComingNote;
-    const card = (label, bb, url) => `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
-      <div class="text-[12px] font-bold text-slate-700">${label}</div>
-      <div class="mt-1 grid grid-cols-2 gap-2">
-        <div><div class="text-[11px] text-slate-400">World imports</div><div class="font-display text-xl font-extrabold tnum text-indigo-600">${fmtUSD(bb.world_import_value)}</div></div>
-        <div><div class="text-[11px] text-slate-400">World exports</div><div class="font-display text-xl font-extrabold tnum text-emerald-600">${fmtUSD(bb.world_export_value)}</div></div>
+    if (!hasMarket) return `<div class="flex h-full flex-col justify-center">${marketComingNote}</div>`;
+    const cnt = (v) => Array.isArray(v) ? v.length : (v || 0);
+    const card = (label, bb, url) => `<div class="flex h-full flex-col rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-100">
+      <div class="text-[15px] font-bold text-slate-800">${label}</div>
+      <div class="mt-4 grid flex-1 grid-cols-2 content-center gap-x-6 gap-y-5">
+        <div><div class="text-[12px] text-slate-400">World imports</div><div class="font-display text-3xl font-extrabold tnum text-indigo-600">${fmtUSD(bb.world_import_value)}</div></div>
+        <div><div class="text-[12px] text-slate-400">World exports</div><div class="font-display text-3xl font-extrabold tnum text-emerald-600">${fmtUSD(bb.world_export_value)}</div></div>
+        <div><div class="text-[12px] text-slate-400">Import volume</div><div class="font-display text-xl font-extrabold tnum text-slate-700">${fmtTonnes(bb.world_import_netWgt)}</div></div>
+        <div><div class="text-[12px] text-slate-400">Reporting importers</div><div class="font-display text-xl font-extrabold tnum text-slate-700">${cnt(bb.reporting_importers)} countries</div></div>
       </div>
-      <div class="mt-1 text-[11px] text-slate-400">Import volume ${fmtTonnes(bb.world_import_netWgt)}</div>
-      <div class="mt-1">${deckSrc('UN Comtrade, ' + year, url)}</div></div>`;
-    return `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">${card('All coated fabric (HS 5903)', b, b.query_urls.imports)}${card('PU-coated (HS 5903.20) — closest to 600D PU', bPU, bPU.query_urls.imports)}</div>`;
+      <div class="mt-3">${deckSrc('UN Comtrade, ' + year, url)}</div></div>`;
+    const puShare = Math.round((bPU.world_import_value / b.world_import_value) * 100);
+    return `<div class="flex h-full flex-col gap-5">
+      <div class="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2">${card('All coated fabric (HS 5903)', b, b.query_urls.imports)}${card('PU-coated (HS 5903.20) — closest to 600D PU', bPU, bPU.query_urls.imports)}</div>
+      <div class="grid grid-cols-3 gap-4">${kpi('Countries importing', String(cnt(b.reporting_importers)), 'reporting to UN Comtrade')}${kpi('Countries exporting', String(cnt(b.reporting_exporters)), 'reporting to UN Comtrade', 'text-emerald-600')}${kpi('PU-coated share', puShare + '%', 'of all coated-fabric imports', 'text-purple-600')}</div>
+    </div>`;
   })() });
 
   // 5 — Geography (REAL region split)
   if (hasMarket && b.region_split && b.region_split.length) {
     const regItems = b.region_split.map((r) => ({ key: 'dg' + r.region, label: r.region, value: r.value, valueText: fmtUSD(r.value), pct: r.pct, tipSub: `${fmtUSD(r.value)} · ${r.pct}%`, color: DECK_REGION_COLORS[r.region] || '#94a3b8' }));
+    const top2 = b.region_split.slice().sort((a, c) => c.value - a.value).slice(0, 2);
+    const geoInsight = top2.length >= 2 ? `${top2[0].region} and ${top2[1].region} together take ${Math.round(top2[0].pct + top2[1].pct)}% of world coated-fabric imports.` : '';
     S.push({ kicker: 'Geography', title: 'Where the demand is', tag: TAG_LIVE, body:
-      `<div class="flex flex-wrap items-center gap-4">${buildValueDonut(regItems, { centerNum: fmtUSD(b.world_import_value), centerLabel: 'imports' })}${buildValueLegend(regItems)}</div>
-      <div class="mt-2">${deckSrc('UN Comtrade, ' + year, b.query_urls.imports)}</div>` });
+      `<div class="flex h-full flex-col justify-between gap-4">
+        <p class="text-[16px] leading-relaxed text-slate-600">${escapeHtml(geoInsight)} Demand is <span class="font-semibold text-slate-800">broadly spread</span> across every continent — a diversified buyer base, not one dependent market.</p>
+        <div class="flex flex-wrap items-center justify-center gap-12">
+          ${buildValueDonut(regItems, { centerNum: fmtUSD(b.world_import_value), centerLabel: 'imports', size: 360 })}
+          <div class="min-w-[320px] max-w-xl flex-1">${buildValueLegend(regItems, { big: true })}</div>
+        </div>
+        <div>${deckSrc('UN Comtrade, ' + year, b.query_urls.imports)}</div>
+      </div>` });
   }
 
   // 6 — Supply chain (REAL top exporters)
   if (hasMarket && b.top_exporters && b.top_exporters.length) {
-    const expItems = b.top_exporters.slice(0, 10).map((r, i) => ({ key: 'de' + r.code, label: r.country, short: truncate(r.country, 16), iso2: r.iso2, value: r.value, valueText: fmtUSD(r.value), tipSub: `${fmtUSD(r.value)} · ${fmtTonnes(r.netWgt)} exported`, color: DECK_PALETTE[i % DECK_PALETTE.length] }));
+    const expItems = b.top_exporters.slice(0, 8).map((r, i) => ({ key: 'de' + r.code, label: r.country, short: truncate(r.country, 20), iso2: r.iso2, value: r.value, valueText: fmtUSD(r.value), tipSub: `${fmtUSD(r.value)} · ${fmtTonnes(r.netWgt)} exported`, color: DECK_PALETTE[i % DECK_PALETTE.length] }));
+    const chinaShare = b.world_export_value ? Math.round((expItems[0].value / b.world_export_value) * 100) : 0;
     S.push({ kicker: 'Supply chain', title: 'Who makes it today', tag: TAG_LIVE, body:
-      `<p class="text-[13px] text-slate-600">Global coated-fabric exports are concentrated — the “China dominates” picture the China+1 thesis rests on.</p>
-      <div class="mt-2">${buildValueBars(expItems)}</div><div class="mt-1">${deckSrc('UN Comtrade, ' + year, b.query_urls.exports)}</div>` });
+      `<div class="flex h-full flex-col justify-between gap-4">
+        <p class="text-[16px] leading-relaxed text-slate-600">Global coated-fabric exports are highly concentrated — <span class="font-semibold text-slate-800">${escapeHtml(expItems[0].label)} alone supplies ~${chinaShare}% of world exports</span>. This is the “China dominates” picture the China+1 thesis rests on.</p>
+        <div class="mx-auto w-full max-w-3xl">${buildValueBars(expItems, { rowH: 35, barH: 18, fontPx: 14, x0: 210, valReserve: 84, W: 540, flagW: 26 })}</div>
+        <div>${deckSrc('UN Comtrade, ' + year, b.query_urls.exports)}</div>
+      </div>` });
   }
 
   // 7 — Recent monthly trend (REAL, provisional)
   if (hasMarket && m.monthly && m.monthly.series && m.monthly.series.length) {
     S.push({ kicker: 'Recent trend', title: 'Recent monthly activity', tag: TAG_LIVE, body:
-      `<p class="text-[13px] text-slate-600">World monthly trade (HS 5903) through <span class="font-semibold">${escapeHtml(monthLabel(m.monthly.through))}</span> — <span class="font-semibold text-amber-600">provisional</span> (recent months are revised up as more countries report; China does not report monthly).</p>
-      <div class="mt-2">${buildMonthlyTrend(m.monthly.series)}</div>
-      <div class="mt-1 flex items-center justify-between"><span class="text-[11px] text-slate-500">Last ${m.monthly.months_count} mo imports: <span class="font-bold tnum text-slate-700">${fmtUSD(m.monthly.last12_import_value)}</span></span>${deckSrc('UN Comtrade (monthly)', m.monthly.query_urls && m.monthly.query_urls.imports)}</div>` });
+      `<div class="flex h-full flex-col justify-between gap-4">
+        <div>
+          <p class="text-[16px] leading-relaxed text-slate-600">World monthly trade (HS 5903) through <span class="font-semibold text-slate-800">${escapeHtml(monthLabel(m.monthly.through))}</span> — <span class="font-semibold text-amber-600">provisional</span> (recent months revise up as more countries report; China does not report monthly).</p>
+          <div class="mt-3 flex items-center gap-6 text-[13px] font-medium text-slate-500">
+            <span class="flex items-center gap-2"><span class="h-3 w-3 rounded-full" style="background:#6366f1"></span>Imports</span>
+            <span class="flex items-center gap-2"><span class="h-3 w-3 rounded-full" style="background:#10b981"></span>Exports</span>
+          </div>
+        </div>
+        <div class="w-full">${buildMonthlyTrend(m.monthly.series, { H: 180 })}</div>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex gap-8">
+            <div><div class="text-[12px] text-slate-400">Last ${m.monthly.months_count} mo imports</div><div class="font-display text-2xl font-extrabold tnum text-indigo-600">${fmtUSD(m.monthly.last12_import_value)}</div></div>
+            <div><div class="text-[12px] text-slate-400">Last ${m.monthly.months_count} mo exports</div><div class="font-display text-2xl font-extrabold tnum text-emerald-600">${fmtUSD(m.monthly.last12_export_value)}</div></div>
+          </div>
+          ${deckSrc('UN Comtrade (monthly)', m.monthly.query_urls && m.monthly.query_urls.imports)}
+        </div>
+      </div>` });
   }
 
   // 8 — Competition
   const cp = rc.competitive_positioning || {};
   const comps = state.competitors || [];
   S.push({ kicker: 'Competition', title: 'Competitive landscape', tag: isExisting ? TAG_STRATEGY : '', body: (() => {
-    if (!isExisting || !comps.length) return `<div class="rounded-xl bg-amber-50 p-3 text-[13px] text-amber-800 ring-1 ring-amber-100">Competitor mapping for ${escapeHtml(prod.name)} is in progress.</div>`;
-    const rows = comps.slice(0, 9).map((c) => `<div class="flex items-center justify-between gap-2 border-t border-slate-100 py-1.5 first:border-t-0"><span class="min-w-0 truncate text-[13px] font-medium text-slate-700">${escapeHtml(c.company)}</span><span class="shrink-0 text-[11px] text-slate-400">${countryCell(c.country)} · ${escapeHtml(c.positioning || '')}</span></div>`).join('');
-    return `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div><div class="mb-1 text-[12px] font-semibold text-slate-500">Who we’re up against (${comps.length} mapped)</div>${rows}</div>
-      <div class="rounded-xl bg-indigo-50/60 p-3 ring-1 ring-indigo-100"><div class="text-[12px] font-bold text-indigo-700">${escapeHtml(cp.statement || 'Compete on service and technical capability, not price.')}</div><ul class="mt-2 space-y-1 text-[12px] text-slate-600">${(cp.points || []).map((p) => `<li>• ${escapeHtml(p)}</li>`).join('')}</ul></div>
-    </div><div class="mt-2">${deckSrc('Kusumgar competitor map')}</div>`;
+    if (!isExisting || !comps.length) return `<div class="flex h-full flex-col justify-center"><div class="rounded-xl bg-amber-50 p-4 text-[15px] text-amber-800 ring-1 ring-amber-100">Competitor mapping for ${escapeHtml(prod.name)} is in progress.</div></div>`;
+    const rows = comps.slice(0, 10).map((c) => `<div class="flex items-center justify-between gap-3 border-t border-slate-100 py-2.5 first:border-t-0"><span class="min-w-0 truncate text-[15px] font-medium text-slate-700">${escapeHtml(c.company)}</span><span class="shrink-0 text-[12px] text-slate-400">${countryCell(c.country)} · ${escapeHtml(c.positioning || '')}</span></div>`).join('');
+    return `<div class="flex h-full flex-col gap-3">
+      <div class="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-2">
+        <div class="flex h-full flex-col">
+          <div class="mb-2 text-[13px] font-semibold uppercase tracking-wide text-slate-500">Who we’re up against · ${comps.length} mapped</div>
+          <div class="flex-1">${rows}</div>
+        </div>
+        <div class="flex h-full flex-col justify-center rounded-2xl bg-indigo-50/60 p-6 ring-1 ring-indigo-100">
+          <div class="text-[17px] font-bold leading-snug text-indigo-700">${escapeHtml(cp.statement || 'Compete on service and technical capability, not price.')}</div>
+          <ul class="mt-4 space-y-3 text-[15px] leading-snug text-slate-700">${(cp.points || []).map((p) => `<li class="flex gap-2.5"><span class="mt-1 shrink-0 text-indigo-400">▸</span><span>${escapeHtml(p)}</span></li>`).join('')}</ul>
+        </div>
+      </div>
+      <div>${deckSrc('Kusumgar competitor map')}</div>
+    </div>`;
   })() });
 
   // 9 — Why Kusumgar can win
   if (rc.why_kusumgar_wins) {
     const w = rc.why_kusumgar_wins;
     S.push({ kicker: 'Advantage', title: 'Why Kusumgar can win', tag: TAG_STRATEGY, body:
-      `<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div><div class="text-[12px] font-semibold text-slate-500">Our strengths</div><ul class="mt-1 space-y-1 text-[12px] text-slate-700">${(w.strengths || []).map((s) => `<li>✓ ${escapeHtml(s)}</li>`).join('')}</ul></div>
-        <div><div class="text-[12px] font-semibold text-slate-500">Buyer pain points we solve</div><ul class="mt-1 space-y-1 text-[12px] text-slate-700">${(w.customer_pain_points || []).map((s) => `<li>• ${escapeHtml(s)}</li>`).join('') || '<li class="text-slate-400">—</li>'}</ul></div>
-        <div><div class="text-[12px] font-semibold text-slate-500">Certifications</div><div class="mt-1 flex flex-wrap gap-1">${(w.certifications || []).map((c) => `<span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">${escapeHtml(c)}</span>`).join(' ')}</div>${w.positioning ? `<div class="mt-3 text-[12px] font-semibold text-slate-500">Positioning</div><p class="mt-1 text-[12px] text-slate-700">${escapeHtml(w.positioning)}</p>` : ''}</div>
+      `<div class="grid h-full grid-cols-1 gap-6 sm:grid-cols-3">
+        <div class="flex h-full flex-col rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-100">
+          <div class="text-[13px] font-semibold uppercase tracking-wide text-slate-500">Our strengths</div>
+          <ul class="mt-4 space-y-3 text-[15px] leading-snug text-slate-700">${(w.strengths || []).map((s) => `<li class="flex gap-2.5"><span class="mt-0.5 shrink-0 text-emerald-500">✓</span><span>${escapeHtml(s)}</span></li>`).join('')}</ul>
+        </div>
+        <div class="flex h-full flex-col rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-100">
+          <div class="text-[13px] font-semibold uppercase tracking-wide text-slate-500">Buyer pain points we solve</div>
+          <ul class="mt-4 space-y-3 text-[15px] leading-snug text-slate-700">${(w.customer_pain_points || []).map((s) => `<li class="flex gap-2.5"><span class="mt-0.5 shrink-0 text-indigo-400">▸</span><span>${escapeHtml(s)}</span></li>`).join('') || '<li class="text-slate-400">Being mapped as targets are validated.</li>'}</ul>
+        </div>
+        <div class="flex h-full flex-col rounded-2xl bg-emerald-50/50 p-6 ring-1 ring-emerald-100">
+          <div class="text-[13px] font-semibold uppercase tracking-wide text-slate-500">Certifications</div>
+          <div class="mt-4 flex flex-wrap gap-2">${(w.certifications || []).map((c) => `<span class="rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-emerald-600 ring-1 ring-emerald-200">${escapeHtml(c)}</span>`).join(' ')}</div>
+          ${w.positioning ? `<div class="mt-6 text-[13px] font-semibold uppercase tracking-wide text-slate-500">Positioning</div><p class="mt-2 text-[15px] leading-snug text-slate-700">${escapeHtml(w.positioning)}</p>` : ''}
+        </div>
       </div>` });
   }
 
   // 10 — Target customers (REAL)
   if (confirmed.length) {
-    const rows = confirmed.slice(0, 12).map((t) => `<div class="flex items-center justify-between gap-2 border-t border-slate-100 py-1.5 first:border-t-0"><span class="min-w-0 truncate text-[13px] font-medium text-slate-700">${escapeHtml(t.company)}</span><span class="shrink-0 text-[11px] text-slate-400">${countryCell(t.country)} · ✅</span></div>`).join('');
+    const col = (arr) => arr.map((t, idx) => `<div class="flex items-center justify-between gap-3 ${idx ? 'border-t border-slate-100' : ''} py-3"><span class="min-w-0 truncate text-[15px] font-medium text-slate-700">${escapeHtml(t.company)}</span><span class="shrink-0 text-[12px] text-slate-400">${countryCell(t.country)} <span class="text-emerald-500">✅</span></span></div>`).join('');
+    const sample = confirmed.slice(0, 16);
+    const half = Math.ceil(sample.length / 2);
     S.push({ kicker: 'Target customers', title: 'Real target companies', tag: TAG_LIVE, body:
-      `<p class="text-[13px] text-slate-600"><span class="font-semibold text-emerald-600">${confirmed.length}</span> companies verified against their own website${targets.length > confirmed.length ? ` (of ${targets.length} mapped)` : ''}. A sample:</p>
-      <div class="mt-2 grid grid-cols-1 gap-x-8 sm:grid-cols-2">${rows}</div><div class="mt-2">${deckSrc('Kusumgar verified target list')}</div>` });
+      `<div class="flex h-full flex-col gap-3">
+        <p class="text-[16px] text-slate-600"><span class="font-semibold text-emerald-600">${confirmed.length}</span> companies verified against their own website${targets.length > confirmed.length ? ` (of ${targets.length} mapped)` : ''}. A representative sample:</p>
+        <div class="grid flex-1 grid-cols-1 content-center gap-x-12 sm:grid-cols-2">
+          <div>${col(sample.slice(0, half))}</div>
+          <div>${col(sample.slice(half))}</div>
+        </div>
+        <div>${deckSrc('Kusumgar verified target list')}</div>
+      </div>` });
   }
 
   // 11 — Market entry strategy
   if (rc.market_entry_phases && rc.market_entry_phases.phases) {
     const ph = rc.market_entry_phases.phases;
+    const phAccents = [{ bg: 'bg-indigo-50/60', ring: 'ring-indigo-100', dot: 'bg-indigo-500' }, { bg: 'bg-purple-50/60', ring: 'ring-purple-100', dot: 'bg-purple-500' }, { bg: 'bg-pink-50/60', ring: 'ring-pink-100', dot: 'bg-pink-500' }];
     S.push({ kicker: 'Go-to-market', title: 'Market entry strategy', tag: TAG_STRATEGY, body:
-      `<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">${ph.map((p) => `<div class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100"><div class="text-[13px] font-extrabold text-slate-800">${escapeHtml(p.phase)}</div><div class="mt-1 flex flex-wrap gap-1">${(p.segments || []).map((s) => `<span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200">${escapeHtml(segLabel(s))}</span>`).join(' ')}</div><p class="mt-2 text-[11px] leading-snug text-slate-500">${escapeHtml(p.rationale || '')}</p></div>`).join('')}</div>` });
+      `<div class="grid h-full grid-cols-1 gap-6 sm:grid-cols-3">${ph.map((p, idx) => {
+        const a = phAccents[idx % phAccents.length];
+        const phaseName = String(p.phase || '').replace(/^Phase\s*\d+\s*[—–-]\s*/i, '') || p.phase;
+        return `<div class="flex h-full flex-col rounded-2xl ${a.bg} p-6 ring-1 ${a.ring}">
+          <div class="flex items-center gap-3">
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full ${a.dot} font-display text-[16px] font-extrabold text-white">${idx + 1}</span>
+            <div><div class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Phase ${idx + 1}</div><div class="text-[19px] font-extrabold leading-tight text-slate-800">${escapeHtml(phaseName)}</div></div>
+          </div>
+          <div class="mt-5 flex flex-wrap gap-2">${(p.segments || []).map((s) => `<span class="rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-slate-700 ring-1 ring-slate-200">${escapeHtml(segLabel(s))}</span>`).join(' ')}</div>
+          <div class="flex-1"></div>
+          <p class="border-t border-slate-200/70 pt-4 text-[14px] leading-relaxed text-slate-600">${escapeHtml(p.rationale || '')}</p>
+        </div>`;
+      }).join('')}</div>` });
   }
 
   // 12 — Revenue potential & action plan (ESTIMATE)
   const rs = rc.revenue_scenarios;
   S.push({ kicker: 'Revenue & actions', title: 'Revenue potential & next steps', tag: TAG_ESTIMATE, body: (() => {
-    const nextSteps = `<div class="mt-3 text-[12px] font-semibold text-slate-500">Next steps</div><ul class="mt-1 space-y-1 text-[12px] text-slate-700"><li>1 — Prioritise Phase-1 verified targets and open sampling conversations.</li><li>2 — Lead with China+1 resilience + audited quality (AS9100D / IATF 16949).</li><li>3 — Offer flexible MOQ &amp; customisation to displace incumbents.</li></ul>`;
+    const steps = [
+      'Prioritise Phase-1 verified targets and open sampling conversations.',
+      'Lead with China+1 resilience + audited quality (AS9100D / IATF 16949).',
+      'Offer flexible MOQ & customisation to displace incumbents.',
+    ];
+    const nextSteps = `<div><div class="text-[13px] font-semibold uppercase tracking-wide text-slate-500">Next steps</div><ul class="mt-3 space-y-3 text-[15px] leading-snug text-slate-700">${steps.map((s, i) => `<li class="flex gap-3"><span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-indigo-100 text-[12px] font-extrabold text-indigo-600">${i + 1}</span><span>${escapeHtml(s)}</span></li>`).join('')}</ul></div>`;
     if (rs && hasMarket) {
       const base = b.world_import_value;
-      const rows = rs.shares.map((sh) => `<div class="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100"><span class="text-[13px] font-semibold text-slate-700">${sh}% of world import market</span><span class="font-display text-xl font-extrabold tnum text-indigo-600">${fmtUSD(base * (sh / 100))}</span></div>`).join('');
-      return `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div class="space-y-2">${rows}</div><div><div class="rounded-xl bg-amber-50 p-3 text-[12px] leading-snug text-amber-800 ring-1 ring-amber-100"><span class="font-bold">Estimate — how to read this:</span> ${escapeHtml(rs.assumption)} Base = ${fmtUSD(base)} (${escapeHtml(rs.basis)}, UN Comtrade ${year}).</div>${nextSteps}</div></div>`;
+      const rows = rs.shares.map((sh) => `<div class="flex items-center justify-between rounded-2xl bg-slate-50 px-7 py-7 ring-1 ring-slate-100"><span class="text-[16px] font-semibold text-slate-700">${sh}% of world import market</span><span class="font-display text-4xl font-extrabold tnum text-indigo-600">${fmtUSD(base * (sh / 100))}</span></div>`).join('');
+      return `<div class="grid h-full grid-cols-1 gap-8 sm:grid-cols-2">
+        <div class="flex h-full flex-col justify-center gap-5">${rows}</div>
+        <div class="flex h-full flex-col justify-center gap-6">
+          <div class="rounded-2xl bg-amber-50 p-5 text-[14px] leading-relaxed text-amber-800 ring-1 ring-amber-100"><span class="font-bold">Estimate — how to read this:</span> ${escapeHtml(rs.assumption)} Base = ${fmtUSD(base)} (${escapeHtml(rs.basis)}, UN Comtrade ${year}).</div>
+          ${nextSteps}
+        </div>
+      </div>`;
     }
-    return `<div class="rounded-xl bg-amber-50 p-3 text-[13px] leading-snug text-amber-800 ring-1 ring-amber-100">Revenue scenarios need the live market size for this product — a later brick — so no USD figure is shown yet.</div>${nextSteps}`;
+    return `<div class="flex h-full flex-col justify-center gap-6"><div class="rounded-2xl bg-amber-50 p-5 text-[15px] leading-relaxed text-amber-800 ring-1 ring-amber-100">Revenue scenarios need the live market size for this product — a later brick — so no USD figure is shown yet.</div>${nextSteps}</div>`;
   })() });
 
   DECK_TOTAL = S.length;
