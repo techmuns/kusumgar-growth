@@ -1,6 +1,6 @@
 {
  "_meta": {
-  "total": 261,
+  "total": 275,
   "source": "Kusumgar curated target list (600D_FABRIC_TGT_COMPANIES.xlsx + NEW_KUSUMGAR_DOWNLAD.xlsx)",
   "note": "verified=false rows await the research-verify robot (visits each company website; nothing invented)"
  },
@@ -20,7 +20,8 @@
    "product_confirmed": true,
    "product_evidence": "A leader in automotive seating with unmatched global reach and scale",
    "verify_source_url": "https://www.adient.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "lear-corporation",
@@ -37,7 +38,8 @@
    "product_confirmed": true,
    "product_evidence": "Lear Corporation is a global automotive leader in Seating and E-Systems",
    "verify_source_url": "https://www.lear.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "toyota-boshoku",
@@ -54,7 +56,8 @@
    "product_confirmed": true,
    "product_evidence": "Automobile Seats Aircraft seats",
    "verify_source_url": "https://www.toyota-boshoku.com/global/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ts-tech",
@@ -71,7 +74,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://tstech.co.jp",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "forvia-faurecia",
@@ -88,7 +92,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://forvia.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "magna-seating",
@@ -105,7 +110,8 @@
    "product_confirmed": true,
    "product_evidence": "Seating",
    "verify_source_url": "https://www.magna.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "grammer-ag",
@@ -122,7 +128,8 @@
    "product_confirmed": true,
    "product_evidence": "GRAMMER Commercial Vehicles entwickelt und produziert weltweit Fahrer- und Passagiersitze für Land- und Baumaschinen, Stapler, Lkw, Busse und Bahnen.",
    "verify_source_url": "https://www.grammer.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "freedman-seating",
@@ -139,7 +146,8 @@
    "product_confirmed": true,
    "product_evidence": "Freedman manufactures seats and seating related products for many different applications, including bus, rail, marine, delivery truck, specialty and commercial vehicle seating.",
    "verify_source_url": "https://freedmanseating.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "harita-seating",
@@ -156,7 +164,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bharat-seats",
@@ -173,7 +182,8 @@
    "product_confirmed": true,
    "product_evidence": "Bharat Seats Ltd is engaged in the manufacturing of seating systems, NVH components and body sealing parts for four wheelers",
    "verify_source_url": "https://bharatseats.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "stryker",
@@ -190,7 +200,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "zoll-medical",
@@ -207,7 +218,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "laerdal",
@@ -224,7 +236,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "medtronic",
@@ -241,7 +254,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ge-healthcare",
@@ -258,7 +272,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "philips-healthcare",
@@ -275,7 +290,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ferno",
@@ -292,7 +308,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bound-tree-medical",
@@ -309,7 +326,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ambu",
@@ -326,7 +344,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "icu-medical",
@@ -343,7 +362,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "milwaukee-tool",
@@ -360,7 +380,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "klein-tools",
@@ -377,7 +398,8 @@
    "product_confirmed": true,
    "product_evidence": "Lineman Bucket Bags & Accessories",
    "verify_source_url": "https://www.kleintools.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "stanley-black-decker",
@@ -394,7 +416,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "dewalt",
@@ -411,7 +434,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bosch-power-tools",
@@ -428,7 +452,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "makita",
@@ -445,7 +470,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "hilti",
@@ -462,7 +488,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "snap-on",
@@ -479,7 +506,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "veto-pro-pac",
@@ -496,7 +524,8 @@
    "product_confirmed": true,
    "product_evidence": "Tool Bags, Tool Backpacks and Tool Storage That Works",
    "verify_source_url": "https://vetopropac.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "clc-work-gear",
@@ -513,7 +542,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "coverstore",
@@ -530,7 +560,8 @@
    "product_confirmed": true,
    "product_evidence": "industry-leading selection of weatherproof patio furniture covers, grill covers, TV covers, and more",
    "verify_source_url": "https://www.coverstore.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "classic-accessories",
@@ -547,7 +578,8 @@
    "product_confirmed": true,
    "product_evidence": "premium outdoor covers designed to protect patio furniture, vehicles, boats, and equipment",
    "verify_source_url": "https://classicaccessories.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "duck-covers",
@@ -564,7 +596,8 @@
    "product_confirmed": true,
    "product_evidence": "offering exceptional, waterproof, and durable outdoor furniture covers tailored to protect your patio furniture",
    "verify_source_url": "https://duck-covers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "empirecovers",
@@ -581,7 +614,8 @@
    "product_confirmed": true,
    "product_evidence": "Patio Furniture Covers... Hot Tub Covers... Air Conditioner Covers... Fire Pit Covers... Outdoor Fountain Covers",
    "verify_source_url": "https://www.empirecovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "loop-loc",
@@ -598,7 +632,8 @@
    "product_confirmed": true,
    "product_evidence": "LOOP-LOC makes super-strong inground safety pool covers and high quality liners for any size pool.",
    "verify_source_url": "https://www.looploc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "merlin-industries",
@@ -615,7 +650,8 @@
    "product_confirmed": true,
    "product_evidence": "Merlin pool safety covers are incredibly strong, and beautifully crafted to fit any size pool shape. Manufactured completely with U.S.A.-made materials and components that exceed industry standards.",
    "verify_source_url": "https://merlinindustries.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "latham-pool-products",
@@ -632,7 +668,8 @@
    "product_confirmed": true,
    "product_evidence": "Coverstar automatic pool covers offer reliable protection and streamlined operation with just the touch of a button. Custom-built to fit your pool, each cover is crafted from premium materials for durability, easy maintenance, safety and peace of mind.",
    "verify_source_url": "https://www.lathampool.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "pool-cover-specialists",
@@ -649,7 +686,8 @@
    "product_confirmed": true,
    "product_evidence": "Infinity 4000™ Automatic Swimming Pool Covers ManualTrak™ Swimming Pool Cover Replacement Pool Cover Fabric Life-lock™ Solid Pool Covers",
    "verify_source_url": "https://www.poolcoverspecialists.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "treasure-garden",
@@ -666,7 +704,8 @@
    "product_confirmed": true,
    "product_evidence": "Protective Covers",
    "verify_source_url": "https://treasuregarden.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "garden-leisure",
@@ -683,7 +722,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://glshop.co.uk/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "taylor-made",
@@ -700,7 +740,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "westland-industries",
@@ -717,7 +758,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "carver-industries",
@@ -734,7 +776,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "dowco-marine",
@@ -751,7 +794,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "shoremaster",
@@ -768,7 +812,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "covercraft",
@@ -785,7 +830,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.covercraft.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "brunswick",
@@ -802,7 +848,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sea-ray",
@@ -819,7 +866,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "mastercraft",
@@ -836,7 +884,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "yamaha-marine",
@@ -853,7 +902,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "gli-pool-products",
@@ -870,7 +920,8 @@
    "product_confirmed": true,
    "product_evidence": "A GLI Safety Cover not only protects your swimming pool from the elements, but more importantly, it acts as an off-season, full-time Lifeguard for your pool",
    "verify_source_url": "https://www.glipoolproducts.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "anchor-industries",
@@ -887,7 +938,8 @@
    "product_confirmed": true,
    "product_evidence": "Pool Covers Keep pools safe and functional all year with custom covers designed for homes, clubs, and commercial spaces.",
    "verify_source_url": "https://anchorinc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "meyco-pool-covers",
@@ -904,7 +956,8 @@
    "product_confirmed": true,
    "product_evidence": "Meyco Pool Covers, creators of the original safety pool cover, offer custom features to keep your pool safe and stylish all off-season.",
    "verify_source_url": "https://meycocovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rayner-pool-covers",
@@ -921,7 +974,8 @@
    "product_confirmed": true,
    "product_evidence": "Safety Covers GLI HPI Yard Guard Coverlon Rayner Freetime Fun Safety Covers",
    "verify_source_url": "https://www.poolstore.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "cover-pools",
@@ -938,7 +992,8 @@
    "product_confirmed": true,
    "product_evidence": "The world's first and current leading manufacturer of automatic safety pool covers. For over 50 years, we custom fit any new or existing pool shape or size.",
    "verify_source_url": "https://www.coverpools.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "aquamatic-cover-systems",
@@ -955,7 +1010,8 @@
    "product_confirmed": true,
    "product_evidence": "Aquamatic Cover Systems manufactures the easiest to use manual system (EZ Cover) as well as the most advanced and adaptable automatic system (HydraLux)",
    "verify_source_url": "https://www.aquamatic.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "coverstar",
@@ -972,7 +1028,8 @@
    "product_confirmed": true,
    "product_evidence": "Coverstar swimming pool covers are the strongest way to prevent children and pets from getting into your swimming pool. View our selection of durable automatic covers",
    "verify_source_url": "https://www.coverstar.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "automatic-pool-covers",
@@ -989,7 +1046,8 @@
    "product_confirmed": true,
    "product_evidence": "Automatic Pool Covers, Inc. has set the standard in automatic pool cover innovation, quality, and reliability",
    "verify_source_url": "https://automaticpoolcovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "coversafe",
@@ -1006,7 +1064,8 @@
    "product_confirmed": true,
    "product_evidence": "Discover top-quality automatic pool cover installation maintenance and repairs for peace of mind and reliable performance.",
    "verify_source_url": "https://coversafe.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "pooltux",
@@ -1023,7 +1082,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tara-manufacturing",
@@ -1040,7 +1100,8 @@
    "product_confirmed": true,
    "product_evidence": "we have applied the same innovative solutions to develop a pool safety cover that exceeds ASTM standards... our brand new 60,000 sq.ft., energy-efficient facility capable of handling large commercial pool covers",
    "verify_source_url": "https://taramfg.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "hpi-pool-products",
@@ -1057,7 +1118,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.thepoolfactory.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bioguard-covers",
@@ -1074,7 +1136,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://bioguard.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "merlin-safety-covers",
@@ -1091,7 +1154,8 @@
    "product_confirmed": true,
    "product_evidence": "Merlin pool safety covers are incredibly strong, and beautifully crafted to fit any size pool shape. Manufactured completely with U.S.A.-made materials and components that exceed industry standards.",
    "verify_source_url": "https://merlinindustries.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "pool-warehouse-covers",
@@ -1108,7 +1172,8 @@
    "product_confirmed": true,
    "product_evidence": "Pool Covers Save $250 Instantly DON'T WAIT TO PROTECT YOUR POOL... Automatic Pool Covers... Inground Pool Covers... Above Ground Covers... Winter Covers... Solid Safety Covers Mesh Safety Covers",
    "verify_source_url": "https://www.poolwarehouse.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "cover-care",
@@ -1125,7 +1190,8 @@
    "product_confirmed": true,
    "product_evidence": "Cover Care services and repairs all makes and models of automatic pool covers",
    "verify_source_url": "https://covercare.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "big-duck-canvas",
@@ -1142,7 +1208,8 @@
    "product_confirmed": true,
    "product_evidence": "Fabric for Grill Covers",
    "verify_source_url": "https://www.bigduckcanvas.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "trivantage",
@@ -1159,7 +1226,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://trivantage.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "miami-corporation",
@@ -1176,7 +1244,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://miamicorp.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rochford-supply",
@@ -1193,7 +1262,8 @@
    "product_confirmed": true,
    "product_evidence": "Boat Cover Vents & Accessories",
    "verify_source_url": "https://rochfordsupply.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sailrite",
@@ -1210,7 +1280,8 @@
    "product_confirmed": true,
    "product_evidence": "Marine Covers",
    "verify_source_url": "https://www.sailrite.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tarps-now",
@@ -1227,7 +1298,8 @@
    "product_confirmed": true,
    "product_evidence": "We're a national supplier actively supporting aerospace, trucking, aircraft, watercraft, heavy duty equipment, industrial machinery and construction coverings.",
    "verify_source_url": "https://www.tarpsnow.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "a1-tarps",
@@ -1244,7 +1316,8 @@
    "product_confirmed": true,
    "product_evidence": "Pond Liners",
    "verify_source_url": "https://a1tarps.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "chicago-canvas",
@@ -1261,7 +1334,8 @@
    "product_confirmed": true,
    "product_evidence": "Pool Tarps Tarps For Pool Covers",
    "verify_source_url": "https://chicagocanvas.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "canvas-etc",
@@ -1278,7 +1352,8 @@
    "product_confirmed": true,
    "product_evidence": "A wall tent in Montana in the middle of winter would most likely be made of Sunforger army",
    "verify_source_url": "https://www.canvasetc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ohio-awning",
@@ -1295,7 +1370,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://ohioawning.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "budge-industries",
@@ -1312,7 +1388,8 @@
    "product_confirmed": true,
    "product_evidence": "Budge manufactures and distributes protective covers and film products for cars, trucks, RVs, motorcycles, utility terrain vehicles, all terrain vehicles, as well as for boats, snowmobiles, patio furniture and more.",
    "verify_source_url": "https://www.budgeindustries.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "eevelle",
@@ -1329,7 +1406,8 @@
    "product_confirmed": true,
    "product_evidence": "HOME & PATIO Outdoor Cover options for patio furniture, BBQ grills, firepits, log racks, and more.",
    "verify_source_url": "https://eevelle.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "khomo-gear",
@@ -1346,7 +1424,8 @@
    "product_confirmed": true,
    "product_evidence": "Premium all-weather covers built for rain, sun, wind and time. SHOP OUTDOOR COVERS",
    "verify_source_url": "https://www.khomogear.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "veranda-covers",
@@ -1363,7 +1442,8 @@
    "product_confirmed": false,
    "product_evidence": "The website is for MightyCovers.com, not Veranda Covers. The text states 'Welcome to Mighty Covers ®' and 'Copyright 2009 - 2026 © by Mighty Covers ®'",
    "verify_source_url": "https://mightycovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "arlmont-co",
@@ -1380,7 +1460,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://arlmontco.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "covers-all",
@@ -1397,7 +1478,8 @@
    "product_confirmed": true,
    "product_evidence": "swimming pool covers",
    "verify_source_url": "https://www.coversandall.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "national-patio-covers",
@@ -1414,7 +1496,8 @@
    "product_confirmed": true,
    "product_evidence": "Patio furniture covers for outdoor patios featuring custom builds and waterproof materials from National Patio Covers",
    "verify_source_url": "https://www.nationalpatiocovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "outdoor-cover-warehouse",
@@ -1431,7 +1514,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://outdoorcoverwarehouse.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "creative-covers-inc",
@@ -1448,7 +1532,8 @@
    "product_confirmed": true,
    "product_evidence": "Protect your outdoor furniture, grills, and equipment with premium custom covers. Waterproof, UV-resistant, durable, and proudly made in the USA.",
    "verify_source_url": "https://creativecoversinc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "protective-covers-inc",
@@ -1465,7 +1550,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://protectivepackaging.net",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "coverworld",
@@ -1482,7 +1568,8 @@
    "product_confirmed": false,
    "product_evidence": "Marine Covers Boat Covers Pontoon Covers Jet Ski Covers Bimini Tops RV Covers",
    "verify_source_url": "https://cover.world/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "patio-watcher",
@@ -1499,7 +1586,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://patiowatcher.worthepenny.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "seasons-sentry",
@@ -1516,7 +1604,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://sentryusa.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "great-lakes-boat-top",
@@ -1533,7 +1622,8 @@
    "product_confirmed": true,
    "product_evidence": "Factory bimini tops, boat canvas and boat enclosures made to match the original with a full selection of factory replacement marine canvas products",
    "verify_source_url": "https://greatlakesboattop.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ameritex-fabric-systems",
@@ -1550,7 +1640,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "taylor-made-products",
@@ -1567,7 +1658,8 @@
    "product_confirmed": true,
    "product_evidence": "Taylor Made boat covers are available in semi-custom and aftermarket options, ensuring a perfect fit and superior protection",
    "verify_source_url": "https://www.taylormadeproducts.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "commercial-sewing",
@@ -1584,7 +1676,8 @@
    "product_confirmed": true,
    "product_evidence": "Outer Armor by Commercial Sewing®, is the leading brand in covers for recreational vehicles in the power sport and marine industries. Marine Products Mooring Covers Bimini Tops & Sunshades Self-Boot Power Biminis Dust Covers PWC Covers Outboard Motor Covers",
    "verify_source_url": "https://commercialsewing.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "lippert-marine",
@@ -1601,7 +1694,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.lippert.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ameri-brand-products",
@@ -1618,7 +1712,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://websweeper.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "oceansouth",
@@ -1635,7 +1730,8 @@
    "product_confirmed": true,
    "product_evidence": "OCEANSOUTH has been at the forefront of designing and manufacturing high-quality boating accessories and marine products... Boat Covers, Custom Fit Covers, Inflatable Boat Covers, Jet Ski / PWC Covers, Hatch Covers, Console Covers, Outboard Covers, Propeller Covers, Trolling Motor Covers",
    "verify_source_url": "https://oceansouth.com/en-au",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rnr-marine",
@@ -1652,7 +1748,8 @@
    "product_confirmed": true,
    "product_evidence": "Factory Original-Equipment (OEM) and after-market boat Tops, Canvas, Curtains, Frames, Covers & Carpet",
    "verify_source_url": "https://rnr-marine.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "boat-covers-direct",
@@ -1669,7 +1766,8 @@
    "product_confirmed": false,
    "product_evidence": "We direct ship quality Carver and Shoretex custom boat covers and bimini tops",
    "verify_source_url": "https://www.boatcoversdirect.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "covers-unlimited",
@@ -1686,7 +1784,8 @@
    "product_confirmed": true,
    "product_evidence": "Boat Covers For residential clients, our custom-fit boat covers provide unmatched protection from sun, rain, and wear.",
    "verify_source_url": "https://www.coversunlimited.net/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "precision-boat-covers",
@@ -1703,7 +1802,8 @@
    "product_confirmed": true,
    "product_evidence": "Our custom boat covers are made from Aqualon® Edge marine-grade fabric, offering superior durability, waterproof protection, and UV resistance. Each boat cover is precision-cut and hand-sewn by our skilled team at our headquarters near the Lake of the Ozarks",
    "verify_source_url": "https://www.worldsbestboatcover.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "atlantic-marine-canvas",
@@ -1720,7 +1820,8 @@
    "product_confirmed": true,
    "product_evidence": "From full enclosures to cockpit,mooring covers, boat tops and frames",
    "verify_source_url": "https://atlanticmarinecanvas.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "canvas-designers",
@@ -1737,7 +1838,8 @@
    "product_confirmed": true,
    "product_evidence": "We create custom canvas boat covers, seats, tops, upholstery and enclosures to protect and enhance the functionality of your vessel.",
    "verify_source_url": "https://canvasdesigners.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "marine-tops-unlimited",
@@ -1754,7 +1856,8 @@
    "product_confirmed": true,
    "product_evidence": "Mooring and Travel Covers have a rope or a ratchet strap around the perimeter of the cover and come with tie downs or optional straps to secure them. These covers fully cover the boat down to the rubrail",
    "verify_source_url": "https://marinetops.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "performance-marine-canvas",
@@ -1771,7 +1874,8 @@
    "product_confirmed": true,
    "product_evidence": "Canvas USA® manufactures marine-grade boat covers, bimini tops, and cushions",
    "verify_source_url": "https://canvasusa.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "jsi-marine",
@@ -1788,7 +1892,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.jsi-alliance.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tumacs-covers",
@@ -1805,7 +1910,8 @@
    "product_confirmed": true,
    "product_evidence": "Tumacs Covers has been making custom made boat covers for the marine industry for over 50 years.",
    "verify_source_url": "https://tumacscovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "o-sea-marine",
@@ -1822,7 +1928,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://oseamalibu.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sattler-marine",
@@ -1839,7 +1946,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://sattler.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "taco-marine",
@@ -1856,7 +1964,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://tacomarine.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "canvas-craft",
@@ -1873,7 +1982,8 @@
    "product_confirmed": true,
    "product_evidence": "custom boat covers",
    "verify_source_url": "https://www.canvascraftinc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sureshade",
@@ -1890,7 +2000,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "imar-marine",
@@ -1907,7 +2018,8 @@
    "product_confirmed": true,
    "product_evidence": "premium, polymer-based cleaning/protective agents specifically designed for marine environments, Endorsed for maintaining yachts, vinyl, fiberglass, and clear vinyl enclosures",
    "verify_source_url": "https://www.imarsales.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sea-ray-accessories",
@@ -1924,7 +2036,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://searay.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "mastercraft-accessories",
@@ -1941,7 +2054,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.mastercraft.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "malibu-accessories",
@@ -1958,7 +2072,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://accessories.chevrolet.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "correct-craft-accessories",
@@ -1975,7 +2090,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://correctcraft.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ranger-boats-accessories",
@@ -1992,7 +2108,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://rangerboats.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bennington-marine-accessories",
@@ -2009,7 +2126,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://benningtonmarine.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "harris-pontoon-accessories",
@@ -2026,7 +2144,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://harrisboats.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "yamaha-marine-accessories",
@@ -2043,7 +2162,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://yamahaoutboards.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "brunswick-marine-accessories",
@@ -2060,7 +2180,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.brunswick.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tracker-marine-accessories",
@@ -2077,7 +2198,8 @@
    "product_confirmed": true,
    "product_evidence": "Tracker Covers",
    "verify_source_url": "https://trackermarineparts.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "crestliner-accessories",
@@ -2094,7 +2216,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://crestliner.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "lund-boat-covers",
@@ -2111,7 +2234,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.nationalboatcovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "princecraft-accessories",
@@ -2128,7 +2252,8 @@
    "product_confirmed": true,
    "product_evidence": "Top and covers installation",
    "verify_source_url": "https://www.princecraft.com/us/en/index.aspx?erreur=true",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sunbrella-marine-fabricators",
@@ -2145,7 +2270,8 @@
    "product_confirmed": false,
    "product_evidence": "Leader in performance fabrics for upholstery, awnings, and marine applications",
    "verify_source_url": "https://www.sunbrella.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bainbridge-marine",
@@ -2162,7 +2288,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "marine-canvas-creations",
@@ -2179,7 +2306,8 @@
    "product_confirmed": true,
    "product_evidence": "Marine Canvas Creations is a Boat Cover Fabricator in Woodbridge, VA 22192",
    "verify_source_url": "https://marinecanvascreationsva.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "fisher-canvas",
@@ -2196,7 +2324,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://fishercanvas.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "boat-outfitters",
@@ -2213,7 +2342,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.boatoutfitters.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "marine-specialties",
@@ -2230,7 +2360,8 @@
    "product_confirmed": true,
    "product_evidence": "Boat Covers",
    "verify_source_url": "https://marinespecialties.net/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sailrite-marine-customers",
@@ -2247,7 +2378,8 @@
    "product_confirmed": true,
    "product_evidence": "DIY Kits Shop All DIY Kits Bags & Totes Bimini & Dodger Marine Covers Sail Covers",
    "verify_source_url": "https://www.sailrite.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "harken-canvas-solutions",
@@ -2264,7 +2396,8 @@
    "product_confirmed": null,
    "product_evidence": "Harken Canvas",
    "verify_source_url": "https://www.harken.com/en/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "marine-concepts",
@@ -2281,7 +2414,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://dcmc-us.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ocean-dynamics",
@@ -2298,7 +2432,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://oceandynamics.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ridgid",
@@ -2315,7 +2450,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.ridgid.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "greenlee",
@@ -2332,7 +2468,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.greenlee.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "fluke",
@@ -2349,7 +2486,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.fluke.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "knipex",
@@ -2366,7 +2504,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://knipex.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "wiha",
@@ -2383,7 +2522,8 @@
    "product_confirmed": true,
    "product_evidence": "The Wiha Tool Backpack. Product details",
    "verify_source_url": "https://wiha.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "gedore",
@@ -2400,7 +2540,8 @@
    "product_confirmed": true,
    "product_evidence": "GEDORE Werkzeugtaschen und Zubehör",
    "verify_source_url": "https://www.gedore.com/de-de/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "facom",
@@ -2417,7 +2558,8 @@
    "product_confirmed": true,
    "product_evidence": "Toolboxes - Cases and Chests",
    "verify_source_url": "https://www.facom.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "proto",
@@ -2434,7 +2576,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://protoindustrial.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "crescent-tools",
@@ -2451,7 +2594,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.crescenttool.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "matco-tools",
@@ -2468,7 +2612,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.matcotools.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sk-tools",
@@ -2485,7 +2630,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://sktools.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bahco",
@@ -2502,7 +2648,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "wera-tools",
@@ -2519,7 +2666,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.wera.de/de/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tekton",
@@ -2536,7 +2684,8 @@
    "product_confirmed": true,
    "product_evidence": "Tool Rolls and Bags",
    "verify_source_url": "https://www.tekton.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "gearwrench",
@@ -2553,7 +2702,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.gearwrench.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "husky-tools",
@@ -2570,7 +2720,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://husky.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "occidental-leather",
@@ -2587,7 +2738,8 @@
    "product_confirmed": true,
    "product_evidence": "Tool Bags Fastener Bags Specialty Bags Utility Bags... Tool Totes & Cases",
    "verify_source_url": "https://www.occidentalleather.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "toughbuilt",
@@ -2604,7 +2756,8 @@
    "product_confirmed": true,
    "product_evidence": "Contractor Bags & Totes",
    "verify_source_url": "https://toughbuilt.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bucket-boss",
@@ -2621,7 +2774,8 @@
    "product_confirmed": true,
    "product_evidence": "Bucket Boss® offers premium quality tool belts, tool bags, jobsite apparel, work gear, and more",
    "verify_source_url": "https://bucketboss.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "custom-leathercraft",
@@ -2638,7 +2792,8 @@
    "product_confirmed": true,
    "product_evidence": "Tool Carriers CLC Tech Gear™ Molded Base Bags Nail and Tool Bags Softside Tool Carriers Tool Pouches",
    "verify_source_url": "https://goclc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "pelican-products",
@@ -2655,7 +2810,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://pelican.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "skb-cases",
@@ -2672,7 +2828,8 @@
    "product_confirmed": false,
    "product_evidence": "The website describes 'Drum Cases & Bags' and various hard cases (injection molded, rotomolded, rack mount, vacuumed formed) for sports, music, photo/video, industrial and military applications, but does not specifically mention Tool & Equipment Bags.",
    "verify_source_url": "https://www.skbcases.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "nanuk-cases",
@@ -2689,7 +2846,8 @@
    "product_confirmed": true,
    "product_evidence": "TRAIL Gear Cases",
    "verify_source_url": "https://nanuk.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "explorer-cases",
@@ -2706,7 +2864,8 @@
    "product_confirmed": true,
    "product_evidence": "Waterproof Tool Boxes - Explorer Cases Waterproof Tool Boxes: Explorer Cases is a complete range of indestructible cases. The ideal solution in the most extreme conditions.",
    "verify_source_url": "https://www.explorercases.com/en/home/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "zarges",
@@ -2723,7 +2882,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.zarges.com/en/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "bott-ltd",
@@ -2740,7 +2900,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://bott.uk",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sortimo",
@@ -2757,7 +2918,8 @@
    "product_confirmed": true,
    "product_evidence": "Tool Bags | ProClick",
    "verify_source_url": "https://www.mysortimo.com/en/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "raaco",
@@ -2774,7 +2936,8 @@
    "product_confirmed": true,
    "product_evidence": "Soft Bags",
    "verify_source_url": "https://www.raaco.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "montezuma",
@@ -2791,7 +2954,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://montezumacounty.gov/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "weather-guard",
@@ -2808,7 +2972,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://weatherguard.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "southwire-tools",
@@ -2825,7 +2990,8 @@
    "product_confirmed": true,
    "product_evidence": "Material Handling & Storage",
    "verify_source_url": "https://www.southwire.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ideal-industries",
@@ -2842,7 +3008,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.idealindustries.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "gardner-bender",
@@ -2859,7 +3026,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.gardnerbender.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "wernerco",
@@ -2876,7 +3044,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://wernerco.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "testo",
@@ -2893,7 +3062,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://testo.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "leica-geosystems",
@@ -2910,7 +3080,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://leica-geosystems.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "trimble",
@@ -2927,7 +3098,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.trimble.com/en",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "keysight-technologies",
@@ -2944,7 +3116,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://keysight.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "yokogawa-test-equipment",
@@ -2961,7 +3134,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://tmi.yokogawa.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "megger",
@@ -2978,7 +3152,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://megger.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "medcotec",
@@ -2995,7 +3170,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.medcotec.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "statpacks",
@@ -3012,7 +3188,8 @@
    "product_confirmed": true,
    "product_evidence": "Shop by Mission EMS + Fire Water Safety Sports Tactical",
    "verify_source_url": "https://statpacks.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "meret",
@@ -3029,7 +3206,8 @@
    "product_confirmed": true,
    "product_evidence": "MERET designs and produces the highest quality first responder bags and equipment",
    "verify_source_url": "https://meretusa.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "thomas-ems",
@@ -3046,7 +3224,8 @@
    "product_confirmed": true,
    "product_evidence": "Advanced Life Support Packs Basic Life Support Packs Support Pouches / Inserts Support Pouches Heating, Cooling, Temperature Control Products Cases Accessories Heating Pack Custom Bags Hard Cases Narcotics Storage Transportation & Immobilization Bariatric Transfer Flat Thomas Handles Mass Casualty & Fire Rehab Thomas Triage Pack IFAK KIT – Active Shooter Pack AlbacMat Rescue Mat Fully Loaded Pre-F",
    "verify_source_url": "https://thomasems.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "north-american-rescue",
@@ -3063,7 +3242,8 @@
    "product_confirmed": true,
    "product_evidence": "North American Rescue provides the most effective and highest quality mission critical medical products, decreasing preventable deaths in the field.",
    "verify_source_url": "https://www.narescue.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "conterra",
@@ -3080,7 +3260,8 @@
    "product_confirmed": true,
    "product_evidence": "Dedicated to designing emergency gear that keeps getting better. Since 1990. EMS & Rescue Equipment",
    "verify_source_url": "https://www.conterra-inc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "lightning-x-products",
@@ -3097,7 +3278,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://gearbags.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "kemp-usa",
@@ -3114,7 +3296,8 @@
    "product_confirmed": true,
    "product_evidence": "Browse our extensive selection of wholesale EMS equipment, lifeguard supplies, and swim gear. High-quality products for professional rescuers.",
    "verify_source_url": "https://www.kempusa.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "galls",
@@ -3131,7 +3314,8 @@
    "product_confirmed": true,
    "product_evidence": "EMS + Medical View All Medical Kits First Aid Supplies Medical Bags Medical Gloves Diagnostic EMS EMT Uniforms Infection Control",
    "verify_source_url": "https://www.galls.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "iron-duck",
@@ -3148,7 +3332,8 @@
    "product_confirmed": true,
    "product_evidence": "Trauma Bags Backpacks Oxygen Bags Gear Bags Opioid Kits Modules... Patient Packaging Spineboards Patient Packaging Immobilization Stretcher Straps",
    "verify_source_url": "https://ironduck.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "prestige-medical",
@@ -3165,7 +3350,8 @@
    "product_confirmed": true,
    "product_evidence": "Prestige Medical continually innovates stethoscopes, aneroid sphygmomanometers, and medical accessories for today's healthcare professionals. EMS Products",
    "verify_source_url": "https://www.prestigemedical.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "emi-international",
@@ -3182,7 +3368,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.e-m-i.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "curaplex",
@@ -3199,7 +3386,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rescue-essentials",
@@ -3216,7 +3404,8 @@
    "product_confirmed": true,
    "product_evidence": "Emergency medical supplies trusted by first responders, military, and professionals. Shop trauma kits, IFAKs, bleeding control kits, tourniquets & other life-saving gear.",
    "verify_source_url": "https://rescue-essentials.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "allied-medical",
@@ -3233,7 +3422,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "hartwell-medical",
@@ -3250,7 +3440,8 @@
    "product_confirmed": true,
    "product_evidence": "EMS Solutions for Spinal Splinting and Immobilization, Patient Transport, and Airway Management. CombiCarrierII, EVAC-U-SPLINT, FASPLINT",
    "verify_source_url": "https://www.hartwellmedical.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "chinook-medical",
@@ -3267,7 +3458,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://chinookmed.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tactical-medical-solutions",
@@ -3284,7 +3476,8 @@
    "product_confirmed": true,
    "product_evidence": "TacMed Solutions™ provides military-grade tourniquets, trauma kits, and bleeding control equipment trusted by professionals.",
    "verify_source_url": "https://tacmedsolutions.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "combat-medical",
@@ -3301,7 +3494,8 @@
    "product_confirmed": false,
    "product_evidence": "Company name in text is 'Safeguard Medical' not 'Combat Medical'",
    "verify_source_url": "https://safeguardmedical.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sam-medical",
@@ -3318,7 +3512,8 @@
    "product_confirmed": true,
    "product_evidence": "SAM Medical is an innovator in first aid, field treatment, and emergency medical supplies. We engineer products that preserve life while offering intuitive application.",
    "verify_source_url": "https://www.sammedical.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "safeguard-medical",
@@ -3335,7 +3530,8 @@
    "product_confirmed": true,
    "product_evidence": "Safeguard Medical exists to bring together life-saving products and knowledge of emergency medical skills that preserve life. We empower responders at every skill level with world-class trauma medicine products",
    "verify_source_url": "https://safeguardmedical.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tacmed-solutions",
@@ -3352,7 +3548,8 @@
    "product_confirmed": true,
    "product_evidence": "Australia's trauma and tactical medical specialist. Tourniquets, IFAKs, trauma kits and chest seals. TGA-compliant. Trusted by first responders and defence.",
    "verify_source_url": "https://tacmedaustralia.com.au/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rescue-one",
@@ -3369,7 +3566,8 @@
    "product_confirmed": true,
    "product_evidence": "We provide life safety products, training, and safety solutions to individuals, health care providers, and organizations of all sizes, and are one of the Mid-Atlantic's largest life safety training organizations and independent distributors of Automated External Defibrillators (AEDs) and supplies.",
    "verify_source_url": "https://rescue-one.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "zoll",
@@ -3386,7 +3584,8 @@
    "product_confirmed": true,
    "product_evidence": "Medical & Emergency - AEDs, Automated CPR, Monitors/defibrillators, Ventilators, Emergency care, Critical care, EMS and fire solutions",
    "verify_source_url": "https://www.zoll.com/en-us",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "stryker-ems",
@@ -3403,7 +3602,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.stryker.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "medsource-labs",
@@ -3420,7 +3620,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://medsourcelabs.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "pax-bags",
@@ -3437,7 +3638,8 @@
    "product_confirmed": true,
    "product_evidence": "PAX is a manufacturer of emergency backpacks, insert bags and accessories.",
    "verify_source_url": "https://www.pax-bags.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "elite-bags",
@@ -3454,7 +3656,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://elitebags.es",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "spencer-italia",
@@ -3471,7 +3674,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://spencer.it",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "karl-bollmann",
@@ -3488,7 +3692,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "weinmann-emergency",
@@ -3505,7 +3710,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://weinmann-emergency.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "ferno-uk",
@@ -3522,7 +3728,8 @@
    "product_confirmed": true,
    "product_evidence": "Emergency Patient Handling Immobilization Splinting Pediatrics Ambulance Systems... POWER X2 Ambulance Cot... Transcend Stair Chair... iNX Integrated Patient Transport & Loading System... Oxygen O2 Regulators & Flow Meters Demand Valves Administrators Resuscitators & Masks... Suction & Airway... Rescue Litters/Basket Stretchers",
    "verify_source_url": "https://ferno.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "me-ber",
@@ -3539,7 +3746,8 @@
    "product_confirmed": true,
    "product_evidence": "Me.Ber. progetta e produce barelle autocaricanti, sedie portantine e prodotti per soccorso ed emergenza medica",
    "verify_source_url": "https://www.meber.it/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "oscar-boscarol",
@@ -3556,7 +3764,8 @@
    "product_confirmed": true,
    "product_evidence": "Tecnologie medicali MADE IN ITALY per il soccorso... aspiratori medicali di secreti... kit di somministrazione ossigeno per le ambulanze... Cassette di primo soccorso",
    "verify_source_url": "https://www.boscarol.it/ita/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "junkin-safety",
@@ -3573,7 +3782,8 @@
    "product_confirmed": true,
    "product_evidence": "Stretchers, basket stretchers, backboards, evacuation chairs, and accessories for EMS and fire departments. Shop Emergency & Rescue → 13 products Mortuary & Funeral Mortuary cots, lowering devices, funeral carts, and cemetery equipment for funeral homes and morgues. Shop Mortuary & Funeral → 15 products First Aid & Fire Safety First aid kits, immobilization tools, and fire blankets",
    "verify_source_url": "https://www.junkinsafety.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "life-assist",
@@ -3590,7 +3800,8 @@
    "product_confirmed": false,
    "product_evidence": "we have grown into one of the largest distributors of EMS products in the United States",
    "verify_source_url": "https://www.life-assist.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "emergency-medical-products",
@@ -3607,7 +3818,8 @@
    "product_confirmed": true,
    "product_evidence": "SAM Medical Store Shop SAM Medical for tourniquets, splints, and EMS equipment. Emergency medical kits and ems gear trusted by paramedics, military medics, and civilians worldwide.",
    "verify_source_url": "https://www.sammedical.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "first-rescue",
@@ -3624,7 +3836,8 @@
    "product_confirmed": false,
    "product_evidence": "First Rescue Ambulance is an ambulance transport service located in Irwindale, California... we are dedicated to delivering the highest-quality care to our patients and the healthcare facilities we support",
    "verify_source_url": "https://www.firstrescueambulance.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "blue-jay-medical",
@@ -3641,7 +3854,8 @@
    "product_confirmed": true,
    "product_evidence": "We are a health product manufacturer. Explore our comprehensive product catalogs, available for online purchasing. SHOP ALL Diagnostic Select below from our variety of diagnostic equipment.",
    "verify_source_url": "https://www.bluejayehb.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "reliance-medical",
@@ -3658,7 +3872,8 @@
    "product_confirmed": true,
    "product_evidence": "World leading manufacturer and trade distributor of the highest quality surgical dressings, healthcare products, PPE, medical equipment and first aid supplies",
    "verify_source_url": "https://reliancemedical.co.uk/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "timesco",
@@ -3675,7 +3890,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://timesco.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rothco-medical",
@@ -3692,7 +3908,8 @@
    "product_confirmed": false,
    "product_evidence": "Rothco is the leading supplier of military, tactical, and outdoor gear",
    "verify_source_url": "https://www.rothco.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "stat-medical-devices",
@@ -3709,7 +3926,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://statmedicaldevices.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "elite-first-aid",
@@ -3726,7 +3944,8 @@
    "product_confirmed": true,
    "product_evidence": "Elite First Aid delivers innovative, adventure ready emergency supplies for real life... For over 30 years, we have equipped professionals, explorers, and self-reliant individuals with dependable trauma and first aid solutions.",
    "verify_source_url": "https://elitefirstaidinc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rescue-tech",
@@ -3743,7 +3962,8 @@
    "product_confirmed": true,
    "product_evidence": "Technical Rescue Equipment and Gear NFPA Technical Rescue and training Equipment and Gear for Fire, Industrial, Military, and Tactical Rescue Teams",
    "verify_source_url": "https://www.rescuetech1.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "dynamic-rescue-systems",
@@ -3760,7 +3980,8 @@
    "product_confirmed": false,
    "product_evidence": "Medical/First Aid, First Aid & Medical Training, Medical Response",
    "verify_source_url": "https://www.dynamicrescue.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tarps-plus",
@@ -3777,7 +3998,8 @@
    "product_confirmed": true,
    "product_evidence": "offers poly tarps, canvas tarps, mesh tarps, vinyl tarps, and industrial covers",
    "verify_source_url": "https://www.tarpsplus.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "mytee-products",
@@ -3794,7 +4016,8 @@
    "product_confirmed": true,
    "product_evidence": "specializes in trucking supplies, truck tarps and cargo control trucking equipment",
    "verify_source_url": "https://www.myteeproducts.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "western-tarp",
@@ -3811,7 +4034,8 @@
    "product_confirmed": true,
    "product_evidence": "We are a leading manufacturer of industrial textile products.",
    "verify_source_url": "https://www.westerntarp.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "cunningham-covers",
@@ -3828,7 +4052,8 @@
    "product_confirmed": true,
    "product_evidence": "We manufacture clever protective covers to safeguard the world's most valuable assets... we are one of the world's leading manufacturers of clever protective tarpaulin covers",
    "verify_source_url": "https://www.cunningham.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "cover-tech",
@@ -3845,7 +4070,8 @@
    "product_confirmed": true,
    "product_evidence": "COVER-TECH INC. manufactures & distributes high-quality Fabric Buildings & custom covers and tarps of all shapes, and sizes.",
    "verify_source_url": "https://www.cover-tech.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "industrial-cover-systems",
@@ -3862,7 +4088,8 @@
    "product_confirmed": true,
    "product_evidence": "we make it simple to protect what matters most. From industrial job sites to residential backyards, our team designs and manufactures high-quality tarps, covers, and containment systems",
    "verify_source_url": "https://www.coversunlimited.net/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "machine-covers-usa",
@@ -3879,7 +4106,8 @@
    "product_confirmed": true,
    "product_evidence": "ALCO offers a large variety of industrial covers and Commercial Outdoor Curtains which are application driven... Custom made industrial covers for a wide range of applications.",
    "verify_source_url": "https://www.alcocovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "national-covers",
@@ -3896,7 +4124,8 @@
    "product_confirmed": true,
    "product_evidence": "Forklift covers featuring heavy-duty, weather-resistant fabric for all-season protection",
    "verify_source_url": "https://www.nationalcovers.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "durabilt-covers",
@@ -3913,7 +4142,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://durabiltusa.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "creative-covers",
@@ -3930,7 +4160,8 @@
    "product_confirmed": true,
    "product_evidence": "Custom Industrial Covers Equipment Covers Medical Equipment Covers Air Conditioner Covers Cart Covers Mobile Shelving Covers",
    "verify_source_url": "https://creativecoversinc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "powerblanket",
@@ -3947,7 +4178,8 @@
    "product_confirmed": true,
    "product_evidence": "Powerblanket manufactures industrial heated blankets built for rugged conditions",
    "verify_source_url": "https://www.powerblanket.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "shade-beyond",
@@ -3964,7 +4196,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://shadeandbeyond.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "fabric-structures-usa",
@@ -3981,7 +4214,8 @@
    "product_confirmed": true,
    "product_evidence": "Industrial Fabric Structures & Temporary Fabric Buildings Engineered industrial fabric structures and temporary fabric buildings",
    "verify_source_url": "https://fabricstructures-usa.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "herculite-fabricators",
@@ -3998,7 +4232,8 @@
    "product_confirmed": true,
    "product_evidence": "Sure-Chek® brand medical fabrics are the original health care fabrics that were patented for use as protective covering fabrics",
    "verify_source_url": "https://www.herculite.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "value-vinyls",
@@ -4015,7 +4250,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://valuevinyls.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "adfors",
@@ -4032,7 +4268,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://adfors.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "industrial-netting",
@@ -4049,7 +4286,8 @@
    "product_confirmed": true,
    "product_evidence": "Protective Sleeves Standard Duty Super Duty Work Grade FlexGuard III Heat Sealing Cut to Length Sleeves",
    "verify_source_url": "https://www.industrialnetting.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "national-tent-shade",
@@ -4066,7 +4304,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://nationaltents.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "weathermax-fabricators",
@@ -4083,7 +4322,8 @@
    "product_confirmed": true,
    "product_evidence": "WeatherMAX outdoor performance fabrics are built for demanding environments, markets and specifications",
    "verify_source_url": "https://weathermax.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "rhino-covers",
@@ -4100,7 +4340,8 @@
    "product_confirmed": false,
    "product_evidence": "Rhino Shelter is committed to delivering the industry's best portable garages and shelters",
    "verify_source_url": "https://rhinoshelter.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "versa-shield",
@@ -4117,7 +4358,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.versadesignedsurfaces.com/north-america",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tmi-llc",
@@ -4134,7 +4376,8 @@
    "product_confirmed": false,
    "product_evidence": "TMI Group LLC provides tax preparation services, client portal services, and professional accounting services",
    "verify_source_url": "https://tmigroupllc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "apex-mills-customers",
@@ -4151,7 +4394,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://apexmills.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "heavy-duty-tarps",
@@ -4168,7 +4412,8 @@
    "product_confirmed": true,
    "product_evidence": "Heavy Duty Tarps manufactures and sells high quality custom tarps with free shipping throughout continental USA. Heavy Duty Tarps Custom Commercial Tarps & Industrial Covers",
    "verify_source_url": "https://www.heavydutytarps.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "usa-canvas-shoppe",
@@ -4185,7 +4430,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.usacanvas.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "tarp-america",
@@ -4202,7 +4448,8 @@
    "product_confirmed": true,
    "product_evidence": "We Offer Heavy-Duty Products, Made in the USA... high-quality tarps and covers for all purposes... protective boat, truck, and trailer covering... Our quality, heavy-duty tarps and coverings are made in the USA",
    "verify_source_url": "https://tarpamerica.net/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "industrial-shadeports",
@@ -4219,7 +4466,8 @@
    "product_confirmed": true,
    "product_evidence": "Industrial Shadeports has been Crafting Top Quality Sun Shades, Shade Sails, and Shade Structures since 1993... we have designed, engineered, manufactured and installed high quality Sun Shades and Sun Shade Sails... our Fort Lauderdale facility stands as a testament to our dedication. Here, we embrace a vertically integrated approach, executing all steel, aluminum, and fabric fabrication with prec",
    "verify_source_url": "https://shadeports.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "fabri-tech-components",
@@ -4236,7 +4484,8 @@
    "product_confirmed": true,
    "product_evidence": "Protective Films Fully customized protective plastic films provide temporary surface protection. Plastic films offer unsurpassed abrasion-resistant, chemical-resistant, and scratch-resistant properties and are used for a wide range of applications requiring advanced protection.",
    "verify_source_url": "https://www.fabritech.net/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "custom-covers-central",
@@ -4253,7 +4502,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://customcovercentral.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "cover-solutions",
@@ -4270,7 +4520,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.seatcoversolutions.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "shelter-rite-fabricators",
@@ -4287,7 +4538,8 @@
    "product_confirmed": true,
    "product_evidence": "delivering high-performance industrial coated fabrics since 1949",
    "verify_source_url": "https://www.seamancorp.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "sewn-products-inc",
@@ -4304,7 +4556,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://www.sewnproducts.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "incord",
@@ -4321,7 +4574,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://incord.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "fabtex",
@@ -4338,7 +4592,8 @@
    "product_confirmed": false,
    "product_evidence": "We manufacture and install custom window treatments and bedding for the hospitality, healthcare & other industries.",
    "verify_source_url": "https://www.fabtex.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "pacific-tent",
@@ -4355,7 +4610,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://pacifictentandevents.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "jensen-outdoor-covers",
@@ -4372,7 +4628,8 @@
    "product_confirmed": false,
    "product_evidence": "",
    "verify_source_url": "https://www.jensenoutdoor.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "cover-it-inc",
@@ -4389,7 +4646,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "https://coveritcanada.com",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "american-tarping",
@@ -4406,7 +4664,8 @@
    "product_confirmed": true,
    "product_evidence": "American Tarping is a family-owned and operated distributor of truck tarp systems, motors, tarps, and replacement parts.",
    "verify_source_url": "https://americantarping.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "dtr-fabricators",
@@ -4423,7 +4682,8 @@
    "product_confirmed": null,
    "product_evidence": "",
    "verify_source_url": "",
-   "verified_at": ""
+   "verified_at": "",
+   "product_id": "600d-pu-polyester"
   },
   {
    "id": "shade-systems-america",
@@ -4440,7 +4700,260 @@
    "product_confirmed": true,
    "product_evidence": "manufacturer of outdoor fabric shade covers, sun shade structures, canopies, tents, commercial umbrellas, and shade shelters",
    "verify_source_url": "https://shadesystemsinc.com/",
-   "verified_at": "2026-09-22"
+   "verified_at": "2026-09-22",
+   "product_id": "600d-pu-polyester"
+  },
+  {
+   "id": "teijin",
+   "segment": "Aerospace Composites",
+   "company": "Teijin",
+   "country": "Japan",
+   "application": "Carbon fibres & composites",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://teijin.com",
+   "product_confirmed": true,
+   "product_evidence": "Carbon Fibers Composites",
+   "verify_source_url": "https://www.teijin.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "hexcel",
+   "segment": "Aerospace Composites",
+   "company": "Hexcel",
+   "country": "USA",
+   "application": "Aerospace carbon fibre & prepregs",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://hexcel.com",
+   "product_confirmed": true,
+   "product_evidence": "Hexcel delivers advanced composite materials that help aerospace, defense, and industrial innovators build lighter, stronger, and smarter solutions",
+   "verify_source_url": "https://www.hexcel.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "sgl-carbon",
+   "segment": "Automotive Lightweighting",
+   "company": "SGL Carbon",
+   "country": "Germany",
+   "application": "Fibre-composite materials",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://sglcarbon.com",
+   "product_confirmed": true,
+   "product_evidence": "As a specialist for graphite and fiber composite materials, SGL Carbon offers innovative and reliable solutions",
+   "verify_source_url": "https://www.sglcarbon.com/en/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "zoltek",
+   "segment": "Wind Energy Blades",
+   "company": "Zoltek",
+   "country": "USA",
+   "application": "Commercial carbon fibre",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://zoltek.com",
+   "product_confirmed": true,
+   "product_evidence": "cost-efficient carbon fiber manufacturer",
+   "verify_source_url": "https://zoltek.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "aksa-carbon",
+   "segment": "Wind Energy Blades",
+   "company": "Aksa Carbon (DowAksa)",
+   "country": "Turkey",
+   "application": "Carbon fibre & composites",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://aksa-carbon.com",
+   "product_confirmed": true,
+   "product_evidence": "fully integrated carbon fiber and composite solutions",
+   "verify_source_url": "https://www.aksa-carbon.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "toray-carbon",
+   "segment": "Sporting Goods",
+   "company": "Toray Industries",
+   "country": "Japan",
+   "application": "Carbon fibre (Torayca)",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://toray.com",
+   "product_confirmed": true,
+   "product_evidence": "carbon fiber, quietly driving the sport",
+   "verify_source_url": "https://www.toray.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "carbon-conversions",
+   "segment": "Automotive Lightweighting",
+   "company": "Carbon Conversions",
+   "country": "USA",
+   "application": "Recycled carbon fibre",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://carbonconversions.com",
+   "product_confirmed": true,
+   "product_evidence": "recycles carbon fiber based materials into value added product forms at scale",
+   "verify_source_url": "https://carbonconversions.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "sigmatex",
+   "segment": "Aerospace Composites",
+   "company": "Sigmatex",
+   "country": "United Kingdom",
+   "application": "Carbon fibre textiles/fabrics",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://sigmatex.com",
+   "product_confirmed": true,
+   "product_evidence": "Carbon fibre fabrics for composite material applications",
+   "verify_source_url": "https://www.sigmatex.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "chomarat",
+   "segment": "Wind Energy Blades",
+   "company": "Chomarat",
+   "country": "France",
+   "application": "Composite reinforcements",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://chomarat.com",
+   "product_confirmed": true,
+   "product_evidence": "Chomarat is an independent industrial group that has become a benchmark in the world of composite materials and technical textiles",
+   "verify_source_url": "https://chomarat.com/en/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "porcher-industries",
+   "segment": "Aerospace Composites",
+   "company": "Porcher Industries",
+   "country": "France",
+   "application": "Carbon/glass composite textiles",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://porcher-ind.com",
+   "product_confirmed": true,
+   "product_evidence": "coated composite scrims thermoplastic laminate fabric glass carbon",
+   "verify_source_url": "https://www.porcher-ind.com/en",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "owens-corning-composites",
+   "segment": "Wind Energy Blades",
+   "company": "Owens Corning Composites",
+   "country": "USA",
+   "application": "Composite glass-fibre reinforcements",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://ocf.com",
+   "product_confirmed": true,
+   "product_evidence": "Advanced Composite Materials for Industrial Manufacturing",
+   "verify_source_url": "https://ocf.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "mitsubishi-carbon-fiber",
+   "segment": "Sporting Goods",
+   "company": "Mitsubishi Chemical Carbon Fiber & Composites",
+   "country": "USA",
+   "application": "Carbon fibre & prepregs",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://mccfc.com",
+   "product_confirmed": true,
+   "product_evidence": "Carbon fiber is lightweight and strong, enabling increased performance in a multitude of applications",
+   "verify_source_url": "https://mccfc.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "solvay-composites",
+   "segment": "Aerospace Composites",
+   "company": "Solvay",
+   "country": "Belgium",
+   "application": "Composite materials (chemicals)",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://solvay.com",
+   "product_confirmed": null,
+   "product_evidence": "",
+   "verify_source_url": "https://www.solvay.com/en/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
+  },
+  {
+   "id": "hexagon-purus",
+   "segment": "Pressure Vessels",
+   "company": "Hexagon Purus",
+   "country": "Norway",
+   "application": "Type-4 composite pressure vessels",
+   "est_fabric_consumption": "",
+   "sourcing_model": "",
+   "buyer_role": "",
+   "source": "New-product research (hand-verified)",
+   "verified": true,
+   "website": "https://hexagonpurus.com",
+   "product_confirmed": null,
+   "product_evidence": "",
+   "verify_source_url": "https://hexagonpurus.com/",
+   "verified_at": "2026-09-22",
+   "product_id": "carbon-fibre"
   }
  ]
 }

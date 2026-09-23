@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-22T14:47:49.280Z",
+  "updated_at": "2026-09-22T15:14:15.454Z",
   "exhibitions_total": 56,
-  "products_total": 18,
+  "products_total": 20,
   "leads_total": 589,
   "competitors_total": 23,
   "drafted_count": 589,
@@ -10,8 +10,8 @@
   "company_inbox_count": 178,
   "need_contact_count": 395,
   "sources_total": 41,
-  "research_targets_total": 261,
-  "research_verified_count": 124,
+  "research_targets_total": 275,
+  "research_verified_count": 136,
   "market_year": 2024,
   "market_updated_at": "2026-09-22T14:44:14.568Z",
   "market_latest_month": "202607"

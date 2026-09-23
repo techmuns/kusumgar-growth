@@ -1,0 +1,71 @@
+name: New-product targets
+
+# Grows the source-backed target-company map for NEW-development products (kind:"new" in products.json)
+# — e.g. Carbon Fibre. Searches the open web per application, then verifies each candidate against its
+# OWN website (free reader → Scrape.do → Firecrawl; Bedrock judges only from the page text). Nothing
+# invented. Manual + weekly cron (Sundays). Commits only when data changed.
+on:
+  workflow_dispatch:
+    inputs:
+      max:
+        description: 'Max companies to add per run (cost cap)'
+        required: false
+        default: '30'
+  schedule:
+    - cron: '0 9 * * 0' # 09:00 UTC every Sunday
+
+permissions:
+  contents: write
+
+concurrency:
+  group: newproduct-refresh
+  cancel-in-progress: false
+
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Find new-product targets (graceful without keys)
+        env:
+          # Required: the honesty classifier. Without it the engine writes nothing and exits 0.
+          BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
+          # Optional boosters (search falls back to a free DuckDuckGo query; reading starts free):
+          SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
+          MAX: ${{ github.event.inputs.max || '30' }}
+        run: node scripts/find-newproduct-targets.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/research_targets.json public/data/products.json)" ]; then
+            echo "No changes — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node scripts/update-meta.mjs
+          git add public/data/research_targets.json public/data/products.json public/data/meta.json
+          git commit -m "chore(data): grow new-product target companies"
+
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1
