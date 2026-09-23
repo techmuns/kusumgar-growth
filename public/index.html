@@ -166,6 +166,24 @@
     .deck-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
     .deck-slide svg { display: block; height: auto; }
 
+    /* ============ Pre-show Briefing (print-to-PDF, portrait) ============ */
+    /* #brief is a print-only surface: hidden on screen, revealed only during printing. */
+    #brief { position: fixed; inset: 0; z-index: 95; visibility: hidden; overflow: auto; background: #fff; }
+    .brief-page { max-width: 780px; margin: 0 auto; padding: 28px 32px; color: #0f172a; font-family: 'Inter', system-ui, sans-serif; }
+    .brief-brand { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #6366f1; }
+    .brief-head h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; margin: 6px 0 4px; }
+    .brief-meta { font-size: 13px; font-weight: 600; color: #334155; }
+    .brief-count { font-size: 12px; color: #64748b; margin-top: 3px; }
+    .brief-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
+    .brief-table th { text-align: left; border-bottom: 2px solid #e2e8f0; padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #94a3b8; }
+    .brief-table td { border-bottom: 1px solid #eef2f7; padding: 7px 8px; vertical-align: top; }
+    .brief-table .bnum { color: #94a3b8; width: 22px; }
+    .brief-table .bco { font-weight: 700; }
+    .brief-table .bsub { font-size: 11px; color: #94a3b8; }
+    .brief-table .btag { font-size: 10px; font-weight: 700; color: #10b981; }
+    .brief-foot { margin-top: 18px; font-size: 10px; color: #94a3b8; }
+    .brief-empty { margin-top: 20px; color: #64748b; }
+
     @media print {
       @page { size: A4 landscape; margin: 0; }
       html, body { background: #fff !important; }
@@ -183,6 +201,14 @@
       .reveal-scale { transform: none !important; }
       /* Wipe-reveal clip-paths don't paint reliably in print/PDF — drop them so charts render fully. */
       #deck [clip-path] { clip-path: none !important; }
+      /* Pre-show briefing prints as its own clean portrait page — only when triggered.
+         Hiding the other body children (display:none) prevents leading blank pages. */
+      body.printing-brief > *:not(#brief) { display: none !important; }
+      body.printing-brief #brief, body.printing-brief #brief * { visibility: visible !important; }
+      body.printing-brief #brief { position: static !important; inset: auto !important; overflow: visible !important; }
+      @page briefpg { size: A4 portrait; margin: 14mm; }
+      body.printing-brief .brief-page { page: briefpg; max-width: none; padding: 0; }
+      .brief-table tr { break-inside: avoid; }
     }
   </style>
 </head>
@@ -258,6 +284,7 @@
 
   <!-- Market Deck (print-to-PDF), populated by app.js -->
   <div id="deck"></div>
+  <div id="brief"></div>
 
   <script type="module" src="js/app.js"></script>
 </body>

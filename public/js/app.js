@@ -199,7 +199,7 @@ const state = {
   relevance: {},          // id -> 'yes' | 'no'   (undecided = absent)
   onlyFound: (() => { try { return localStorage.getItem('kgr.onlyfound') === '1'; } catch { return false; } })(),
   master: null,           // full unfiltered {leads,competitors,exhibitions} — for the "only found" toggle
-  filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false, timing: 'all', from: '', to: '' },
+  filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false, timing: 'all', from: '', to: '', sort: 'date' },
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'list',       // exhibitors are one comprehensive table now
@@ -712,6 +712,56 @@ function showUpcoming(d) {
   return e >= today;
 }
 
+/* ------------------------------------------------------------------ *
+ * Exhibition Intelligence — pre-show briefing + competitor hot-show alert.
+ * Everything is computed LIVE from the committed JSON (no new engine/files):
+ *   show → exhibitors via the existing `source: "exhibition:<id>"` mapping,
+ *   ranked "who to meet", competitor counts, and a RELATIVE hot threshold.
+ * ------------------------------------------------------------------ */
+const showLeadsFor = (id) => state.leads.filter((l) => l.source === 'exhibition:' + id);
+const showCompsFor = (id) => state.competitors.filter((c) => c.source === 'exhibition:' + id);
+const showCompCount = (id) => showCompsFor(id).length;
+
+// id → research target (cached; the data is static after load).
+let _rmap = null, _rmapLen = -1;
+function researchMap() {
+  if (!_rmap || _rmapLen !== state.research.length) { _rmap = new Map(state.research.map((t) => [t.id, t])); _rmapLen = state.research.length; }
+  return _rmap;
+}
+// "Who to meet" rank: ⭐ picked → High priority → confirmed target → target → recommended → (0 = skip).
+function meetScore(l) {
+  if (isStarred(l.id)) return 5;
+  if (l.priority === 'High') return 4;
+  const t = researchMap().get(l.id);
+  if (t && t.product_confirmed === true) return 3;
+  if (t) return 2;
+  if (isRecommended(l)) return 1;
+  return 0;
+}
+const MEET_REASON = { 5: '⭐ Picked', 4: 'High priority', 3: 'Verified target', 2: 'Research target', 1: 'Recommended' };
+// A show's exhibitors worth meeting, highest-rank first.
+function showMeetList(id) {
+  return showLeadsFor(id)
+    .map((l) => ({ l, score: meetScore(l) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || String(a.l.company).localeCompare(String(b.l.company)));
+}
+const showMeetCount = (id) => showMeetList(id).length;
+
+// Relative "hot" threshold: a show is hot when its competitor count is in the top quartile of
+// UPCOMING shows (and at least 3) — labelled honestly as "more competitors than most shows".
+let _hotThr = null, _hotKey = '';
+function hotThreshold() {
+  const key = state.exhibitions.length + ':' + state.competitors.length;
+  if (_hotThr != null && _hotKey === key) return _hotThr;
+  // Relative: the top-quartile competitor count among upcoming shows that have any competitor,
+  // with a floor of 2 (so "flocking" always means ≥2). No competitor data → nothing is hot.
+  const counts = state.exhibitions.filter(showUpcoming).map((d) => showCompCount(d.id)).filter((n) => n > 0).sort((a, b) => a - b);
+  const thr = counts.length ? Math.max(2, counts[Math.floor((counts.length - 1) * 0.75)]) : Infinity;
+  _hotThr = thr; _hotKey = key; return thr;
+}
+const isHotShow = (d) => showUpcoming(d) && showCompCount(d.id) >= hotThreshold();
+
 function renderOverview() {
   const data = state.exhibitions;
   const total = data.length;
@@ -950,19 +1000,32 @@ function exhibitionFiltered() {
     }
     return true;
   });
-  return exhibitionsByDate(list);
+  const sorted = exhibitionsByDate(list);
+  if (f.sort === 'competitors') {
+    sorted.sort((a, b) => showCompCount(b.id) - showCompCount(a.id) || (isHotShow(b) - isHotShow(a)) || String(a.name).localeCompare(String(b.name)));
+  }
+  return sorted;
 }
 
 function exhibitionRowsHtml() {
   const rows = exhibitionFiltered();
-  if (!rows.length) return `<tr><td colspan="8" class="px-4 py-10 text-center text-sm text-slate-400">No exhibitions match your search.</td></tr>`;
+  if (!rows.length) return `<tr><td colspan="10" class="px-4 py-10 text-center text-sm text-slate-400">No exhibitions match your search.</td></tr>`;
   const today = new Date(); today.setHours(0, 0, 0, 0);
   return rows.map((d) => {
     const end = showEndDate(d); const past = end && end < today;
     const ended = past ? ' <span class="rounded bg-slate-100 px-1 py-0.5 text-[10px] font-semibold text-slate-400">ended</span>' : '';
+    const meet = showMeetCount(d.id);
+    const cc = showCompCount(d.id);
+    const hot = isHotShow(d);
+    const meetCell = meet
+      ? `<span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[12px] font-bold text-indigo-600" title="${meet} of your leads/targets exhibit here — open for the briefing">🎯 ${meet}</span>`
+      : '<span class="text-slate-300">—</span>';
+    const compCell = `<div class="flex flex-wrap items-center gap-1"><span class="${cc ? 'font-semibold text-slate-700' : 'text-slate-300'} tnum">🛡️ ${cc || '—'}</span>${hot ? '<span class="rounded-full bg-rose-50 px-1.5 py-0.5 text-[10px] font-bold text-rose-500" title="More competitors than most upcoming shows">🔥 Hot</span>' : ''}</div>`;
     return `<tr class="cursor-pointer border-t border-slate-100 align-middle hover:bg-slate-50/60" data-exh-id="${escapeHtml(d.id)}" title="See exhibitors from ${escapeHtml(d.name)}">
       <td class="whitespace-nowrap px-3 py-3">${coloredChip(segLabel(d.segment), segColor(d.segment))}</td>
       <td class="px-3 py-3 text-sm font-semibold text-slate-800"><div class="min-w-[150px] max-w-[280px]">${escapeHtml(d.name)}</div></td>
+      <td class="whitespace-nowrap px-3 py-3">${meetCell}</td>
+      <td class="whitespace-nowrap px-3 py-3">${compCell}</td>
       <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-600">${countryCell(d.country)}</td>
       <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-500">${escapeHtml(dash(d.place))}</td>
       <td class="whitespace-nowrap px-3 py-3 text-sm text-slate-500 tnum">${d.dates ? escapeHtml(d.dates) + ended : '<span class="text-slate-300">—</span>'}</td>
@@ -1011,16 +1074,19 @@ function renderExhibitions() {
       ${selectHtml('f-seg', 'All industries', f.segment, segs)}
       ${timingSel}
       ${dateBox}
+      <button type="button" data-exhsort aria-pressed="${f.sort === 'competitors'}" title="Sort shows by how many mapped competitors are exhibiting" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors ${f.sort === 'competitors' ? 'bg-rose-600 text-white ring-rose-600' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}">🛡️ Most competitor interest</button>
     </div>
     <div class="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-0.5 text-[12px] text-slate-500">
       <span><span id="exhCount" class="tnum font-semibold text-slate-700">${shown}</span> of ${total} shows${plain ? ` · <span class="tnum font-semibold text-emerald-600">${upcoming}</span> upcoming` : ''}</span>
       <span class="text-slate-400">Tap a show to see its exhibitors →</span>
     </div>
     <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
-      <table class="w-full min-w-[880px] border-collapse text-left">
+      <table class="w-full min-w-[1040px] border-collapse text-left">
         <thead><tr class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
           <th class="px-3 py-2.5 font-semibold">Industry</th>
           <th class="px-3 py-2.5 font-semibold">Exhibition</th>
+          <th class="px-3 py-2.5 font-semibold" title="Exhibitors here that are your leads/targets — see the pre-show briefing">🎯 To meet</th>
+          <th class="px-3 py-2.5 font-semibold" title="Mapped competitors exhibiting here">🛡️ Competitors</th>
           <th class="px-3 py-2.5 font-semibold">Country</th>
           <th class="px-3 py-2.5 font-semibold">Place</th>
           <th class="px-3 py-2.5 font-semibold">Date</th>
@@ -2041,6 +2107,87 @@ function exhibitorMiniRow(l) {
 }
 
 // Centered exhibition detail: full info + its exhibitors (add-to-lead inline) + its competitors.
+// One "who to meet" row for the briefing section (interactive; → opens the lead panel).
+function briefRow(l, score) {
+  const c = displayContact(l.id);
+  const pl = state.pipeline[l.id];
+  const stageChip = pl && validStage(pl.stage) ? coloredChip(pl.stage, STAGE_COLOR[pl.stage] || '#64748b') : '';
+  const who = c && c.name
+    ? `<span class="text-[12px] font-semibold text-slate-700">${escapeHtml(c.name)}</span>${c.title ? ` <span class="text-[11px] text-slate-400">· ${escapeHtml(truncate(c.title, 26))}</span>` : ''}`
+    : '<span class="text-[12px] text-slate-400">right person being found</span>';
+  const badges = (c && c.name) ? `${personBadge(c)}${c.email ? emailClassBadge(c) : ''}` : personBadge(null);
+  return `<div class="flex items-start justify-between gap-2 border-t border-slate-100 py-2 first:border-t-0">
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="text-sm font-bold text-slate-800">${escapeHtml(l.company)}</span>
+        <span class="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">${escapeHtml(MEET_REASON[score] || '')}</span>
+        ${stageChip}
+      </div>
+      <div class="mt-0.5">${who}</div>
+      <div class="mt-1 flex flex-wrap items-center gap-1">${badges}</div>
+    </div>
+    <button type="button" data-brief-lead="${escapeHtml(l.id)}" class="shrink-0 self-center rounded-lg bg-indigo-50 px-2.5 py-1.5 text-[12px] font-semibold text-indigo-600 hover:bg-indigo-100">→ Outreach</button>
+  </div>`;
+}
+
+// Build the interactive "who to meet" briefing block for a show's modal (honest empty-states).
+function briefingSectionHtml(id, leadCount) {
+  const meetList = showMeetList(id);
+  const header = `<div class="mb-1 flex items-center justify-between gap-2">
+      <h4 class="font-display text-sm font-bold text-slate-800">📋 Briefing — who to meet</h4>
+      <div class="flex items-center gap-2">${meetList.length ? `<span class="tnum text-[12px] font-semibold text-indigo-600">🎯 ${meetList.length}</span><button type="button" data-print-brief="${escapeHtml(id)}" class="rounded-lg bg-slate-100 px-2.5 py-1 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">🖨️ Print briefing</button>` : ''}</div>
+    </div>`;
+  let body;
+  if (!leadCount) {
+    body = '<div class="rounded-xl bg-amber-50 p-3 text-[13px] leading-snug text-amber-800 ring-1 ring-amber-100">Exhibitor list not published yet — check back ~1 week before the show.</div>';
+  } else if (!meetList.length) {
+    body = `<div class="rounded-xl bg-slate-50 p-3 text-[13px] leading-snug text-slate-500 ring-1 ring-slate-100">${leadCount} exhibitor${leadCount === 1 ? '' : 's'} here, none flagged as your leads/targets yet — see the full list below.</div>`;
+  } else {
+    body = `<div class="rounded-xl bg-white px-3 ring-1 ring-slate-200">${meetList.slice(0, 40).map(({ l, score }) => briefRow(l, score)).join('')}</div>`;
+  }
+  return `<div>${header}${body}</div>`;
+}
+
+// Render a clean one-page printable briefing into #brief and open the print dialog.
+function printBriefing(id) {
+  const d = state.exhibitions.find((x) => x.id === id); if (!d) return;
+  const b = $('#brief'); if (!b) return;
+  const list = showMeetList(id);
+  const roleName = { A: 'Technical / R&D', B: 'Operations', C: 'Purchasing' };
+  const rowsHtml = list.map(({ l, score }, i) => {
+    const c = displayContact(l.id);
+    const pl = state.pipeline[l.id];
+    const stage = pl && validStage(pl.stage) ? pl.stage : '—';
+    const person = (c && c.name) ? `${escapeHtml(c.name)}${c.title ? ' — ' + escapeHtml(c.title) : ''}` : 'Right person: to be found';
+    const roleTxt = (c && c.name && c.role_tier && roleName[c.role_tier]) ? ` <span class="btag">${roleName[c.role_tier]}</span>` : '';
+    const email = (c && c.email) ? escapeHtml(c.email) : '—';
+    return `<tr>
+      <td class="bnum">${i + 1}</td>
+      <td><div class="bco">${escapeHtml(l.company)}</div><div class="bsub">${escapeHtml(l.country || '')}${l.segment ? ' · ' + escapeHtml(l.segment) : ''}</div></td>
+      <td>${person}${roleTxt}</td>
+      <td>${email}</td>
+      <td>${escapeHtml(stage)}</td>
+      <td>${escapeHtml(MEET_REASON[score] || '')}</td>
+    </tr>`;
+  }).join('');
+  const cc = showCompCount(id);
+  b.innerHTML = `<div class="brief-page">
+    <div class="brief-head">
+      <div class="brief-brand">KGR · Kusumgar Growth Engine</div>
+      <h1>Pre-show briefing — who to meet</h1>
+      <div class="brief-meta">${escapeHtml(d.name)}${d.dates ? ' · ' + escapeHtml(d.dates) : ''}${d.place ? ' · ' + escapeHtml(d.place) : ''}${d.country ? ' · ' + escapeHtml(d.country) : ''}</div>
+      <div class="brief-count">${list.length} target${list.length === 1 ? '' : 's'} to meet · ${cc} competitor${cc === 1 ? '' : 's'} exhibiting</div>
+    </div>
+    ${list.length
+      ? `<table class="brief-table"><thead><tr><th class="bnum">#</th><th>Company</th><th>Right person</th><th>Email</th><th>Stage</th><th>Why</th></tr></thead><tbody>${rowsHtml}</tbody></table>`
+      : '<p class="brief-empty">No priority targets flagged among this show’s exhibitors yet.</p>'}
+    <div class="brief-foot">Generated live from the Kusumgar Growth Engine · ${escapeHtml(isoToday())}</div>
+  </div>`;
+  document.body.classList.add('printing-brief');
+  try { window.print(); } catch { /* noop */ }
+  setTimeout(() => { document.body.classList.remove('printing-brief'); b.innerHTML = ''; }, 800);
+}
+
 function openExhibitionModal(id) {
   const d = state.exhibitions.find((x) => x.id === id);
   if (!d) return;
@@ -2071,6 +2218,7 @@ function openExhibitionModal(id) {
         <div class="rounded-xl bg-slate-50 px-3 ring-1 ring-slate-100">
           ${info('Country', countryCell(d.country))}${info('Place', escapeHtml(dash(d.place)))}${info('Date', d.dates ? escapeHtml(d.dates) : '—')}${info('Website', link(d.website, 'Visit website'))}${info('Registration', link(d.registration, 'Register'))}
         </div>
+        ${briefingSectionHtml(id, leads.length)}
         <div>
           <div class="mb-1 flex items-center justify-between"><h4 class="font-display text-sm font-bold text-slate-800">🏢 Exhibitors here</h4><span class="tnum text-[12px] text-slate-400">${leads.length}</span></div>
           <p class="mb-1.5 text-[11px] text-slate-400">Tap ☆ to add a company straight to your leads.</p>
@@ -3207,9 +3355,37 @@ function renderToday() {
     ${body}
   </section>`;
 
-  return `<div class="fade-in grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
-    ${card('📅', 'Upcoming exhibitions', `${upcomingAll.length} upcoming`, comingList)}
-    ${card('🏢', 'Recently found leads', `${foundAll.length} found`, recentList)}
+  // Exhibition-intelligence callout: your next show's briefing counts + hot shows coming up.
+  const nextShow = upcoming[0];
+  const hotShows = upcomingAll.filter(isHotShow).sort((a, b) => showCompCount(b.id) - showCompCount(a.id)).slice(0, 3);
+  let intelCallout = '';
+  if (nextShow) {
+    const m = showMeetCount(nextShow.id), cc = showCompCount(nextShow.id);
+    intelCallout = `<section class="rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-purple-600 p-4 text-white shadow-sm sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div class="text-[11px] font-semibold uppercase tracking-wide text-white/70">Your next show</div>
+          <button type="button" data-exh-id="${escapeHtml(nextShow.id)}" class="mt-0.5 block max-w-full truncate text-left text-lg font-extrabold leading-tight hover:underline">${escapeHtml(nextShow.name)}</button>
+          <div class="text-[12px] text-white/80">${escapeHtml(dash(nextShow.dates))}${nextShow.country ? ' · ' + escapeHtml(nextShow.country) : ''}${nextShow.place ? ' · ' + escapeHtml(nextShow.place) : ''}</div>
+        </div>
+        <div class="flex shrink-0 items-center gap-2">
+          <span class="rounded-xl bg-white/15 px-3 py-2 text-sm font-bold">🎯 ${m} to meet</span>
+          <span class="rounded-xl bg-white/15 px-3 py-2 text-sm font-bold">🛡️ ${cc}${isHotShow(nextShow) ? ' 🔥' : ''}</span>
+        </div>
+      </div>
+      ${hotShows.length ? `<div class="mt-3 border-t border-white/15 pt-2.5">
+        <div class="text-[11px] font-semibold uppercase tracking-wide text-white/70">🔥 Hot shows coming up — competitors flocking</div>
+        <div class="mt-1.5 flex flex-wrap gap-2">${hotShows.map((d) => `<button type="button" data-exh-id="${escapeHtml(d.id)}" class="rounded-lg bg-white/15 px-2.5 py-1 text-[12px] font-semibold hover:bg-white/25">${escapeHtml(truncate(d.name, 30))} · 🛡️ ${showCompCount(d.id)} · 🎯 ${showMeetCount(d.id)}</button>`).join('')}</div>
+      </div>` : ''}
+    </section>`;
+  }
+
+  return `<div class="fade-in space-y-4">
+    ${intelCallout}
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+      ${card('📅', 'Upcoming exhibitions', `${upcomingAll.length} upcoming`, comingList)}
+      ${card('🏢', 'Recently found leads', `${foundAll.length} found`, recentList)}
+    </div>
   </div>`;
 }
 
@@ -3662,6 +3838,8 @@ function wireEvents() {
     if (clearShow) { state.leadFilters.show = 'all'; render(); return; }
     const clearDates = e.target.closest('[data-cleardates]');
     if (clearDates) { state.filters.from = ''; state.filters.to = ''; render(); return; }
+    const exhSort = e.target.closest('[data-exhsort]');
+    if (exhSort) { state.filters.sort = state.filters.sort === 'competitors' ? 'date' : 'competitors'; render(); return; }
 
     // Exhibition row → centered detail modal (full info + exhibitors + competitors).
     const exhRow = e.target.closest('[data-exh-id]');
@@ -3763,6 +3941,11 @@ function wireEvents() {
     // Exhibition modal: ☆ add-to-lead (refresh modal in place) / "see all exhibitors".
     const star = e.target.closest('[data-star]');
     if (star) { toggleStar(star.getAttribute('data-star')); const card = modal.querySelector('[data-exh-modal]'); if (card) openExhibitionModal(card.getAttribute('data-exh-modal')); return; }
+    // Pre-show briefing: print one clean page, or jump a target to its lead panel.
+    const printBrief = e.target.closest('[data-print-brief]');
+    if (printBrief) { printBriefing(printBrief.getAttribute('data-print-brief')); return; }
+    const briefLead = e.target.closest('[data-brief-lead]');
+    if (briefLead) { closeModal(); openLeadDrawer(briefLead.getAttribute('data-brief-lead')); return; }
     const seeAll = e.target.closest('[data-exh-open-leads]');
     if (seeAll) {
       const sid = seeAll.getAttribute('data-exh-open-leads');
