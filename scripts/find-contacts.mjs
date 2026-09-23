@@ -87,7 +87,7 @@ function htmlToText(html) {
 }
 const asUrl = (v) => { const s = String(v || '').trim(); if (!s) return ''; return s.startsWith('http') ? s : 'https://' + s; };
 // Circuit breakers — the paid boosters run out of credits (402); once dead, stop hammering them.
-let fcDead = false, pdlDead = false;
+let fcDead = false, pdlDead = false, fcScrapeDead = false;
 
 /* ---------------- Role tiers (the heart of this brick) ---------------- */
 // Ordered keyword → human label. First match wins within a tier.
@@ -207,15 +207,25 @@ async function websitePerson(company, website, debug) {
   const base = asUrl(website).replace(/\/$/, ''); if (!base) return null;
   let origin; try { origin = new URL(base).origin; } catch { return null; }
   const paths = ['/leadership', '/leadership-team', '/our-team', '/team', '/management', '/about/leadership', '/about-us', '/about', '/company', '/who-we-are', '/our-company', ''];
+  const EXECISH = /chief|officer|\bvp\b|vice president|president|director|head of|manager|leadership|management|founder/i;
   let text = '';
+  // 1) FREE fetch (no cost) first.
   for (const pth of paths) {
     const html = await freeFetchText(origin + pth);
     if (!html) continue;
     const t = htmlToText(html);
-    if (/chief|officer|\bvp\b|vice president|president|director|head of|manager|leadership|management|founder/i.test(t)) {
-      text += ' ' + t; if (debug) debug.push({ reader: 'website-people', url: origin + pth, len: t.length });
-    }
+    if (EXECISH.test(t)) { text += ' ' + t; if (debug) debug.push({ reader: 'website-people', url: origin + pth, len: t.length }); }
     if (text.length > 9000) break;
+  }
+  // 2) If free reading was thin (JS-rendered / consent-walled site), use Firecrawl SCRAPE (renders JS)
+  //    on the two most likely pages. Bounded + circuit-broken so a capped plan doesn't get hammered.
+  if (text.length < 500 && firecrawlKey() && !fcScrapeDead) {
+    for (const pth of ['/leadership', '/about', '']) {
+      const d = await firecrawlScrape(origin + pth, { formats: ['markdown'] }, debug);
+      if (d && d.markdown) { if (EXECISH.test(d.markdown)) { text += ' ' + d.markdown; if (debug) debug.push({ reader: 'firecrawl-people', url: origin + pth }); } }
+      else { fcScrapeDead = true; console.log('[find-contacts] Firecrawl scrape unavailable (credits?) — disabling for this run.'); break; }
+      if (text.length > 6000) break;
+    }
   }
   text = text.slice(0, 9000).trim();
   if (!text) return null;
