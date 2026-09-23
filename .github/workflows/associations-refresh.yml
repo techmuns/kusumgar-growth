@@ -1,0 +1,75 @@
+name: Associations refresh
+
+# Keeps public/data/associations.json current — the industry bodies Kusumgar should join / attend,
+# per segment. Reads each body's OWN website (free browser fetch → Scrape.do → Firecrawl, cheapest
+# first) and pulls its next event + a membership note, SOURCE-BACKED, nothing invented. Manual (with
+# a `max` input) + weekly cron (Wednesdays). Commits only when associations.json changed.
+on:
+  workflow_dispatch:
+    inputs:
+      max:
+        description: 'Max associations to refresh per run (cost cap)'
+        required: false
+        default: '30'
+  schedule:
+    - cron: '0 6 * * 3' # 06:00 UTC every Wednesday
+
+permissions:
+  contents: write
+
+concurrency:
+  group: associations-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Refresh associations (graceful without keys)
+        env:
+          # Required: the extractor that reads each page's TEXT ONLY. Without it the engine writes
+          # nothing and exits 0.
+          BEDROCK_API_KEY: ${{ secrets.BEDROCK_API_KEY }}
+          # Optional readers, tried cheapest-first (a free browser fetch is always used first):
+          #   SCRAPEDO_API_KEY  — reads bot-walled sites when the free fetch is blocked.
+          #   FIRECRAWL_API_KEY — last-resort reader; also enables the optional propose-new-associations step.
+          SCRAPEDO_API_KEY: ${{ secrets.SCRAPEDO_API_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          # Optional (both default in code): AWS region + comma-separated model fallback chain.
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          BEDROCK_MODEL_IDS: ${{ secrets.BEDROCK_MODEL_IDS }}
+          MAX: ${{ github.event.inputs.max || '30' }}
+        run: node scripts/refresh-associations.mjs
+
+      - name: Commit & push if changed
+        run: |
+          if [ -z "$(git status --porcelain public/data/associations.json)" ]; then
+            echo "No changes to associations.json — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "kgr-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node scripts/update-meta.mjs
+          git add public/data/associations.json public/data/meta.json
+          git commit -m "chore(data): refresh associations — events & membership notes"
+
+          branch="${GITHUB_REF_NAME}"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$branch" && git push origin "HEAD:$branch"; then
+              echo "Pushed on attempt $i."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying in $((2**i))s..."
+            sleep $((2**i))
+          done
+          echo "Failed to push after retries." >&2
+          exit 1

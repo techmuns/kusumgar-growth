@@ -200,6 +200,7 @@ const state = {
   onlyFound: (() => { try { return localStorage.getItem('kgr.onlyfound') === '1'; } catch { return false; } })(),
   master: null,           // full unfiltered {leads,competitors,exhibitions} — for the "only found" toggle
   filters: { search: '', segment: 'all', country: 'all', status: 'all', relevantOnly: false, discoveredOnly: false, timing: 'all', from: '', to: '', sort: 'date' },
+  exhibitionsSub: 'shows',     // 'shows' | 'associations'  (Exhibitions tab sub-view)
   productsSub: 'catalog', // 'catalog' | 'coverage'
   productFilters: { search: '', industry: 'all', family: 'all' },
   leadsSub: 'list',       // exhibitors are one comprehensive table now
@@ -212,6 +213,8 @@ const state = {
   composeId: null,             // lead currently open in the Pipeline compose panel
   pipeSearch: '',              // search box in the Pipeline "My leads" column
   prodModalSearch: '',         // search box in the Products catalog modal
+  associations: [],            // industry bodies to join / attend, per segment (associations.json)
+  associationFilters: { segment: 'all' },
   research: [],                // curated target companies (research_targets.json)
   researchSub: 'market',       // 'market' | 'targets'  (Market shown first — the industry-mapping step)
   researchProduct: '600d-pu-polyester', // which product's target map is showing
@@ -1042,7 +1045,18 @@ function refreshExhibitionsTable() {
 }
 
 // One comprehensive, date-sorted table of ALL exhibitions (never hides any). Row → its exhibitors.
+// Exhibitions tab = a sub-view toggle over 🎪 Shows (the table) and 🏛️ Associations (bodies to join).
 function renderExhibitions() {
+  const sub = state.exhibitionsSub === 'associations' ? 'associations' : 'shows';
+  const subBtn = (key, label) => {
+    const on = sub === key;
+    return `<button type="button" data-exhibsub="${key}" aria-pressed="${on}" class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${on ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">${label}</button>`;
+  };
+  const toggle = `<div class="mb-3 inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${subBtn('shows', '🎪 Shows')}${subBtn('associations', '🏛️ Associations')}</div>`;
+  return `<div>${toggle}${sub === 'associations' ? renderAssociations() : renderShows()}</div>`;
+}
+
+function renderShows() {
   if (!state.exhibitions.length) {
     return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No exhibitions loaded.</div>`;
   }
@@ -1097,6 +1111,109 @@ function renderExhibitions() {
         <tbody id="exhRows">${exhibitionRowsHtml()}</tbody>
       </table>
     </div>
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ *
+ * 🏛️ Associations — industry bodies to join / attend, per segment.
+ * Live from associations.json; the next event + membership note on each
+ * card are kept current (source-backed) by the weekly associations robot.
+ * ------------------------------------------------------------------ */
+
+const ASSOC_SEG_ORDER = ['Technical textiles', 'Protective & Industrial Covers', 'Marine Covers', 'Pool & Outdoor Covers', 'Tool & Equipment Bags', 'Medical & Emergency', 'Automotive Seating', 'Military & Defence'];
+const ASSOC_SEG_ICON = {
+  'Technical textiles': '🧵', 'Protective & Industrial Covers': '🛡️', 'Marine Covers': '⛵',
+  'Pool & Outdoor Covers': '🏊', 'Tool & Equipment Bags': '🎒', 'Medical & Emergency': '🚑',
+  'Automotive Seating': '🚗', 'Military & Defence': '🪖',
+};
+const assocSegIcon = (s) => ASSOC_SEG_ICON[s] || '🏛️';
+
+// Associations whose segments include `seg`, name-sorted (a body can serve several segments).
+const assocsInSegment = (seg) => state.associations
+  .filter((a) => Array.isArray(a.segments) && a.segments.includes(seg))
+  .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
+// Segments present in the data, preferred order first then any extras alphabetically.
+function assocSegmentsPresent() {
+  const present = new Set();
+  state.associations.forEach((a) => (a.segments || []).forEach((s) => present.add(s)));
+  const ordered = ASSOC_SEG_ORDER.filter((s) => present.has(s));
+  const extras = [...present].filter((s) => !ASSOC_SEG_ORDER.includes(s)).sort();
+  return [...ordered, ...extras];
+}
+
+// The next-event line — honest when nothing is on record yet.
+function assocEventRow(a) {
+  if (a.next_event) {
+    const date = a.next_event_date ? `<span class="font-semibold text-emerald-700"> · ${escapeHtml(a.next_event_date)}</span>` : '';
+    return `<div class="mt-2 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-[12px] text-emerald-800 ring-1 ring-emerald-100">📅 ${escapeHtml(a.next_event)}${date}</div>`;
+  }
+  const checked = a.verified ? 'Event not listed yet' : 'Not checked yet — the weekly robot will fill it';
+  return `<div class="mt-2 rounded-lg bg-slate-50 px-2.5 py-1.5 text-[12px] text-slate-400 ring-1 ring-slate-100">📅 ${checked}</div>`;
+}
+
+function associationCard(a) {
+  const acr = a.acronym && a.acronym !== a.name ? `<span class="rounded-md bg-indigo-50 px-1.5 py-0.5 text-[11px] font-bold text-indigo-600">${escapeHtml(a.acronym)}</span>` : '';
+  const region = a.region ? `<span class="text-[11px] text-slate-400">📍 ${escapeHtml(a.region)}</span>` : '';
+  const membership = a.membership_note ? `<div class="mt-1.5 text-[12px] leading-snug text-slate-500">💳 ${escapeHtml(a.membership_note)}</div>` : '';
+  const checked = (a.verified && a.last_checked)
+    ? `<span class="text-[11px] text-slate-400">checked ${escapeHtml(a.last_checked)}${a.verify_source_url ? ` · <a href="${escapeHtml(a.verify_source_url)}" target="_blank" rel="noopener" class="font-semibold text-slate-500 hover:underline">source ↗</a>` : ''}</span>`
+    : `<span class="text-[11px] text-slate-300">awaiting first check</span>`;
+  const segChips = (a.segments || []).length > 1
+    ? `<div class="mt-1.5 flex flex-wrap gap-1">${a.segments.map((s) => `<span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">${assocSegIcon(s)} ${escapeHtml(s)}</span>`).join('')}</div>`
+    : '';
+  return `<div class="flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-1.5"><span class="font-display text-[15px] font-extrabold leading-tight text-slate-900">${escapeHtml(a.name)}</span>${acr}</div>
+      <div class="mt-0.5">${region}</div>
+    </div>
+    <p class="mt-1.5 text-[13px] leading-snug text-slate-600">${escapeHtml(a.why_relevant || '')}</p>
+    ${segChips}
+    ${assocEventRow(a)}
+    ${membership}
+    <div class="mt-auto flex items-center justify-between gap-2 border-t border-slate-100 pt-2.5" style="margin-top:0.75rem">
+      ${checked}
+      <a href="${escapeHtml(a.website)}" target="_blank" rel="noopener" class="shrink-0 rounded-xl bg-slate-900 px-3 py-1.5 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-slate-800">Join / Membership ↗</a>
+    </div>
+  </div>`;
+}
+
+function renderAssociations() {
+  if (!state.associations.length) {
+    return `<div class="fade-in rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">Association list isn’t loaded yet — check back shortly.</div>`;
+  }
+  const segs = assocSegmentsPresent();
+  const sel = state.associationFilters.segment;
+  const active = sel !== 'all' && segs.includes(sel) ? sel : 'all';
+  const total = state.associations.length;
+  const withEvent = state.associations.filter((a) => a.next_event).length;
+
+  const chip = (key, label, n) => {
+    const on = active === key;
+    return `<button type="button" data-assocseg="${escapeHtml(key)}" aria-pressed="${on}" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[13px] font-semibold shadow-sm ring-1 transition-colors ${on ? 'bg-slate-900 text-white ring-slate-900' : 'bg-white text-slate-600 ring-slate-200 hover:bg-slate-50'}">${label} <span class="tnum ${on ? 'text-white/70' : 'text-slate-400'}">${n}</span></button>`;
+  };
+  const filters = `<div class="mb-3 flex flex-wrap items-center gap-1.5">
+    ${chip('all', 'All', total)}
+    ${segs.map((s) => chip(s, `${assocSegIcon(s)} ${escapeHtml(s)}`, assocsInSegment(s).length)).join('')}
+  </div>`;
+
+  const shownSegs = active === 'all' ? segs : [active];
+  const sections = shownSegs.map((s) => {
+    const items = assocsInSegment(s);
+    if (!items.length) return '';
+    return `<section class="mb-5">
+      <h3 class="mb-2 flex items-center gap-2 font-display text-sm font-extrabold text-slate-700"><span>${assocSegIcon(s)}</span><span>${escapeHtml(s)}</span><span class="tnum text-[12px] font-semibold text-slate-400">${items.length}</span></h3>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">${items.map(associationCard).join('')}</div>
+    </section>`;
+  }).join('');
+
+  return `<div class="fade-in">
+    <div class="mb-3">
+      <h2 class="font-display text-lg font-extrabold text-slate-900">🏛️ Associations to join &amp; attend</h2>
+      <p class="mt-0.5 text-sm text-slate-500">The industry bodies worth joining or attending, grouped by segment. Events &amp; membership are kept current by a weekly robot — <span class="font-semibold text-emerald-600">${withEvent}</span> with an upcoming event on record. Nothing is invented.</p>
+    </div>
+    ${filters}
+    ${sections || `<div class="rounded-2xl bg-white p-10 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-100">No associations in this segment.</div>`}
   </div>`;
 }
 
@@ -3746,6 +3863,12 @@ function wireEvents() {
     const osub = e.target.closest('[data-osub]');
     if (osub) { state.outreachSub = osub.getAttribute('data-osub'); render(); return; }
 
+    // Exhibitions tab: 🎪 Shows / 🏛️ Associations sub-view toggle + Associations segment filter.
+    const exhibSub = e.target.closest('[data-exhibsub]');
+    if (exhibSub) { state.exhibitionsSub = exhibSub.getAttribute('data-exhibsub'); render(); return; }
+    const assocSeg = e.target.closest('[data-assocseg]');
+    if (assocSeg) { state.associationFilters.segment = assocSeg.getAttribute('data-assocseg'); render(); return; }
+
     // Industry Research: Market/Targets sub-view toggle + Market commodity toggle.
     const researchSub = e.target.closest('[data-researchsub]');
     if (researchSub) { state.researchSub = researchSub.getAttribute('data-researchsub'); render(); return; }
@@ -4010,7 +4133,7 @@ async function boot() {
     // no-store: always pull the freshest data JSON (the background engines update these
     // files on every run) so the page never shows stale numbers from a cached copy.
     const NS = { cache: 'no-store' };
-    const [meta, exhibitions, products, leads, competitors, outreach, research, market, reportContent] = await Promise.all([
+    const [meta, exhibitions, products, leads, competitors, outreach, research, market, reportContent, associations] = await Promise.all([
       fetch('data/meta.json', NS).then((r) => r.json()),
       fetch('data/exhibitions.json', NS).then((r) => r.json()),
       fetch('data/products.json', NS).then((r) => r.json()).catch(() => []),
@@ -4020,6 +4143,7 @@ async function boot() {
       fetch('data/research_targets.json', NS).then((r) => r.json()).catch(() => ({})),
       fetch('data/market_intel.json', NS).then((r) => r.json()).catch(() => null),
       fetch('data/report_content.json', NS).then((r) => r.json()).catch(() => ({})),
+      fetch('data/associations.json', NS).then((r) => r.json()).catch(() => ({})),
     ]);
     state.meta = meta;
     // Tolerate both the seed array and a pipeline { <items>, _meta, _debug } shape.
@@ -4030,6 +4154,7 @@ async function boot() {
     state.competitors = unwrap(competitors, 'competitors').filter((c) => c && c.id && c.company);
     state.outreach = (outreach && typeof outreach === 'object' && !Array.isArray(outreach)) ? outreach : {};
     state.research = unwrap(research, 'targets').filter((t) => t && t.id && t.company);
+    state.associations = unwrap(associations, 'associations').filter((a) => a && a.id && a.name);
     state.market = (market && typeof market === 'object' && market.hs5903) ? market : null;
     state.reportContent = (reportContent && typeof reportContent === 'object' && !Array.isArray(reportContent)) ? reportContent : {};
     state.researchSent = loadResearchSent();
