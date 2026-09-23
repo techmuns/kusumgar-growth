@@ -10,193 +10,228 @@
    "id": "ata",
    "name": "Advanced Textiles Association",
    "acronym": "ATA",
-   "segments": ["Technical textiles", "Protective & Industrial Covers", "Marine Covers", "Tool & Equipment Bags", "Pool & Outdoor Covers"],
+   "segments": [
+    "Technical textiles",
+    "Protective & Industrial Covers",
+    "Marine Covers",
+    "Tool & Equipment Bags",
+    "Pool & Outdoor Covers"
+   ],
    "region": "Global (US-based)",
    "website": "https://www.textiles.org/",
    "why_relevant": "The primary specialty- and technical-fabrics trade body (formerly IFAI). Its members and the Advanced Textiles Expo span coated/technical fabrics, marine canvas, protective covers, awnings and bags — Kusumgar's core segments.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "Memberships start at under $50/month and provide access to join 1,400+ member companies serving the advanced textiles industry.",
+   "next_event": "Advanced Textiles Expo 2026",
+   "next_event_date": "November 3 – 5, 2026",
+   "verify_source_url": "https://www.textiles.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "ifai",
    "name": "Industrial Fabrics Association International",
    "acronym": "IFAI",
-   "segments": ["Technical textiles", "Protective & Industrial Covers"],
+   "segments": [
+    "Technical textiles",
+    "Protective & Industrial Covers"
+   ],
    "region": "Global (US-based)",
    "website": "https://www.ifai.com/",
    "why_relevant": "The industrial/technical fabrics association now operating under the Advanced Textiles Association — the network for coated and industrial-fabric producers, buyers and fabricators.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "Memberships start at under $50/month and provide access to industry-specific education, valuable connections, sourcing opportunities, and support on the federal and state level.",
+   "next_event": "Advanced Textiles Expo 2026",
+   "next_event_date": "November 3 – 5, 2026",
+   "verify_source_url": "https://www.textiles.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "mfa",
    "name": "Marine Fabricators Association",
    "acronym": "MFA",
-   "segments": ["Marine Covers"],
+   "segments": [
+    "Marine Covers"
+   ],
    "region": "North America",
    "website": "https://marine.ifai.com/",
    "why_relevant": "A division of ATA/IFAI representing roughly 300 marine canvas fabricators (boat covers, biminis, enclosures) — the direct buyer community for marine cover fabrics.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
+   "membership_note": "To become a member, first join the Advanced Textiles Association, then gain access to the Marine Fabricators Association member group for benefits including industry resources, educational materials, member directory access, and discounted event attendance.",
+   "next_event": "Marine Fabricators Conference",
    "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "verify_source_url": "https://marine.textiles.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "edana",
    "name": "EDANA",
    "acronym": "EDANA",
-   "segments": ["Medical & Emergency", "Technical textiles"],
+   "segments": [
+    "Medical & Emergency",
+    "Technical textiles"
+   ],
    "region": "Europe / MEA",
    "website": "https://www.edana.org/",
    "why_relevant": "The leading European (and Middle East / Africa) nonwovens and related-industries association — hygiene, medical and wipes producers; the network for medical and emergency nonwoven fabrics.",
    "source": "Kusumgar curated",
-   "membership_note": "",
+   "membership_note": "EDANA welcomes businesses across the nonwovens value chain and offers exclusive market data, industry intelligence, and tailored services to support member organizations' growth and competitiveness.",
    "next_event": "",
    "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "verify_source_url": "https://www.edana.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "inda",
    "name": "INDA — Association of the Nonwoven Fabrics Industry",
    "acronym": "INDA",
-   "segments": ["Medical & Emergency", "Technical textiles"],
+   "segments": [
+    "Medical & Emergency",
+    "Technical textiles"
+   ],
    "region": "North America",
    "website": "https://www.inda.org/",
    "why_relevant": "The North American nonwovens association (host of the IDEA show) — medical, hygiene and technical nonwovens producers and buyers.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "INDA serves hundreds of member companies across the nonwovens and engineered fabrics industry, helping members convene and connect, innovate, and grow through industry-leading events, professional development courses, market intelligence, test methods, consulting services, and advocacy.",
+   "next_event": "Spunbond Technology Course",
+   "next_event_date": "September 22 @ 8:00 am - September 24 @ 6:00 am",
+   "verify_source_url": "https://www.inda.org/events-calendar/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "pia",
    "name": "Parachute Industry Association",
    "acronym": "PIA",
-   "segments": ["Military & Defence", "Technical textiles"],
+   "segments": [
+    "Military & Defence",
+    "Technical textiles"
+   ],
    "region": "Global (US-based)",
    "website": "https://www.pia.com/",
    "why_relevant": "The global body for parachute and aerial-delivery manufacturers — a direct fit for Kusumgar's parachute-fabric heritage and defence/aeronautical textiles.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "PIA welcomes members from every aspect of the parachute business, including suppliers, manufacturers, government agencies, industry-relevant businesses, riggers and DZOs, and interested individuals can see the Membership Application on their website.",
+   "next_event": "2027 First Regular PIA Meeting",
+   "next_event_date": "February 5, 2027 - February 7, 2027",
+   "verify_source_url": "https://www.pia.com/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "ndia",
    "name": "National Defense Industrial Association",
    "acronym": "NDIA",
-   "segments": ["Military & Defence"],
+   "segments": [
+    "Military & Defence"
+   ],
    "region": "USA",
    "website": "https://www.ndia.org/",
    "why_relevant": "The largest US defence-industry association — the route into military & defence textile programs, primes and procurement events.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "NDIA is a membership-driven association that offers membership options including corporate roster participation, with members gaining access to resources, chapters, divisions, and exclusive content such as CMMC & PPBE webinar materials.",
+   "next_event": "2026 Undersea Warfare Fall Conference",
+   "next_event_date": "9/21/2026 - 9/23/2026",
+   "verify_source_url": "https://www.ndia.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "oia",
    "name": "Outdoor Industry Association",
    "acronym": "OIA",
-   "segments": ["Pool & Outdoor Covers", "Tool & Equipment Bags"],
+   "segments": [
+    "Pool & Outdoor Covers",
+    "Tool & Equipment Bags"
+   ],
    "region": "USA",
    "website": "https://outdoorindustry.org/",
    "why_relevant": "The US outdoor-products trade body (packs, bags and outdoor gear) — relevant to technical bag fabrics and outdoor-cover materials.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "OIA membership brings organizations into the room where trade policy to climate action decisions are made, offering advocacy representation, exclusive data and market intelligence, and sustainability tools and peer support to help outdoor industry businesses grow with purpose and resilience.",
+   "next_event": "Catalyst Conference",
+   "next_event_date": "2026",
+   "verify_source_url": "https://outdoorindustry.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "phta",
    "name": "Pool & Hot Tub Alliance",
    "acronym": "PHTA",
-   "segments": ["Pool & Outdoor Covers"],
+   "segments": [
+    "Pool & Outdoor Covers"
+   ],
    "region": "USA",
    "website": "https://www.phta.org/",
    "why_relevant": "The US pool & spa industry body — the buyer community for pool safety covers and winter cover fabrics.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "PHTA membership offers exclusive benefits, industry insights, and advocacy support for pool and hot tub professionals.",
+   "next_event": "Pool Spa Patio Expo",
+   "next_event_date": "November 14-19, 2026",
+   "verify_source_url": "https://www.phta.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "iahtm",
    "name": "International Association for Healthcare Textile Management",
    "acronym": "IAHTM",
-   "segments": ["Medical & Emergency"],
+   "segments": [
+    "Medical & Emergency"
+   ],
    "region": "Global",
    "website": "https://iahtm.com/",
    "why_relevant": "The network for healthcare laundry and reusable medical textiles — relevant to medical & emergency fabric applications.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "IAHTM membership provides shared learning opportunities and educational programs to senior-level experts in healthcare textile management, allowing members to learn from industry experts, share insights, and connect with peers across North America.",
+   "next_event": "2026 Annual Education Conference",
+   "next_event_date": "28 August 2026",
+   "verify_source_url": "https://iahtm.com/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "act",
    "name": "Association for Contract Textiles",
    "acronym": "ACT",
-   "segments": ["Medical & Emergency", "Automotive Seating"],
+   "segments": [
+    "Medical & Emergency",
+    "Automotive Seating"
+   ],
    "region": "North America",
    "website": "https://contracttextiles.org/",
    "why_relevant": "Sets voluntary standards for commercial/contract interior textiles (upholstery, healthcare and seating fabrics) — relevant to seating and healthcare interior applications.",
    "source": "Kusumgar curated",
-   "membership_note": "",
+   "membership_note": "ACT member companies include Principal Members and Associate Members who are among the industry's most respected leaders and support the standards and initiatives of ACT.",
    "next_event": "",
    "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "verify_source_url": "https://contracttextiles.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   },
   {
    "id": "textile-institute",
    "name": "The Textile Institute",
    "acronym": "TI",
-   "segments": ["Technical textiles", "Medical & Emergency"],
+   "segments": [
+    "Technical textiles",
+    "Medical & Emergency"
+   ],
    "region": "Global (UK-based)",
    "website": "https://www.textileinstitute.org/",
    "why_relevant": "The global professional body for textiles (UK-based, worldwide membership) — standards, qualifications and conferences spanning technical and medical textiles.",
    "source": "Kusumgar curated",
-   "membership_note": "",
-   "next_event": "",
-   "next_event_date": "",
-   "verify_source_url": "",
-   "last_checked": "",
-   "verified": false
+   "membership_note": "By joining the TI, you will instantly be part of an International, professionally diverse network of members with benefits including access to a global network, ability to apply for professional qualifications, discounts on publications, attendance at events and training courses, access to informati",
+   "next_event": "Parliamentary Lunch",
+   "next_event_date": "13 Nov 2026",
+   "verify_source_url": "https://www.textileinstitute.org/",
+   "last_checked": "2026-09-23",
+   "verified": true
   }
  ]
 }

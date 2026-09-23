@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-23T07:30:07.312Z",
+  "updated_at": "2026-09-23T11:35:03.801Z",
   "exhibitions_total": 56,
   "products_total": 20,
   "leads_total": 589,
@@ -12,6 +12,8 @@
   "sources_total": 41,
   "research_targets_total": 275,
   "research_verified_count": 136,
+  "associations_total": 12,
+  "associations_event_count": 10,
   "market_year": 2024,
   "market_updated_at": "2026-09-22T14:44:14.568Z",
   "market_latest_month": "202607"
