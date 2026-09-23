@@ -7224,6 +7224,17 @@
       "drafted_at": "2026-09-15T18:06:54.943Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Jason Cox",
+      "title": "President & Founder",
+      "linkedin_url": null,
+      "email": null,
+      "email_status": "none",
+      "source": "website",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "covers-all": {
