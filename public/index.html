@@ -152,18 +152,22 @@
     #deck { position: fixed; inset: 0; z-index: 90; visibility: hidden; overflow-y: auto; background: #eef2f7; }
     #deck.open { visibility: visible; }
     .deck-toolbar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; background: rgba(255,255,255,.9); backdrop-filter: blur(6px); border-bottom: 1px solid #e2e8f0; }
-    .deck-pages { padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    /* Landscape "slide": on screen a white card capped to A4-landscape ratio; content padded. */
+    .deck-pages { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    /* Landscape "slide": A4-landscape ratio, flex column so the body FILLS between header & footer.
+       Same box on screen and in print — what you see is what prints. */
     .deck-slide {
-      width: 100%; max-width: 1040px; background: #fff; color: #0f172a;
-      border-radius: 14px; box-shadow: 0 10px 30px rgba(2,6,23,.10); ring: 1px solid #e2e8f0;
-      padding: 28px 32px; box-sizing: border-box; overflow: hidden;
+      width: 100%; max-width: 1060px; aspect-ratio: 297 / 210; background: #fff; color: #0f172a;
+      border-radius: 14px; box-shadow: 0 10px 30px rgba(2,6,23,.10);
+      padding: 34px 40px; box-sizing: border-box; overflow: hidden;
+      display: flex; flex-direction: column;
     }
-    @media (min-width: 900px) { .deck-slide { aspect-ratio: 297 / 210; } }
     .deck-slide h2 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    /* the middle region grows and vertically centres its content — no top-bunched blank bands */
+    .deck-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+    .deck-slide svg { display: block; height: auto; }
 
     @media print {
-      @page { size: landscape; margin: 0; }
+      @page { size: A4 landscape; margin: 0; }
       html, body { background: #fff !important; }
       body * { visibility: hidden !important; }
       #deck, #deck * { visibility: visible !important; }
@@ -171,11 +175,14 @@
       .deck-toolbar { display: none !important; }
       .deck-pages { padding: 0 !important; gap: 0 !important; }
       .deck-slide {
-        max-width: none !important; width: 100% !important; min-height: 100vh;
+        width: 297mm; height: 210mm; max-width: none !important; aspect-ratio: auto !important;
+        overflow: hidden; break-inside: avoid; page-break-after: always;
         border-radius: 0 !important; box-shadow: none !important; margin: 0 !important;
-        page-break-after: always; break-after: page; aspect-ratio: auto !important;
       }
-      .deck-slide:last-child { page-break-after: auto; break-after: auto; }
+      .deck-slide:last-child { page-break-after: auto; }
+      .reveal-scale { transform: none !important; }
+      /* Wipe-reveal clip-paths don't paint reliably in print/PDF — drop them so charts render fully. */
+      #deck [clip-path] { clip-path: none !important; }
     }
   </style>
 </head>
