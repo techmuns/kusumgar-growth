@@ -11,6 +11,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { askClaude, haveBedrock } from './lib/llm.mjs';
+import { applyGreeting } from './lib/greeting.mjs';
 
 const p = (env, rel) => process.env[env] || fileURLToPath(new URL(rel, import.meta.url));
 const LEADS_PATH = p('KGR_LEADS_PATH', '../public/data/leads.json');
@@ -39,9 +40,7 @@ Write EXACTLY this structure — only the <bracketed> parts change per lead:
 
 Subject: Technical Textiles for <their industry/product> / Kusumgar
 
-Body:
-<greeting>
-
+Body (NO greeting line — start directly at "Let me take this opportunity"):
 Let me take this opportunity to briefly introduce Kusumgar Limited (www.kusumgar.com), one of India's leading manufacturers of high-performance technical textiles, with over 50 years of expertise. We operate a fully vertically integrated setup — weaving, dyeing, finishing, coating, lamination and cut-and-sew — producing synthetic multifilament fabrics in Nylon, Polyester and Aramids from 20D to 3000D, with in-house finishes and performance coatings.
 
 We believe our capabilities align well with the <their industry> industry. Some of the solutions we can offer:
@@ -59,7 +58,7 @@ ${SENDER}
 ${SENDER_TITLE}
 Kusumgar Limited | www.kusumgar.com
 
-Rules: <greeting> is "Dear <ContactName>," when a contact name is given, else "Dear Sir/Madam,". The three bullets MUST be real capabilities from the brief tailored to the lead's industry — never invented. Return STRICT JSON only: {"subject":"...","body":"..."} — no markdown, no commentary.`;
+Rules: Do NOT write ANY salutation or greeting line — no "Dear …", "Hi", "Hello", "Greetings". Begin the body directly with "Let me take this opportunity to briefly introduce Kusumgar Limited". The greeting is added separately from the contact record. The three bullets MUST be real capabilities from the brief tailored to the lead's industry — never invented. Return STRICT JSON only: {"subject":"...","body":"..."} — no markdown, no commentary.`;
 
 async function loadOutreach() {
   try { const o = JSON.parse(await readFile(OUTREACH_PATH, 'utf8')); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
@@ -73,40 +72,53 @@ async function loadLeads() {
 const rank = (l) => (l.priority === 'High' ? 0 : 2) + (l.detail === 'full' ? 0 : 1);
 
 async function main() {
-  if (!haveBedrock()) { console.log('[draft-emails] BEDROCK_API_KEY not set — writing nothing. Exiting 0.'); return; }
-
   const leads = await loadLeads();
   const outreach = await loadOutreach();
 
-  // Draft leads with no email yet, and re-draft any whose email is from an older voice version.
-  let queue = leads.filter((l) => outreach[l.id]?.email?.voice !== VOICE);
-  if (PRIORITY_ONLY) queue = queue.filter((l) => l.priority === 'High');
-  queue.sort((a, b) => rank(a) - rank(b) || a.company.localeCompare(b.company));
-  queue = queue.slice(0, MAX);
-  console.log(`[draft-emails] drafting ${queue.length} of ${leads.length} lead(s)`);
+  // 1) GREETING MIGRATION (pure string — no LLM, no network): re-derive every stored greeting from
+  //    the CURRENT contact, so any stale/garbled baked-in name is discarded. Runs on every invocation
+  //    and even without a Bedrock key, so the data self-heals the moment a contact is updated.
+  let migrated = 0;
+  for (const id of Object.keys(outreach)) {
+    const e = outreach[id] && outreach[id].email;
+    if (!e || typeof e.body !== 'string') continue;
+    const fixed = applyGreeting(e.body, outreach[id].contact);
+    if (fixed !== e.body) { e.body = fixed; migrated++; }
+  }
 
+  // 2) DRAFTING (needs Bedrock). Graceful without it — the migration above still applies.
   let drafted = 0;
-  for (const l of queue) {
-    const contactName = outreach[l.id]?.contact?.name || '';
-    const user = `Lead company: ${l.company}
+  if (!haveBedrock()) {
+    console.log('[draft-emails] BEDROCK_API_KEY not set — skipping new drafts (greeting migration still applied).');
+  } else {
+    // Draft leads with no email yet, and re-draft any whose email is from an older voice version.
+    let queue = leads.filter((l) => outreach[l.id]?.email?.voice !== VOICE);
+    if (PRIORITY_ONLY) queue = queue.filter((l) => l.priority === 'High');
+    queue.sort((a, b) => rank(a) - rank(b) || a.company.localeCompare(b.company));
+    queue = queue.slice(0, MAX);
+    console.log(`[draft-emails] drafting ${queue.length} of ${leads.length} lead(s)`);
+    for (const l of queue) {
+      const user = `Lead company: ${l.company}
 Their industry / segment: ${l.segment || 'technical textiles'}
 Country: ${l.country || 'n/a'}
 Their application (if known): ${l.application || 'unknown'}
-Contact name (if known, for the greeting): ${contactName || 'unknown'}
 
 Write the cold email now.`;
-    const res = await askClaude({ system: SYSTEM, user, json: true, maxTokens: 1200 });
-    if (res && res.subject && res.body) {
-      outreach[l.id] = { ...(outreach[l.id] || {}), email: { subject: String(res.subject), body: String(res.body), drafted_at: new Date().toISOString(), model: MODEL_LABEL, voice: VOICE } };
-      drafted++;
-    } else {
-      console.error(`[draft-emails] no draft returned for ${l.id}`);
+      const res = await askClaude({ system: SYSTEM, user, json: true, maxTokens: 1200 });
+      if (res && res.subject && res.body) {
+        // The greeting is applied here from the contact record — never written by the LLM.
+        const contact = outreach[l.id]?.contact;
+        outreach[l.id] = { ...(outreach[l.id] || {}), email: { subject: String(res.subject), body: applyGreeting(String(res.body), contact), drafted_at: new Date().toISOString(), model: MODEL_LABEL, voice: VOICE } };
+        drafted++;
+      } else {
+        console.error(`[draft-emails] no draft returned for ${l.id}`);
+      }
     }
   }
 
-  if (!drafted) { console.log('[draft-emails] nothing drafted; outreach.json unchanged.'); return; }
+  if (!migrated && !drafted) { console.log('[draft-emails] nothing changed; outreach.json unchanged.'); return; }
   await writeFile(OUTREACH_PATH, JSON.stringify(outreach, null, 2) + '\n');
-  console.log(`[draft-emails] drafted ${drafted} email(s).`);
+  console.log(`[draft-emails] migrated ${migrated} greeting(s), drafted ${drafted} email(s).`);
 }
 
 main()
