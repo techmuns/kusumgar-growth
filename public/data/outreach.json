@@ -1490,13 +1490,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "hummy truh",
-      "title": "operations manager",
-      "linkedin_url": "https://linkedin.com/in/hummy-truh-6010a3b6",
-      "email": null,
-      "email_status": "none",
-      "source": "pdl",
-      "confidence": "high"
+      "name": "Kevin Tuchtenhagen",
+      "title": "Design & Engineering Manager",
+      "linkedin_url": "https://www.linkedin.com/in/kevin-tuchtenhagen",
+      "email": "user@domain.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Engineering"
     }
   },
   "canvas-designers": {
@@ -3146,13 +3148,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Francois Girard",
-      "title": "Purchasing & Planning Manager",
-      "linkedin_url": "https://ca.linkedin.com/in/francois-girard-57a2074a",
-      "email": "fgirard@nanuk.com",
-      "email_status": "verified",
-      "source": "web+guess",
-      "confidence": "medium"
+      "name": "Mark Nelsons",
+      "title": "National Director - Technical Packaging",
+      "linkedin_url": "https://ca.linkedin.com/in/mnelsons",
+      "email": "jobs@nanuk.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Technical"
     }
   },
   "north-american-rescue": {
@@ -3164,13 +3168,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Lindsay Willhelm",
-      "title": "Sr. Buyer-Team Lead/NARMD",
-      "linkedin_url": "https://www.linkedin.com/in/lindsay-willhelm-5ab708230",
+      "name": "Christopher Radnovich",
+      "title": "Software Engineering Manager",
+      "linkedin_url": "https://www.linkedin.com/in/christopher-radnovich-069ba34a",
       "email": "info@NARescue.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Engineering"
     }
   },
   "o-sea-marine": {
@@ -3200,13 +3206,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Kingston Fallon",
-      "title": "Southern Regional & National Accounts Manager",
-      "linkedin_url": "https://www.linkedin.com/in/kingston-fallon-177a68103",
+      "name": "Taylor Pask",
+      "title": "Footwear & Product Development Leader",
+      "linkedin_url": "https://www.linkedin.com/in/taylor-pask",
       "email": "service@occidentalleather.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "ocean-dynamics": {
@@ -3288,6 +3296,17 @@
       "drafted_at": "2026-09-15T15:01:03.135Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Michelle Ehlers",
+      "title": "Qualitäts- & Produktmanagement bei PAX-Bags",
+      "linkedin_url": "https://de.linkedin.com/in/michelle-ehlers-5251a72ba",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "low",
+      "role_tier": null,
+      "match_reason": ""
     }
   },
   "pelican-products": {
@@ -3353,13 +3372,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/adam-ryan-94448213",
+      "name": "Olivia Marino",
+      "title": "Vice President Product Development/Production & Operations",
+      "linkedin_url": "https://www.linkedin.com/in/olivia-marino-9b153451",
       "email": "accessibility@canvasusa.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "pip-global-safety": {
@@ -4873,13 +4894,15 @@
       "voice": 2
     },
     "contact": {
-      "name": "Scott Hall",
-      "title": "Experienced buyer of raw materials for converting",
-      "linkedin_url": "https://www.linkedin.com/in/scott-hall-b7634910",
+      "name": "Tony Ryan",
+      "title": "Plant manager latham pool products",
+      "linkedin_url": "https://www.linkedin.com/in/tony-ryan-b72a8b5a",
       "email": null,
       "email_status": "none",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Plant Manager"
     }
   },
   "toyota-boshoku": {
@@ -7505,13 +7528,15 @@
       "voice": 2
     },
     "contact": {
-      "name": null,
-      "title": null,
-      "linkedin_url": "https://www.linkedin.com/in/brandstatter-amy",
-      "email": "sales@creativecoversinc.com",
+      "name": "Ethan Calderon",
+      "title": "Marketing and Operations Manager",
+      "linkedin_url": "https://www.linkedin.com/in/ethan-calderon-5335691b4",
+      "email": "johndoe@email.com",
       "email_status": "published",
-      "source": "web",
-      "confidence": "medium"
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "B",
+      "match_reason": "Operations"
     }
   },
   "creative-covers-inc": {
@@ -8215,6 +8240,17 @@
       "drafted_at": "2026-09-15T18:12:29.092Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Scott Milne",
+      "title": "Product Development",
+      "linkedin_url": "https://www.linkedin.com/in/rmefficiency",
+      "email": "sales@heavydutytarps.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "Product Development"
     }
   },
   "herculite-fabricators": {
@@ -8715,6 +8751,17 @@
       "drafted_at": "2026-09-15T18:16:29.851Z",
       "model": "bedrock-converse",
       "voice": 2
+    },
+    "contact": {
+      "name": "Trey Vann",
+      "title": "Director, Product Development Engineering and R&D",
+      "linkedin_url": "https://www.linkedin.com/in/treyvann",
+      "email": "sale@poolwarehouse.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   },
   "pooltux": {
@@ -9172,6 +9219,32 @@
       "confidence": "medium",
       "role_tier": "B",
       "match_reason": "Operations"
+    }
+  },
+  "owens-corning-composites": {
+    "contact": {
+      "name": "Chris Skinner",
+      "title": "VP Strategic Marketing & R&D | Advanced Materials",
+      "linkedin_url": "https://be.linkedin.com/in/christopherskinner",
+      "email": "caio.tralba@owenscorning.com",
+      "email_status": "published",
+      "source": "serper+website",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
+    }
+  },
+  "porcher-industries": {
+    "contact": {
+      "name": "SENECOT Jean-Marc, Ph.D.",
+      "title": "Global Head of R&D",
+      "linkedin_url": "https://fr.linkedin.com/in/senecot-jean-marc",
+      "email": null,
+      "email_status": "none",
+      "source": "serper",
+      "confidence": "medium",
+      "role_tier": "A",
+      "match_reason": "R&D"
     }
   }
 }
