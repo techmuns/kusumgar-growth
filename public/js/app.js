@@ -91,6 +91,7 @@ const segLabel = (s) => SEG_LABELS[s] || s;
 const OUTREACH_STAGES = [
   { key: 'To contact', color: '#94a3b8' },       // slate
   { key: 'Connected', color: '#0ea5e9' },        // sky
+  { key: 'Draft created', color: '#ec4899' },    // pink — a Gmail draft exists, not yet sent
   { key: 'Email sent', color: '#6366f1' },       // indigo
   { key: 'No reply', color: '#f59e0b' },         // amber
   { key: 'Meeting set', color: '#8b5cf6' },      // violet
@@ -224,6 +225,7 @@ const state = {
   market: null,                // UN Comtrade market intel (market_intel.json)
   reportContent: {},           // per-product strategy narrative (report_content.json)
   marketCommodity: 'hs5903',   // 'hs5903' | 'hs590320'
+  gmail: { checked: false, configured: false, connected: false, email: '', busy: false }, // Gmail connector status
 };
 
 const PIPE_KEY = (id) => `kgr.outreach.${id}`;
@@ -2553,7 +2555,7 @@ function composePanelHtml(id) {
   const findLink = `<a href="${escapeHtml(linkedinSearchUrl(l))}" target="_blank" rel="noopener" class="font-medium text-indigo-600 hover:underline">🔗 Find contact on LinkedIn ↗</a>`;
 
   return `<div class="space-y-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
-    <div class="rounded-xl bg-indigo-50 px-3 py-2 text-[12px] font-medium text-indigo-700 ring-1 ring-indigo-100">🔌 Connect Gmail for one-click send + automatic in-thread follow-ups — coming next.</div>
+    ${composeGmailNote()}
 
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
@@ -2587,11 +2589,13 @@ function composePanelHtml(id) {
     </div>
 
     <div class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
-      <button type="button" data-compose-gmail class="rounded-xl bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">✉️ Open in Gmail</button>
+      ${state.gmail.connected ? '<button type="button" data-compose-draft class="rounded-xl bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">✉️ Create Gmail draft</button>' : ''}
+      <button type="button" data-compose-gmail class="rounded-xl ${state.gmail.connected ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-indigo-600 text-white hover:bg-indigo-700'} px-3.5 py-2 text-sm font-semibold shadow-sm">✉️ Open in Gmail</button>
       <button type="button" data-compose-copy class="rounded-xl bg-slate-100 px-3.5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">📋 Copy email</button>
       <button type="button" data-compose-sent class="rounded-xl bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">✅ Mark as sent</button>
       <a id="composeMailto" data-compose-mailto href="${escapeHtml(mailtoUrl(to, draft.subject, draft.body))}" class="text-[12px] text-slate-500 hover:text-slate-700 hover:underline">or use your mail app</a>
     </div>
+    <div id="composeDraftResult" class="text-[12px]">${pl.draftId ? `✅ Draft created — <a href="${escapeHtml(pl.gmailUrl || 'https://mail.google.com/mail/u/0/#drafts')}" target="_blank" rel="noopener" class="font-semibold text-emerald-700 hover:underline">Open in Gmail ↗</a>` : ''}</div>
     ${alreadySent ? `<div class="rounded-xl bg-emerald-50 px-3 py-2 text-[12px] font-semibold text-emerald-700 ring-1 ring-emerald-200">✅ Marked as sent — now tracked in the Tracker${pl.next ? ` · follow-up ${escapeHtml(fmtDate(pl.next))} (${escapeHtml(dueLabel(pl.next))})` : ''}.</div>` : ''}
   </div>`;
 }
@@ -2777,7 +2781,95 @@ function renderOutreach() {
   };
   const toggle = `<div class="inline-flex rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200">${topBtn(state.outreachSub === 'pipeline', 'pipeline', '✉️ Pipeline')}${topBtn(isTracker, 'tracker', `📊 Tracker${fuBadge}`)}</div>`;
   const body = state.outreachSub === 'pipeline' ? renderPipeline() : renderTrackerHub();
-  return `<div class="mb-4">${toggle}</div>${body}`;
+  return `<div class="mb-4 flex flex-wrap items-center justify-between gap-2">${toggle}${gmailStatusBar()}</div>${body}`;
+}
+
+/* ------------------------------------------------------------------ *
+ * Gmail connector (draft-mode) — status bar + actions. Server lives in
+ * functions/api/gmail/*. Everything degrades gracefully until the KV +
+ * secrets are set in Cloudflare (status → configured:false).
+ * ------------------------------------------------------------------ */
+const gmailBtn = 'inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-semibold shadow-sm ring-1 transition-colors';
+function gmailStatusBar() {
+  const g = state.gmail;
+  if (!g.checked) return `<span class="text-[12px] text-slate-400">Checking Gmail…</span>`;
+  if (!g.configured) return `<span class="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 px-3 py-2 text-[12px] font-medium text-slate-400 ring-1 ring-slate-200" title="Set the GMAIL_TOKENS KV binding + Google secrets in Cloudflare to enable one-click Gmail drafts.">🔌 Gmail not set up yet</span>`;
+  if (g.connected) {
+    return `<span class="inline-flex items-center gap-2">
+      <span class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-50 px-3 py-2 text-[13px] font-semibold text-emerald-700 ring-1 ring-emerald-200">✅ Gmail: ${escapeHtml(g.email || 'connected')}</span>
+      <button type="button" data-gmail-disconnect ${g.busy ? 'disabled' : ''} class="text-[12px] font-semibold text-slate-400 hover:text-rose-600 hover:underline">Disconnect</button>
+    </span>`;
+  }
+  return `<button type="button" data-gmail-connect ${g.busy ? 'disabled' : ''} class="${gmailBtn} bg-white text-indigo-600 ring-indigo-200 hover:bg-indigo-50">🔌 Connect Gmail</button>`;
+}
+
+// Fetch /status; re-render the Outreach tab when it resolves. Never throws (offline → not configured).
+async function loadGmailStatus() {
+  try {
+    const r = await fetch('/api/gmail/status', { cache: 'no-store' });
+    const d = await r.json();
+    state.gmail = { checked: true, configured: !!d.configured, connected: !!d.connected, email: d.email || '', busy: false };
+  } catch { state.gmail = { checked: true, configured: false, connected: false, email: '', busy: false }; }
+  if (state.tab === 'outreach') render();
+}
+function gmailConnect() {
+  // Full-page navigation so the OAuth redirect + CSRF cookie work.
+  window.location.href = '/api/gmail/connect?return=' + encodeURIComponent('/?gmail=connected');
+}
+async function gmailDisconnect() {
+  state.gmail.busy = true; if (state.tab === 'outreach') render();
+  try { await fetch('/api/gmail/disconnect', { method: 'POST' }); } catch { /* ignore */ }
+  await loadGmailStatus();
+}
+// Contextual note inside the compose panel (the top-right bar carries the connect/disconnect control).
+function composeGmailNote() {
+  const g = state.gmail;
+  if (g.connected) return `<div class="rounded-xl bg-emerald-50 px-3 py-2 text-[12px] font-medium text-emerald-700 ring-1 ring-emerald-100">✅ Connected to <b>${escapeHtml(g.email || 'Gmail')}</b> — “Create Gmail draft” saves this straight into your Gmail Drafts (nothing is ever sent automatically).</div>`;
+  if (g.configured) return `<div class="rounded-xl bg-indigo-50 px-3 py-2 text-[12px] font-medium text-indigo-700 ring-1 ring-indigo-100">🔌 Connect Gmail (top-right) to save drafts straight into your inbox — or use “Open in Gmail” below.</div>`;
+  return `<div class="rounded-xl bg-slate-50 px-3 py-2 text-[12px] font-medium text-slate-500 ring-1 ring-slate-200">✉️ Use “Open in Gmail” below to send in your browser. One-click Gmail drafts turn on once Gmail is set up.</div>`;
+}
+// Create a Gmail DRAFT for the open lead from the edited compose fields. Never sends.
+async function createGmailDraft(btn) {
+  const id = state.composeId; if (!id) return;
+  const to = (($('#composeTo') || {}).value || '').trim();
+  const subject = ($('#composeSubject') || {}).value || '';
+  const body = ($('#composeBody') || {}).value || '';
+  const res = $('#composeDraftResult');
+  if (!to) { if (res) res.innerHTML = '<span class="font-semibold text-rose-600">Add the recipient’s email first.</span>'; return; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Creating…'; }
+  if (res) res.innerHTML = '<span class="text-slate-400">Creating draft in Gmail…</span>';
+  try {
+    const pl = state.pipeline[id] || {};
+    const r = await fetch('/api/gmail/draft', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ leadId: id, to, subject, body, threadId: pl.threadId || undefined }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.ok) {
+      setPipeline(id, { stage: 'Draft created', draftId: d.draftId || '', threadId: d.threadId || pl.threadId || '', gmailUrl: d.gmailUrl || 'https://mail.google.com/mail/u/0/#drafts' });
+      render(); // rebuilds the panel → shows the success line + 'Draft created' stage
+    } else {
+      const msg = d.error === 'not_connected' ? 'Gmail isn’t connected — click “Connect Gmail” (top-right).'
+        : d.error === 'not_configured' ? 'Gmail isn’t set up yet.'
+        : d.error === 'bad_recipient' ? 'That recipient email looks invalid.'
+        : (d.detail || d.error || 'Could not create the draft.');
+      if (res) res.innerHTML = `<span class="font-semibold text-rose-600">${escapeHtml(msg)}</span>`;
+      if (btn) { btn.disabled = false; btn.textContent = '✉️ Create Gmail draft'; }
+    }
+  } catch {
+    if (res) res.innerHTML = '<span class="font-semibold text-rose-600">Network error — try again.</span>';
+    if (btn) { btn.disabled = false; btn.textContent = '✉️ Create Gmail draft'; }
+  }
+}
+// Transient bottom-center toast (used for the OAuth return message).
+function gmailToast(msg, ok) {
+  try {
+    const el = document.createElement('div');
+    el.textContent = msg;
+    el.className = 'fixed left-1/2 bottom-5 z-[60] max-w-[92vw] -translate-x-1/2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-lg ' + (ok ? 'bg-emerald-600' : 'bg-slate-800');
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.transition = 'opacity .4s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 450); }, 3800);
+  } catch { /* ignore */ }
 }
 
 // Tracker hub: the existing stage board + follow-ups, kept exactly as-is, under one Tracker view.
@@ -3893,12 +3985,18 @@ function wireEvents() {
       if (window.innerWidth < 1024) { const p = $('#composePanel'); if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       return;
     }
+    const cDraft = e.target.closest('[data-compose-draft]');
+    if (cDraft) { createGmailDraft(cDraft); return; }
     const cGmail = e.target.closest('[data-compose-gmail]');
     if (cGmail) { openInGmail(); return; }
     const cCopy = e.target.closest('[data-compose-copy]');
     if (cCopy) { copyComposeEmail(cCopy); return; }
     const cSent = e.target.closest('[data-compose-sent]');
     if (cSent) { markComposeSent(); return; }
+
+    // Gmail connector (top-right of the Outreach tab)
+    if (e.target.closest('[data-gmail-connect]')) { gmailConnect(); return; }
+    if (e.target.closest('[data-gmail-disconnect]')) { gmailDisconnect(); return; }
 
     const goFollow = e.target.closest('[data-gofollow]');
     if (goFollow) { state.tab = 'outreach'; state.outreachSub = 'followups'; render(); return; }
@@ -4189,7 +4287,24 @@ async function boot() {
     renderTabs();
     return;
   }
+  // Gmail connector: handle the OAuth return (?gmail=…) then load live status.
+  try {
+    const sp = new URL(location.href).searchParams;
+    const gp = sp.get('gmail');
+    if (gp) {
+      const reason = sp.get('reason') || '';
+      state.tab = 'outreach'; state.outreachSub = 'pipeline';
+      const url = new URL(location.href); url.searchParams.delete('gmail'); url.searchParams.delete('reason');
+      history.replaceState({}, '', url.pathname + url.search + url.hash);
+      setTimeout(() => {
+        if (gp === 'connected') gmailToast('✅ Gmail connected — you can now create drafts.', true);
+        else if (gp === 'notconfigured') gmailToast('Gmail isn’t set up yet (needs Cloudflare KV + secrets).', false);
+        else if (gp === 'error') gmailToast('Gmail connection failed' + (reason ? ' (' + reason + ')' : '') + ' — please try again.', false);
+      }, 250);
+    }
+  } catch { /* ignore */ }
   render();
+  loadGmailStatus();
 }
 
 boot();
