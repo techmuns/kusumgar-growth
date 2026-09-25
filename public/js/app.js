@@ -93,6 +93,7 @@ const OUTREACH_STAGES = [
   { key: 'Connected', color: '#0ea5e9' },        // sky
   { key: 'Draft created', color: '#ec4899' },    // pink — a Gmail draft exists, not yet sent
   { key: 'Email sent', color: '#6366f1' },       // indigo
+  { key: 'Replied', color: '#22c55e' },          // green — an inbound reply was detected
   { key: 'No reply', color: '#f59e0b' },         // amber
   { key: 'Meeting set', color: '#8b5cf6' },      // violet
   { key: 'Sample requested', color: '#14b8a6' }, // teal
@@ -226,6 +227,7 @@ const state = {
   reportContent: {},           // per-product strategy narrative (report_content.json)
   marketCommodity: 'hs5903',   // 'hs5903' | 'hs590320'
   gmail: { checked: false, configured: false, connected: false, email: '', busy: false }, // Gmail connector status
+  replies: {},                 // threadId -> { hasReply, lastFrom, lastDate, checkedAt } (Gmail reply-tracking)
 };
 
 const PIPE_KEY = (id) => `kgr.outreach.${id}`;
@@ -2680,6 +2682,11 @@ function trackerTableHtml() {
     const contact = c && (c.name || c.email)
       ? `<span class="inline-flex items-center gap-1.5">${escapeHtml(c.name || c.email)}${emailClassBadge(c, true)}</span>`
       : `<span class="text-slate-400">→ find contact</span>`;
+    const rep = state.replies[pl.threadId];
+    const replied = (rep && rep.hasReply) || pl.stage === 'Replied';
+    const rFrom = (rep && rep.lastFrom) || pl.repliedFrom || '';
+    const rWhen = (rep && rep.lastDate) || pl.repliedAt || '';
+    const replyBadge = replied ? ` <span class="ml-1 inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold" style="background:#dcfce7;color:#15803d" title="${escapeHtml('Replied' + (rFrom ? ' from ' + rFrom : '') + (rWhen ? ' · ' + rWhen : ''))}">✅ Replied</span>` : '';
     const hasDraft = hasDraftFor(l.id) ? '<span class="font-bold text-emerald-600">✓</span>' : '<span class="text-slate-300">—</span>';
     return `<tr class="border-t border-slate-100 hover:bg-slate-50/60">
       <td class="whitespace-nowrap px-3 py-2.5 text-sm font-semibold text-slate-800">${escapeHtml(l.company)}</td>
@@ -2688,7 +2695,7 @@ function trackerTableHtml() {
       <td class="whitespace-nowrap px-3 py-2.5">${stageClosed(pl.stage) ? '<span class="text-[12px] text-slate-300">—</span>' : `<input type="date" data-pl-followup="${escapeHtml(l.id)}" value="${escapeHtml(pl.next || '')}" class="rounded-lg border-0 bg-white px-2 py-1 text-[12px] font-semibold ring-1 ring-slate-200 focus:outline-none" style="color:${pl.next ? dueColor(pl.next) : '#94a3b8'}" />`}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'deal', DEAL_TYPES, pl.dealType || 'current', false)}</td>
       <td class="whitespace-nowrap px-3 py-2.5">${sel(l.id, 'mfg', MFG_TYPES, pl.mfg || 'own', false)}</td>
-      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${contact}</td>
+      <td class="whitespace-nowrap px-3 py-2.5 text-sm text-slate-600">${contact}${replyBadge}</td>
       <td class="whitespace-nowrap px-3 py-2.5 text-center text-sm">${hasDraft}</td>
       <td class="whitespace-nowrap px-3 py-2.5"><button type="button" data-action="draft-email" data-lead-id="${escapeHtml(l.id)}" class="rounded-lg bg-slate-100 px-2 py-1 text-[12px] font-semibold text-slate-600 hover:bg-slate-200">✉️ Email</button></td>
     </tr>`;
@@ -2718,6 +2725,7 @@ function renderTracker() {
       </div>
       <select id="o-stage" class="rounded-xl border-0 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none">${stageSel}</select>
       <button type="button" data-goto="leads" class="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">➕ Add leads</button>
+      ${state.gmail.connected ? '<button type="button" data-check-replies title="Check Gmail for inbound replies to emails you sent" class="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 hover:bg-emerald-50">↻ Check replies</button>' : ''}
     </div>
     <div class="mb-2 px-0.5 text-[12px] text-slate-500"><span id="oCount" class="tnum font-semibold text-slate-700">${trackerRows().length}</span> in pipeline</div>
     <div class="overflow-x-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"><div id="trackerTableWrap">${trackerTableHtml()}</div></div>
@@ -2870,6 +2878,75 @@ function gmailToast(msg, ok) {
     document.body.appendChild(el);
     setTimeout(() => { el.style.transition = 'opacity .4s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 450); }, 3800);
   } catch { /* ignore */ }
+}
+
+/* ------------------------------------------------------------------ *
+ * Gmail reply-tracking (Tracker) — read-only. Polls /api/gmail/replies
+ * for threads we drafted/sent and flips leads to the 'Replied' stage
+ * when a real inbound reply is detected. Never sends. Fully graceful
+ * when Gmail isn't connected.
+ * ------------------------------------------------------------------ */
+const REPLY_STAGES = ['Draft created', 'Email sent', 'No reply'];   // stages an incoming reply may advance
+let repliesChecking = false, repliesCheckedAt = 0, repliesScopeHintShown = false, repliesTimer = null;
+
+async function checkReplies(force = false) {
+  const g = state.gmail;
+  if (!g || !g.connected) return;
+  if (repliesChecking) return;
+  if (!force && repliesCheckedAt && (Date.now() - repliesCheckedAt) < 120000) return; // 2-min cache
+
+  // Every pipeline lead that carries a Gmail thread id.
+  const byThread = new Map();
+  for (const l of state.leads) {
+    const pl = state.pipeline[l.id];
+    if (pl && validStage(pl.stage) && pl.threadId) byThread.set(pl.threadId, l.id);
+  }
+  const ids = [...byThread.keys()];
+  if (!ids.length) { repliesCheckedAt = Date.now(); return; }
+
+  repliesChecking = true;
+  const btn = document.querySelector('[data-check-replies]');
+  const origLabel = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Checking…'; }
+  let scopeHint = false;
+  try {
+    for (let i = 0; i < ids.length; i += 25) {                       // batch ≤ 25
+      const batch = ids.slice(i, i + 25);
+      let data;
+      try {
+        const r = await fetch('/api/gmail/replies?threadIds=' + encodeURIComponent(batch.join(',')), { cache: 'no-store' });
+        if (r.status === 401 || r.status === 503) return;            // not connected/configured → skip silently
+        if (!r.ok) continue;
+        data = await r.json();
+      } catch { continue; }
+      for (const t of (data && data.threads) || []) {
+        if (!t || !t.threadId) continue;
+        if (t.note) scopeHint = true;                               // 403 scope note
+        state.replies[t.threadId] = { hasReply: t.hasReply === true, lastFrom: t.lastFrom || '', lastDate: t.lastDate || '', checkedAt: Date.now() };
+        if (t.hasReply === true) {
+          const leadId = byThread.get(t.threadId);
+          const pl = leadId && state.pipeline[leadId];
+          if (pl && REPLY_STAGES.includes(pl.stage)) {               // don't override later stages
+            setPipeline(leadId, { stage: 'Replied', repliedFrom: t.lastFrom || '', repliedAt: t.lastDate || '' });
+          }
+        }
+      }
+    }
+    repliesCheckedAt = Date.now();
+    if (scopeHint && !repliesScopeHintShown) { repliesScopeHintShown = true; gmailToast('Reconnect Gmail to enable reply detection.', false); }
+  } finally {
+    repliesChecking = false;
+    const b = document.querySelector('[data-check-replies]');
+    if (b) { b.disabled = false; b.textContent = origLabel || '↻ Check replies'; }
+    if (state.tab === 'outreach' && state.outreachSub === 'tracker') refreshTrackerTable();
+  }
+}
+
+// Poll every ~4 min while the Tracker stage-board is visible + connected; stop otherwise.
+function ensureReplyTimer() {
+  const active = state.tab === 'outreach' && state.outreachSub === 'tracker' && state.gmail.connected;
+  if (active && !repliesTimer) repliesTimer = setInterval(() => checkReplies(false), 240000);
+  else if (!active && repliesTimer) { clearInterval(repliesTimer); repliesTimer = null; }
 }
 
 // Tracker hub: the existing stage board + follow-ups, kept exactly as-is, under one Tracker view.
@@ -3888,6 +3965,10 @@ function render() {
   else if (state.tab === 'leads' && state.leadsSub === 'overview') revealCharts();
   else if (state.tab === 'competitors' && state.competitorsSub === 'landscape') revealCharts();
   else if (state.tab === 'research' && state.researchSub === 'market') revealCharts();
+
+  // Gmail reply-tracking: check when the Tracker stage-board is open; keep the poll timer in sync.
+  if (state.tab === 'outreach' && state.outreachSub === 'tracker') checkReplies(false);
+  ensureReplyTimer();
 }
 
 // Kick chart entrance animations after the DOM paints (idempotent, so a
@@ -3997,6 +4078,7 @@ function wireEvents() {
     // Gmail connector (top-right of the Outreach tab)
     if (e.target.closest('[data-gmail-connect]')) { gmailConnect(); return; }
     if (e.target.closest('[data-gmail-disconnect]')) { gmailDisconnect(); return; }
+    if (e.target.closest('[data-check-replies]')) { checkReplies(true); return; }
 
     const goFollow = e.target.closest('[data-gofollow]');
     if (goFollow) { state.tab = 'outreach'; state.outreachSub = 'followups'; render(); return; }
