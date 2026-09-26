@@ -1,130 +1,130 @@
 {
  "_meta": {
   "source": "UN Comtrade",
-  "year": 2024,
-  "year_reason": "2024 — latest complete year; 2025 still partial (China not yet reported)",
-  "latest_complete_year": 2024,
-  "updated_at": "2026-09-22T14:44:14.568Z",
+  "year": 2025,
+  "year_reason": "2025 — latest complete year; 2026 still partial (no data yet)",
+  "latest_complete_year": 2025,
+  "updated_at": "2026-09-26T12:32:21.168Z",
   "note": "All figures are real UN Comtrade import/export values — nothing modeled.",
   "monthly_through": "202607"
  },
  "hs5903": {
   "label": "All coated fabric (HS 5903)",
   "query_urls": {
-   "imports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=5903&flowCode=M&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2024",
-   "exports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=5903&flowCode=X&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2024"
+   "imports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=5903&flowCode=M&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2025",
+   "exports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=5903&flowCode=X&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2025"
   },
-  "world_import_value": 9331292353.008003,
-  "world_export_value": 14632783355.73501,
-  "world_import_netWgt": 1007671718.8460003,
-  "world_export_netWgt": 2679266005.1769996,
-  "reporting_importers": 140,
-  "reporting_exporters": 115,
+  "world_import_value": 8923806451.573002,
+  "world_export_value": 14062784460.423998,
+  "world_import_netWgt": 825629959.9770002,
+  "world_export_netWgt": 2598173547.136999,
+  "reporting_importers": 105,
+  "reporting_exporters": 90,
   "top_importers": [
    {
     "code": 842,
     "country": "USA",
     "iso2": "US",
-    "value": 1196612048,
-    "netWgt": 106749745.695
+    "value": 1031095502,
+    "netWgt": 52266437.201
    },
    {
     "code": 484,
     "country": "Mexico",
     "iso2": "MX",
-    "value": 658811791,
+    "value": 783862652,
     "netWgt": 0
    },
    {
     "code": 156,
     "country": "China",
     "iso2": "CN",
-    "value": 618756400,
-    "netWgt": 44526498.428
-   },
-   {
-    "code": 360,
-    "country": "Indonesia",
-    "iso2": "ID",
-    "value": 445228154,
-    "netWgt": 43445470
-   },
-   {
-    "code": 504,
-    "country": "Morocco",
-    "iso2": "MA",
-    "value": 411706316.405,
-    "netWgt": 46353540.74
+    "value": 566195921,
+    "netWgt": 37679617.583
    },
    {
     "code": 699,
     "country": "India",
     "iso2": "IN",
-    "value": 379287483.91,
-    "netWgt": 33401246.517
+    "value": 489639251.049,
+    "netWgt": 40801618.045
    },
    {
-    "code": 344,
-    "country": "China, Hong Kong SAR",
-    "iso2": "HK",
-    "value": 301182920.278,
-    "netWgt": 12019317
+    "code": 360,
+    "country": "Indonesia",
+    "iso2": "ID",
+    "value": 464729717.167,
+    "netWgt": 51740051.648
    },
    {
-    "code": 616,
-    "country": "Poland",
-    "iso2": "PL",
-    "value": 284426730,
-    "netWgt": 38976503.8
+    "code": 504,
+    "country": "Morocco",
+    "iso2": "MA",
+    "value": 452398002.557,
+    "netWgt": 47892090.56
    },
    {
     "code": 276,
     "country": "Germany",
     "iso2": "DE",
-    "value": 283701457.446,
+    "value": 329783126.984,
+    "netWgt": 28433915.509
+   },
+   {
+    "code": 344,
+    "country": "China, Hong Kong SAR",
+    "iso2": "HK",
+    "value": 310822549.222,
+    "netWgt": 10426371
+   },
+   {
+    "code": 616,
+    "country": "Poland",
+    "iso2": "PL",
+    "value": 281242823,
+    "netWgt": 35180546.767
+   },
+   {
+    "code": 380,
+    "country": "Italy",
+    "iso2": "IT",
+    "value": 278789934.103,
+    "netWgt": 29032189
+   },
+   {
+    "code": 642,
+    "country": "Romania",
+    "iso2": "RO",
+    "value": 258394559.55,
     "netWgt": 0
    },
    {
     "code": 792,
     "country": "Türkiye",
     "iso2": "TR",
-    "value": 256257512,
-    "netWgt": 46768700
-   },
-   {
-    "code": 642,
-    "country": "Romania",
-    "iso2": "RO",
-    "value": 250767096.66,
-    "netWgt": 18821843.582
-   },
-   {
-    "code": 380,
-    "country": "Italy",
-    "iso2": "IT",
-    "value": 242060725.908,
-    "netWgt": 23889046
-   },
-   {
-    "code": 116,
-    "country": "Cambodia",
-    "iso2": "KH",
-    "value": 228465103.05,
-    "netWgt": 44568629.12
+    "value": 246529864,
+    "netWgt": 42863738
    },
    {
     "code": 251,
     "country": "France",
     "iso2": "FR",
-    "value": 185111667.662,
-    "netWgt": 16244331.596
+    "value": 194281550.045,
+    "netWgt": 17842951.345
    },
    {
     "code": 826,
     "country": "United Kingdom",
     "iso2": "GB",
-    "value": 169077047.634,
-    "netWgt": 14102142.333
+    "value": 173798983.359,
+    "netWgt": 14694989.314
+   },
+   {
+    "code": 203,
+    "country": "Czechia",
+    "iso2": "CZ",
+    "value": 169164305,
+    "netWgt": 0
    }
   ],
   "top_exporters": [
@@ -132,263 +132,258 @@
     "code": 156,
     "country": "China",
     "iso2": "CN",
-    "value": 6740112979,
-    "netWgt": 2018478967.03
+    "value": 6738131333,
+    "netWgt": 2114356876.05
    },
    {
     "code": 276,
     "country": "Germany",
     "iso2": "DE",
-    "value": 991835850.056,
-    "netWgt": 61515684.48
+    "value": 1026381435.903,
+    "netWgt": 60442055.255
    },
    {
     "code": 842,
     "country": "USA",
     "iso2": "US",
-    "value": 946560285,
-    "netWgt": 59786806.403
+    "value": 852581421,
+    "netWgt": 27424669.898
    },
    {
     "code": 410,
     "country": "Rep. of Korea",
     "iso2": "KR",
-    "value": 822947919,
-    "netWgt": 75951897.233
+    "value": 804505854,
+    "netWgt": 74540878.063
    },
    {
     "code": 380,
     "country": "Italy",
     "iso2": "IT",
-    "value": 671220843.523,
-    "netWgt": 49654167
-   },
-   {
-    "code": 490,
-    "country": "Other Asia, nes",
-    "iso2": "",
-    "value": 636441610.706,
-    "netWgt": 59001482
+    "value": 711965269.619,
+    "netWgt": 49807886
    },
    {
     "code": 392,
     "country": "Japan",
     "iso2": "JP",
-    "value": 435149194.556,
-    "netWgt": 23144569
+    "value": 429573530.414,
+    "netWgt": 20158399
    },
    {
     "code": 344,
     "country": "China, Hong Kong SAR",
     "iso2": "HK",
-    "value": 350818933.544,
-    "netWgt": 10266784
-   },
-   {
-    "code": 699,
-    "country": "India",
-    "iso2": "IN",
-    "value": 301752655.964,
-    "netWgt": 22163499.963
+    "value": 407524170.952,
+    "netWgt": 10869177
    },
    {
     "code": 251,
     "country": "France",
     "iso2": "FR",
-    "value": 274474985.69,
-    "netWgt": 15079869.554
+    "value": 266868486.243,
+    "netWgt": 0
+   },
+   {
+    "code": 699,
+    "country": "India",
+    "iso2": "IN",
+    "value": 262499095.623,
+    "netWgt": 19433957.452
    },
    {
     "code": 620,
     "country": "Portugal",
     "iso2": "PT",
-    "value": 218252633.109,
-    "netWgt": 26128814.539
+    "value": 246615318.347,
+    "netWgt": 0
    },
    {
     "code": 56,
     "country": "Belgium",
     "iso2": "BE",
-    "value": 204539011.565,
-    "netWgt": 36118985.118
-   },
-   {
-    "code": 124,
-    "country": "Canada",
-    "iso2": "CA",
-    "value": 187721028.995,
-    "netWgt": 29389727.127
-   },
-   {
-    "code": 724,
-    "country": "Spain",
-    "iso2": "ES",
-    "value": 186710084.092,
-    "netWgt": 19130356.755
+    "value": 217252446.325,
+    "netWgt": 16611527.395
    },
    {
     "code": 616,
     "country": "Poland",
     "iso2": "PL",
-    "value": 180658862,
-    "netWgt": 17575147.485
+    "value": 205394722,
+    "netWgt": 18974745.765
+   },
+   {
+    "code": 724,
+    "country": "Spain",
+    "iso2": "ES",
+    "value": 198053863.484,
+    "netWgt": 18673807.078
+   },
+   {
+    "code": 528,
+    "country": "Netherlands",
+    "iso2": "NL",
+    "value": 185861284.038,
+    "netWgt": 9575650.73
+   },
+   {
+    "code": 203,
+    "country": "Czechia",
+    "iso2": "CZ",
+    "value": 171378718,
+    "netWgt": 18120499.695
    }
   ],
   "region_split": [
    {
-    "region": "Asia",
-    "value": 3037927087.611,
-    "pct": 32.6
+    "region": "Europe",
+    "value": 2987245733.278001,
+    "pct": 33.5
    },
    {
-    "region": "Europe",
-    "value": 2979099257.0600004,
-    "pct": 31.9
+    "region": "Asia",
+    "value": 2917068107.977,
+    "pct": 32.7
    },
    {
     "region": "North America",
-    "value": 2070756529.1080005,
-    "pct": 22.2
+    "value": 2025602613.8350003,
+    "pct": 22.7
    },
    {
     "region": "Africa",
-    "value": 773185564.4129996,
-    "pct": 8.3
+    "value": 619627874.881,
+    "pct": 6.9
    },
    {
     "region": "South America",
-    "value": 321889857.81099993,
-    "pct": 3.4
+    "value": 270630405.95400006,
+    "pct": 3
    },
    {
     "region": "Oceania",
-    "value": 104987149.79,
-    "pct": 1.1
-   },
-   {
-    "region": "Other",
-    "value": 43446907.215,
-    "pct": 0.5
+    "value": 103631715.64799999,
+    "pct": 1.2
    }
   ]
  },
  "hs590320": {
   "label": "Polyurethane-coated (HS 5903.20) — closest to Kusumgar 600D PU",
   "query_urls": {
-   "imports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=590320&flowCode=M&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2024",
-   "exports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=590320&flowCode=X&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2024"
+   "imports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=590320&flowCode=M&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2025",
+   "exports": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?cmdCode=590320&flowCode=X&partnerCode=0&partner2Code=0&customsCode=C00&motCode=0&period=2025"
   },
-  "world_import_value": 3410444144.1810007,
-  "world_export_value": 6168417057.979999,
-  "world_import_netWgt": 276083960.4490001,
-  "world_export_netWgt": 775084240.9569997,
-  "reporting_importers": 129,
-  "reporting_exporters": 92,
+  "world_import_value": 3306871293.0829997,
+  "world_export_value": 5876486924.124999,
+  "world_import_netWgt": 238489165.14200017,
+  "world_export_netWgt": 740477214.67,
+  "reporting_importers": 102,
+  "reporting_exporters": 74,
   "top_importers": [
-   {
-    "code": 842,
-    "country": "USA",
-    "iso2": "US",
-    "value": 365165098,
-    "netWgt": 22445572.419
-   },
-   {
-    "code": 156,
-    "country": "China",
-    "iso2": "CN",
-    "value": 309571631,
-    "netWgt": 17098002.482
-   },
    {
     "code": 360,
     "country": "Indonesia",
     "iso2": "ID",
-    "value": 296599796,
-    "netWgt": 30243768
+    "value": 312493658.132,
+    "netWgt": 32768419.09
+   },
+   {
+    "code": 842,
+    "country": "USA",
+    "iso2": "US",
+    "value": 298387542,
+    "netWgt": 5570096.142
    },
    {
     "code": 484,
     "country": "Mexico",
     "iso2": "MX",
-    "value": 195261066,
+    "value": 268010770,
     "netWgt": 0
+   },
+   {
+    "code": 156,
+    "country": "China",
+    "iso2": "CN",
+    "value": 252596568,
+    "netWgt": 13429867.542
    },
    {
     "code": 504,
     "country": "Morocco",
     "iso2": "MA",
-    "value": 190472406.641,
-    "netWgt": 16969161.54
-   },
-   {
-    "code": 616,
-    "country": "Poland",
-    "iso2": "PL",
-    "value": 127181090,
-    "netWgt": 14177696.502
-   },
-   {
-    "code": 792,
-    "country": "Türkiye",
-    "iso2": "TR",
-    "value": 124966072,
-    "netWgt": 14794506
+    "value": 231676908.062,
+    "netWgt": 18909870.834
    },
    {
     "code": 699,
     "country": "India",
     "iso2": "IN",
-    "value": 124447502.475,
-    "netWgt": 7649404.186
+    "value": 151249571.809,
+    "netWgt": 8279178.869
    },
    {
     "code": 276,
     "country": "Germany",
     "iso2": "DE",
-    "value": 118177477.282,
-    "netWgt": 0
+    "value": 136321956.081,
+    "netWgt": 5833833.115
+   },
+   {
+    "code": 792,
+    "country": "Türkiye",
+    "iso2": "TR",
+    "value": 124758137,
+    "netWgt": 13498090
+   },
+   {
+    "code": 616,
+    "country": "Poland",
+    "iso2": "PL",
+    "value": 116232019,
+    "netWgt": 12437571.767
    },
    {
     "code": 380,
     "country": "Italy",
     "iso2": "IT",
-    "value": 93991281.385,
-    "netWgt": 6733393
+    "value": 103552769.113,
+    "netWgt": 7357305
    },
    {
     "code": 642,
     "country": "Romania",
     "iso2": "RO",
-    "value": 86199187.95,
-    "netWgt": 4150454.915
+    "value": 101528917.35,
+    "netWgt": 0
    },
    {
     "code": 344,
     "country": "China, Hong Kong SAR",
     "iso2": "HK",
-    "value": 80875599.133,
-    "netWgt": 5288455
+    "value": 91706568.512,
+    "netWgt": 4556017
    },
    {
     "code": 203,
     "country": "Czechia",
     "iso2": "CZ",
-    "value": 73543687,
-    "netWgt": 4122415.274
+    "value": 84875001,
+    "netWgt": 3067227.048
    },
    {
-    "code": 76,
-    "country": "Brazil",
-    "iso2": "BR",
-    "value": 70751384,
-    "netWgt": 19606440.485
+    "code": 688,
+    "country": "Serbia",
+    "iso2": "RS",
+    "value": 81735580,
+    "netWgt": 5697793.253
    },
    {
-    "code": 788,
-    "country": "Tunisia",
-    "iso2": "TN",
-    "value": 67775202.723,
-    "netWgt": 3897413.685
+    "code": 251,
+    "country": "France",
+    "iso2": "FR",
+    "value": 66994567.988,
+    "netWgt": 4905361.557
    }
   ],
   "top_exporters": [
@@ -396,142 +391,137 @@
     "code": 156,
     "country": "China",
     "iso2": "CN",
-    "value": 2869848329,
-    "netWgt": 549335586.916
+    "value": 2828955409,
+    "netWgt": 574509651.357
    },
    {
     "code": 410,
     "country": "Rep. of Korea",
     "iso2": "KR",
-    "value": 594451168,
-    "netWgt": 37622433.598
+    "value": 567899986,
+    "netWgt": 36440555.676
    },
    {
     "code": 842,
     "country": "USA",
     "iso2": "US",
-    "value": 360788703,
-    "netWgt": 18084782.226
+    "value": 361097048,
+    "netWgt": 14041808.575
    },
    {
     "code": 392,
     "country": "Japan",
     "iso2": "JP",
-    "value": 331691369.568,
-    "netWgt": 14970393
-   },
-   {
-    "code": 490,
-    "country": "Other Asia, nes",
-    "iso2": "",
-    "value": 329178737.578,
-    "netWgt": 29336325
+    "value": 324468213.516,
+    "netWgt": 12582704
    },
    {
     "code": 276,
     "country": "Germany",
     "iso2": "DE",
-    "value": 302630789.096,
-    "netWgt": 15523018.208
+    "value": 318470897.675,
+    "netWgt": 16063184.851
    },
    {
     "code": 380,
     "country": "Italy",
     "iso2": "IT",
-    "value": 220164795.652,
-    "netWgt": 11947648
+    "value": 233808393.567,
+    "netWgt": 10819581
    },
    {
     "code": 344,
     "country": "China, Hong Kong SAR",
     "iso2": "HK",
-    "value": 124627454.808,
-    "netWgt": 4816638
+    "value": 143941801.295,
+    "netWgt": 4794755
    },
    {
     "code": 616,
     "country": "Poland",
     "iso2": "PL",
-    "value": 120180101,
-    "netWgt": 10333545.354
+    "value": 141477536,
+    "netWgt": 11694074.488
    },
    {
     "code": 56,
     "country": "Belgium",
     "iso2": "BE",
-    "value": 104167817.111,
-    "netWgt": 4971659.13
-   },
-   {
-    "code": 528,
-    "country": "Netherlands",
-    "iso2": "NL",
-    "value": 84527484.586,
-    "netWgt": 25266192
-   },
-   {
-    "code": 724,
-    "country": "Spain",
-    "iso2": "ES",
-    "value": 83076874.466,
-    "netWgt": 6363044.616
+    "value": 97893819.209,
+    "netWgt": 4467782.66
    },
    {
     "code": 251,
     "country": "France",
     "iso2": "FR",
-    "value": 76615328.883,
-    "netWgt": 3736437.95
+    "value": 92084131.545,
+    "netWgt": 4121568.246
+   },
+   {
+    "code": 724,
+    "country": "Spain",
+    "iso2": "ES",
+    "value": 86726529.502,
+    "netWgt": 6257091.49
+   },
+   {
+    "code": 528,
+    "country": "Netherlands",
+    "iso2": "NL",
+    "value": 82395355.045,
+    "netWgt": 2602475
+   },
+   {
+    "code": 203,
+    "country": "Czechia",
+    "iso2": "CZ",
+    "value": 79246632,
+    "netWgt": 4992338.132
    },
    {
     "code": 757,
     "country": "Switzerland",
     "iso2": "CH",
-    "value": 67135812.535,
-    "netWgt": 1990525.855
+    "value": 72769811.54,
+    "netWgt": 2113776.922
    },
    {
-    "code": 484,
-    "country": "Mexico",
-    "iso2": "MX",
-    "value": 61916848,
-    "netWgt": 4003917.564
+    "code": 792,
+    "country": "Türkiye",
+    "iso2": "TR",
+    "value": 60766989,
+    "netWgt": 7527923
    }
   ],
   "region_split": [
    {
     "region": "Asia",
-    "value": 1234313261.8040001,
-    "pct": 36.2
+    "value": 1186777633.1889997,
+    "pct": 35.9
    },
    {
     "region": "Europe",
-    "value": 1105264993.3550003,
-    "pct": 32.4
+    "value": 1129297147.6809995,
+    "pct": 34.2
    },
    {
     "region": "North America",
-    "value": 618200560.4490001,
-    "pct": 18.1
+    "value": 624152046.687,
+    "pct": 18.9
    },
    {
     "region": "Africa",
-    "value": 308199916.3670001,
-    "pct": 9
+    "value": 272221903.256,
+    "pct": 8.2
    },
    {
     "region": "South America",
-    "value": 119930771.035,
-    "pct": 3.5
-   },
-   {
-    "region": "Other",
-    "value": 14831911.852,
-    "pct": 0.4
+    "value": 84986091.368,
+    "pct": 2.6
    },
    {
     "region": "Oceania",
-    "value": 9702729.319,
+    "value": 9436470.901999999,
     "pct": 0.3
    }
   ]
@@ -554,7 +544,7 @@
    {
     "period": "202509",
     "import_value": 728160808.8759998,
-    "export_value": 626113905.9549999,
+    "export_value": 535471644.28099996,
     "import_netWgt": 83260253.261
    },
    {
@@ -577,49 +567,49 @@
    },
    {
     "period": "202601",
-    "import_value": 587654648.349,
-    "export_value": 498864372.5089999,
-    "import_netWgt": 60879919.41099999
+    "import_value": 587654311.019,
+    "export_value": 498864403.8689999,
+    "import_netWgt": 60879904.41099999
    },
    {
     "period": "202602",
-    "import_value": 581908906.277,
-    "export_value": 492805118.91,
-    "import_netWgt": 60898099.222
+    "import_value": 581909172.327,
+    "export_value": 492805110.79,
+    "import_netWgt": 60898105.222
    },
    {
     "period": "202603",
-    "import_value": 616359217.775,
-    "export_value": 561154614.9959999,
-    "import_netWgt": 56291082.146000005
+    "import_value": 617378525.332,
+    "export_value": 561945480.508,
+    "import_netWgt": 56384535.105000004
    },
    {
     "period": "202604",
-    "import_value": 597738500.763,
-    "export_value": 553989185.2249999,
-    "import_netWgt": 53837661.98699999
+    "import_value": 597739091.5929999,
+    "export_value": 553989422.7249999,
+    "import_netWgt": 53837688.98699999
    },
    {
     "period": "202605",
-    "import_value": 569954728.5849999,
-    "export_value": 532486427.218,
-    "import_netWgt": 50119447.088000014
+    "import_value": 541312235.23,
+    "export_value": 450560290.21699995,
+    "import_netWgt": 47955677.87300002
    },
    {
     "period": "202606",
-    "import_value": 505224436.3600001,
-    "export_value": 407512126.56899995,
-    "import_netWgt": 40368461.923
+    "import_value": 528545479.01000005,
+    "export_value": 414876676.875,
+    "import_netWgt": 41719383.189
    },
    {
     "period": "202607",
-    "import_value": 387359341.879,
-    "export_value": 249357392.659,
-    "import_netWgt": 30444674.460999995
+    "import_value": 406276040.346,
+    "export_value": 254117756.06100002,
+    "import_netWgt": 31386643.754999995
    }
   ],
-  "last12_import_value": 7173104178.6189995,
-  "last12_export_value": 6160528370.061001,
+  "last12_import_value": 7187719253.487998,
+  "last12_export_value": 6000876011.345999,
   "months_count": 12
  }
 }
